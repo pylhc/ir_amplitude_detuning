@@ -1,14 +1,14 @@
-"""
-Classes
--------
 
-Classes used to hold and manipulate data.
+"""
+Classes for Detuning
+--------------------
+
+Classes used to hold and manipulate detuning (measurement) data.
 """
 from __future__ import annotations
 
-from collections.abc import Iterator
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from functools import partial
 from typing import TYPE_CHECKING
 
@@ -16,7 +16,7 @@ import numpy as np
 from omc3.utils.stats import weighted_mean
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterator, Sequence
 
 LOG = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ class MeasureValue:
             raise NotImplementedError("Addition of Measurements with scalar values other than 0 are not implemented.")
         return MeasureValue(value=self.value, error=self.error)
 
-    def __sub__(self, other: 'MeasureValue'):
+    def __sub__(self, other: MeasureValue):
         return MeasureValue(value=self.value - other.value, error=np.sqrt(self.error**2 + other.error**2))
 
     def __mul__(self, other: float):
@@ -117,17 +117,17 @@ class Detuning:
     values are set.
     For convenience, the input values are scaled by scale."""
     # first order
-    X10: float | None = None
-    X01: float | None = None
-    Y10: float | None = None
-    Y01: float | None = None
+    X10: float | None = None  # d Qx / d Jx
+    X01: float | None = None  # d Qx / d Jy
+    Y10: float | None = None  # d Qy / d Jx
+    Y01: float | None = None  # d Qy / d Jy
     # second order
-    X20: float | None = None
-    X11: float | None = None
-    X02: float | None = None
-    Y20: float | None = None
-    Y11: float | None = None
-    Y02: float | None = None
+    X20: float | None = None  # d^2 Qx / (d Jx)^2
+    X11: float | None = None  # d^2 Qx / (d Jx)(d Jy)
+    X02: float | None = None  # d^2 Qx / (d Jy)^2
+    Y20: float | None = None  # d^2 Qy / (d Jx)^2
+    Y11: float | None = None  # d^2 Qy / (d Jx)(d Jy)
+    Y02: float | None = None  # d^2 Qy / (d Jy)^2
     scale: float = 1.
 
     def __post_init__(self):
@@ -293,81 +293,3 @@ class Constraints:
 scaled_detuning = partial(Detuning, scale=1e3)
 scaled_contraints = partial(Constraints, scale=1e3)
 scaled_detuningmeasurement = partial(DetuningMeasurement, scale=1e3)
-
-
-@dataclass(slots=True)
-class TargetData:
-    """ Class to hold the Data of a Target.
-        Single IPs are converted into a tuple automatically.
-        The detuning values should be a dictionary defining the
-        beams. Beam 2 and Beam 4 are used interchangeably:
-        if only one is defined its values will be returned when
-        the other one is requested.
-     """
-    ips: Sequence[int] | int
-    detuning: dict[int, Detuning]
-    constraints: dict[int, Constraints] = None
-    xing: str = None
-    MAIN_XING: str = field(init=False, default='main')
-
-    def __post_init__(self):
-        if self.xing is None:
-            self.xing = self.MAIN_XING
-
-        if isinstance(self.ips, int):
-            self.ips = (self.ips,)
-
-    def beams(self) -> list[int]:
-        return list(self.detuning.keys())
-
-    def __getitem__(self, beam):
-        try:
-            return self.detuning[beam]
-        except KeyError as e:
-            if beam == 2 and (4 in self.beams()):
-                return self.detuning[4]
-            if beam == 4 and (2 in self.beams()):
-                return self.detuning[2]
-
-            LOG.debug(f"Beam {beam} not defined. Returning empty detuning definition")
-            return Detuning()
-
-    def constraints_beams(self) -> list[int]:
-        if self.constraints is None:
-            return []
-        return list(self.constraints.keys())
-
-    def get_contraints(self, beam: int) -> Constraints:
-        if self.constraints is None:
-            return Constraints()
-
-        try:
-            return self.constraints[beam]
-        except (KeyError, TypeError):
-            if beam == 2 and (4 in self.constraints_beams()):
-                return self.constraints[4]
-            if beam == 4 and (2 in self.constraints_beams()):
-                return self.constraints[2]
-
-            LOG.debug(f"Beam {beam} not defined. Returning empty Constraints")
-            return Constraints()
-
-@dataclass(slots=True)
-class Target:
-    """ Class to hold Target information.
-
-        The data is a TargetData or list of TargetData containing the data for this Target.
-        This is done so that the TargetData can be split up depending on which IPs are targeted.
-        Single TargetData are converted into a List automatically.
-    """
-    name: str
-    data: Sequence[TargetData] | TargetData
-
-    def __post_init__(self):
-        if isinstance(self.data, TargetData):
-            self.data = [self.data]
-        self.ips = [ip for data in self.data for ip in data.ips]
-
-        if len(self.ips) != len(set(self.ips)):
-            LOG.debug(f"Duplicate ips found for {self.name}")
-            self.ips = set(self.ips)

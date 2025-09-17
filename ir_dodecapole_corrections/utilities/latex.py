@@ -3,8 +3,12 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
+import numpy as np
+
 if TYPE_CHECKING:
-    from ir_dodecapole_corrections.utilities.classes import MeasureValue
+    from collections.abc import Sequence
+
+    from ir_dodecapole_corrections.utilities.classes_detuning import MeasureValue
 
 LOG = logging.getLogger(__name__)
 
@@ -26,15 +30,27 @@ XLABEL_MAP = {
     "nominal": "Nominal",
 }
 
-def print_correction_and_error_as_latex(x_pseudo: float, correctors: list[str]):
-    """ Print the correction values with errors as latex table snippet."""
-    length = 0.615  # corrector length
-    x_scaled = x_pseudo * 1e-3 / length  # convert to KNL [10^3]
+def print_correction_and_error_as_latex(values: Sequence[MeasureValue], correctors: Sequence[str], length: Sequence[float] | float = 0.615) -> None:
+    """ Print the correction values with errors as latex table snippet.
+
+    Args:
+        values: List of MeasureValue with the correction values
+        correctors: List of corrector names, same length as values
+        length: Length of the correctors in m, default 0.615 m for MCTs
+    """
+    try:
+        len(length)
+    except TypeError:
+        length = [length] * len(values)
+
+    assert len(values) == len(correctors) == len(length), "Values, correctors and length must have the same length."
+
+    values_scaled = np.array([v * 1e-3 / l for v, l in zip(values, length)])  # convert to KNL [10^3] # noqa: E741
 
     def mv2s(data: MeasureValue) -> str:
         """ Covert MeasureValue to string with error in paranthesis. """
         if not hasattr(data, "error"):
-            return fr"{data:.3f} & (\%)"
+            return fr"{data:.3f}"
 
         uncert = (
             f"{int(data.error * 1000.0):03d}"   # only the digits after the comma if < 1
@@ -42,11 +58,12 @@ def print_correction_and_error_as_latex(x_pseudo: float, correctors: list[str]):
             f"{data.error:.3f}"                 # full number if >= 1
         )
 
-        return fr"{data.value:.3f}({uncert})& (\%)"
+        return fr"{data.value:.3f}({uncert})"
 
     LOG.info(
-        f"\n & {' & '.join(correctors)}\\\\\n"
-        f" & {' & '.join(mv2s(x) for x in x_scaled)}\\\\\n"
+        f"Latex table snippet for correctors (KNL values [10^-3]):\n\n"
+        f" & {' & '.join(correctors)}\\\\\n"
+        f" & {' & '.join(mv2s(x) for x in values_scaled)}\\\\\n"
     )
 
 

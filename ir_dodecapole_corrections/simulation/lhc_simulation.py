@@ -10,7 +10,7 @@ it with extra functionality.
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import ClassVar, Union
+from typing import ClassVar
 
 import cpymad.madx
 import tfs
@@ -29,12 +29,7 @@ from cpymad_lhc.logging import MADXCMD, MADXOUT, cpymad_logging_setup
 from optics_functions.coupling import closest_tune_approach, coupling_via_cmatrix
 from tfs import TfsDataFrame
 
-from ir_dodecapole_corrections.utilities.detuning import (
-    DECAPOLE_CIRCUIT,
-    DODECAPOLE_CIRCUIT,
-    DODECAPOLE_CORRECTOR,
-    DODECAPOLE_PATTERN,
-)
+from ir_dodecapole_corrections.utilities.classes_accelerator import Corrector
 
 LOG = logging.getLogger(__name__)  # setup in main()
 LOG_LEVEL = logging.DEBUG
@@ -64,7 +59,7 @@ def pathstr(key: str, *args: str) -> str:
     return str(PATHS[key].joinpath(*args))
 
 
-def get_optics_path(year: int, name: Union[str, Path]):
+def get_optics_path(year: int, name: str | Path):
     """ Get optics by name, i.e. a collection of optics path-strings to the optics files.
 
      Args:
@@ -129,6 +124,29 @@ def get_detuning_from_ptc_output(df, beam=None, log=True, terms=("X10", "Y01", "
             LOG.info(f"  {term:<3s}: {value}")
         results[term] = value
     return results
+
+
+class LHCCorrectors:
+    """ Container for the corrector definitions used in the LHC.
+
+        These correctors are installed into the MCTX and powered via kcdx3 and kctx3 circuits.
+        The length is set to 0.615 m, which is the length of the MCTs.
+        The pattern is used to find the correctors in the MAD-X sequence.
+    """
+    b5 = Corrector(
+        field = "b5",
+        length=0.615,
+        magnet="MCTX.3{side}{ip}",  # installed into the MCTX
+        circuit="kcdx3.{side}{ip}",
+        pattern="MCTX.*[15]$",
+    )
+    b6 = Corrector(
+        field = "b6",
+        length=0.615,
+        magnet="MCTX.3{side}{ip}",
+        circuit="kctx3.{side}{ip}",
+        pattern="MCTX.*[15]$",
+    )
 
 
 @dataclass()
@@ -249,7 +267,7 @@ class LHCBeam:
     # Wrapper ---
     def log_orbit(self):
         """ Log the current orbit. """
-        log_orbit(self.madx, accel=self.ACCEL)
+        log_orbit(self.madx, accel=self.ACCEL, year=self.year)
 
     def closest_tune_approach(self, df: TfsDataFrame | None = None):
         """ Calculate and print out the closest tune approach from the twiss
@@ -334,7 +352,7 @@ class LHCBeam:
                   kbunch=1, ex=self.emittance, ey=self.emittance)
 
         # Setup Orbit
-        orbit_vars = orbit_setup(madx, accel='lhc', **self.xing)
+        orbit_vars = orbit_setup(madx, accel='lhc', year=self.year, **self.xing)
 
         madx.use(sequence=self.seq_name)
 
@@ -363,16 +381,21 @@ class LHCBeam:
         beam_sign_str = "-" if self.beam == 4 else ""
         for ip in (1, 5):
             for side in "LR":
-                magnet = DODECAPOLE_CORRECTOR.format(side=side, ip=ip)
-                deca_circuit = DECAPOLE_CIRCUIT.format(side=side.lower(), ip=ip)
-                dodeca_circuit = DODECAPOLE_CIRCUIT.format(side=side.lower(), ip=ip)
+                magnet = LHCCorrectors.b6.magnet.format(side=side, ip=ip)
+                magnet_b5 = LHCCorrectors.b5.magnet.format(side=side, ip=ip)
+
+                assert magnet_b5 == magnet, "Magnet name for b5 and b6 must be the same as we install b5 corrector in same magnet!"
+
+                deca_circuit = LHCCorrectors.b5.circuit.format(side=side.lower(), ip=ip)
+                dodeca_circuit = LHCCorrectors.b6.circuit.format(side=side.lower(), ip=ip)
+
                 self.madx.input(f"{magnet}, KNL := {{0, 0, 0, 0, {deca_circuit}*l.MCTX, {beam_sign_str}{dodeca_circuit}*l.MCTX}}, polarity=+1;")
                 self.madx.globals[deca_circuit] = 0
                 self.madx.globals[dodeca_circuit] = 0
 
     def reset_detuning_circuits(self):
         """ Reset all kcdx and kctx circuits (to zero). """
-        for circuit in (DECAPOLE_CIRCUIT, DODECAPOLE_CIRCUIT):
+        for circuit in (LHCCorrectors.b5.circuit, LHCCorrectors.b6.circuit):
             for ip in (1, 5):
                 for side in "LR":
                     self.madx.globals[circuit.format(side=side.lower(), ip=ip)] = 0
@@ -399,7 +422,7 @@ class LHCBeam:
 
         try:
             self.match_tune()
-            self.get_twiss(id_, index_regex=DODECAPOLE_PATTERN)
+            self.get_twiss(id_, index_regex=LHCCorrectors.b6.pattern)
         except cpymad.madx.TwissFailed as e:
             LOG.error("Matching/Twiss failed!")
             return None

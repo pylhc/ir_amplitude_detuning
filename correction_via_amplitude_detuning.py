@@ -17,26 +17,27 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
+import pandas as pd
 import tfs
 
 from ir_dodecapole_corrections.simulation.lhc_simulation import FakeLHCBeam, LHCBeam
-from ir_dodecapole_corrections.utilities.classes import MeasureValue, Target
+from ir_dodecapole_corrections.utilities.classes_accelerator import Correctors, get_filled_corrector_attributes
+from ir_dodecapole_corrections.utilities.classes_detuning import MeasureValue
 from ir_dodecapole_corrections.utilities.detuning import (
     calc_effective_detuning,
-    calculate_correction_values_from_feeddown_to_detuning,
+    calculate_correction,
 )
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
     from pathlib import Path
 
-LOG = logging.getLogger(__name__)
-LENGTH_MCTX = 0.615
+    from ir_dodecapole_corrections.utilities.classes_targets import Target
 
+LOG = logging.getLogger(__name__)
 
 def run_lhc_and_calc_correction(outputdirs: dict[int, Path],
          targets: Sequence[Target],
-         field_list: Sequence[str] =('b6',),
          xing: dict | None = None,  # set to {'scheme': 'top'} below
          optics: str = 'round3030',  # 30cm round optics
          year: int = 2018,  # lhc year
@@ -69,69 +70,33 @@ def run_lhc_and_calc_correction(outputdirs: dict[int, Path],
         lhc_beam.install_circuits_into_mctx()
         optics[beam] = lhc_beam.df_twiss_nominal_ir.copy()
 
-    for fields in field_list:
-        for target in targets:
-            LOG.info(f"Calculating detuning with {fields} for \n{str(target)}")
-            id_ = f"{target.name}_{fields}"
-            try:
-                values = calculate_correction_values_from_feeddown_to_detuning(optics, target=target, fields=fields)
-            except ValueError:
-                LOG.error(f"Optimization failed for {target.name} and {fields}.")
-                values = {}
-            dfs_effective_detuning = calc_effective_detuning(optics, values, ips=target.ips)
+    for target in targets:
+        LOG.info(f"Calculating detuning with {fields} for \n{str(target)}")
+        id_ = f"{target.name}_{fields}"
+        try:
+            values = calculate_correction(optics, target=target, fields=fields)
+        except ValueError:
+            LOG.error(f"Optimization failed for {target.name} and {fields}.")
+            values = {}
+        dfs_effective_detuning = calc_effective_detuning(optics, values, ips=target.ips)
 
-            for lhc_beam, df in zip(lhc_beams.values(), dfs_effective_detuning):
-                tfs.write(lhc_beam.output_path('ampdet_calc', id_), df)
-                lhc_beam.set_mctx_circuits_powering(values, id_=id_)
-                lhc_beam.check_kctx_limits()
-                lhc_beam.reset_detuning_circuits()
+        for lhc_beam, df in zip(lhc_beams.values(), dfs_effective_detuning):
+            tfs.write(lhc_beam.output_path('ampdet_calc', id_), df)
+            lhc_beam.set_mctx_circuits_powering(values, id_=id_)
+            lhc_beam.check_kctx_limits()
+            lhc_beam.reset_detuning_circuits()
 
     # exit
     for lhc_beam in lhc_beams.values():
         lhc_beam.madx.exit()
 
 
-# Calculate Corrector Settings without running MAD-X again ---------------------
 
-def calculate_from_prerun_optics(
-    outputdirs: dict[int, Path],
-    inputdirs: dict[int, Path],
-    targets: Sequence[Target],
-    field_list: Sequence[str] = ("b5", "b6", "b5b6"),
-):
-    """ Calculate the corrector settings from previously run MAD-X simulations."""
-    lhc_beams_in = {b: FakeLHCBeam(beam=b, outputdir=indir) for b, indir in inputdirs.items()}
-    lhc_beams_out = {b: FakeLHCBeam(beam=b, outputdir=outdir) for b, outdir in outputdirs.items()}
-    optics = {lhc_in.beam: tfs.read(LHCBeam.output_path(lhc_in, 'twiss', 'optics_ir'), index="NAME") for lhc_in in lhc_beams_in.values()}
-
-    for fields in field_list:
-        for target in targets:
-            id_ = f"{target.name}_{fields}"
-            try:
-                values = calculate_correction_values_from_feeddown_to_detuning(optics, target=target, fields=fields)
-            except ValueError:
-                LOG.error(f"Optimization failed for {target.name} and {fields}.")
-                values = {}
-            dfs_effective_detuning = calc_effective_detuning(optics, values, ips=target.ips)
-
-            for lhc_out, df in zip(lhc_beams_out.values(), dfs_effective_detuning):
-                detuning_tfs_out_with_and_without_errors(lhc_out, id_, df)
-                madx_settings_out(lhc_out, id_, values)
-                knl_tfs_out(lhc_out, id_, values)
-
-
-def madx_string(key: str, knl: float | MeasureValue, kn: float | MeasureValue | None = None):
+def madx_string(key: str, knl: float | MeasureValue, length: str,  kn: float | MeasureValue | None = None,  ):
+    knl_string = f"{key} := {getattr(knl, 'value', knl)} / {length};"
     kn_string = ""
-    try:
-        knl_string = f"{key} := {knl.value} / l.MCTX;"
-    except AttributeError:
-        knl_string = f"{key} := {knl} / l.MCTX;"
-
     if kn:
-        try:
-            kn_string = f" ! {key} = {kn.value};"
-        except AttributeError:
-            kn_string = f" ! {key} = {kn};"
+        kn_string = f" ! {key} = {getattr(kn, 'value', kn)};"
 
     return f"{knl_string}{kn_string}"
 
@@ -144,29 +109,41 @@ def madx_settings_out(lhc_out, id_, values):
     LHCBeam.output_path(lhc_out, 'settings', id_, suffix=".madx").write_text("\n".join(madx_command))
 
 
-def knl_tfs_out(lhc_out, id_, values):
-    df = tfs.TfsDataFrame(index=values.keys(), headers={"l.MCTX": LENGTH_MCTX})
-    for key, knl in values.items():
+def knl_tfs_out(lhc_out: LHCBeam, id_: str, values: pd.Series, correctors: Correctors):
+    df = tfs.TfsDataFrame(index=values.index)
+
+    ips = ['1', '5']
+    circuit_length_map = {circuit: corrector.length for corrector in correctors
+                   for circuit in get_filled_corrector_attributes(ips=ips, correctors=[corrector], attribute='circuit')}
+    circuit_magnet_map = dict(
+        zip(get_filled_corrector_attributes(ips=ips, correctors=correctors, attribute='circuit'),
+            get_filled_corrector_attributes(ips=ips, correctors=correctors, attribute='magnet'))
+    )
+
+    for circuit, knl in values.items():
+        length = circuit_length_map[circuit]
+        magnet = circuit_magnet_map[circuit]
         try:
-            df.loc[key, "KNL"] = knl.value
+            df.loc[magnet, "KNL"] = knl.value
         except AttributeError:
-            df.loc[key, "KNL"] = knl
-            df.loc[key, "KN"] = knl / LENGTH_MCTX
+            df.loc[magnet, "KNL"] = knl
+            df.loc[magnet, "KN"] = knl / length
         else:
-            df.loc[key, "ERRKNL"] = knl.error
-            df.loc[key, "KN"] = knl.value / LENGTH_MCTX
-            df.loc[key, "ERRKN"] = knl.error / LENGTH_MCTX
+            df.loc[magnet, "ERRKNL"] = knl.error
+            df.loc[magnet, "KN"] = knl.value / length
+            df.loc[magnet, "ERRKN"] = knl.error / length
 
     tfs.write(LHCBeam.output_path(lhc_out, 'settings', id_), df, save_index="NAME")
 
 
-def detuning_tfs_out_with_and_without_errors(lhc_out, id_, df):
+def detuning_tfs_out_with_and_without_errors(lhc_out: LHCBeam, id_: str, df: pd.DataFrame):
+    """ """
     has_errors = False
     df_errors = df.copy()
 
     for column in df.columns:
         try:
-            values = df[column].apply(MeasureValue.from_value)
+            values: pd.Series = df[column].apply(MeasureValue.from_value)
         except AttributeError:
             pass  # string column
         else:

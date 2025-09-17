@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
-path = "ir_dodecapole_correction/__init__.py"
+path = "ir_dodecapole_corrections/__init__.py"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
@@ -63,6 +63,9 @@ test = [
 doc = [
   "sphinx >= 7.0",
   "sphinx_rtd_theme >= 2.0",
+  "sphinx_copybutton >= 0.4",
+  "sphinx-prompt >= 1.7",
+  "sphinx_codeautolink >= 0.14",
 ]
 
 all = [

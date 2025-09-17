@@ -34,7 +34,7 @@ from omc3.tune_analysis.constants import (CORRECTED, get_action_col, get_kick_ou
 from omc3.tune_analysis.kick_file_modifiers import read_timed_dataframe
 from tfs.tools import significant_digits
 
-from ir_dodecapole_corrections.correction_via_amplitude_detuning_multi_xing import (
+from ir_dodecapole_corrections.lhc_detuning_corrections import (
     calculate_corrections, check_corrections, create_optics)
 from ir_dodecapole_corrections.utilities.classes import (Detuning, DetuningMeasurement,
                                                          MeasureValue, Target, TargetData)

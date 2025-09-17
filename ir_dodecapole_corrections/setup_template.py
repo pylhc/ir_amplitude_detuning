@@ -14,7 +14,7 @@ See the "examples" folder for alredy filled-in examples.
 from collections.abc import Sequence
 from pathlib import Path
 
-from ir_dodecapole_corrections.correction_via_amplitude_detuning_multi_xing import (
+from ir_dodecapole_corrections.lhc_detuning_corrections import (
     calculate_corrections,
 )
 from ir_dodecapole_corrections.plotting.detuning import (
