@@ -10,18 +10,20 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, fields
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, TypeAlias
 
 import numpy as np
 import pandas as pd
 
-from ir_dodecapole_corrections.detuning.targets import MeasureValue
+from ir_dodecapole_corrections.detuning.measurements import (
+    FirstOrderTerm,
+    MeasureValue,
+    SecondOrderTerm,
+)
 from ir_dodecapole_corrections.utilities.classes_accelerator import (
-    CIRCUIT,
     Correctors,
+    FieldComponent,
     get_fields,
-    get_filled_corrector_attributes,
-    sort_correctors,
 )
 
 if TYPE_CHECKING:
@@ -30,6 +32,10 @@ if TYPE_CHECKING:
     from tfs import TfsDataFrame
 
     from ir_dodecapole_corrections.utilities.classes_targets import Target, TargetData
+
+    DetuningTerm: TypeAlias = FirstOrderTerm | SecondOrderTerm
+    TwissPerBeam: TypeAlias = dict[int, TfsDataFrame]
+    OpticsPerXing: TypeAlias = dict[str, TwissPerBeam]
 
 
 LOG = logging.getLogger(__name__)
@@ -91,7 +97,7 @@ class DetuningCorrectionEquationSystem:
 
 
 def build_detuning_correction_matrix(
-    optics: dict[int, TfsDataFrame],
+    optics: TwissPerBeam | OpticsPerXing,
     target: Target,
     correctors: Correctors
     ) -> DetuningCorrectionEquationSystem:
@@ -102,18 +108,24 @@ def build_detuning_correction_matrix(
 
     Args:
     """
-    all_circuits = get_filled_corrector_attributes(target.ips, correctors, attribute=CIRCUIT)
-    full_eqsys = DetuningCorrectionEquationSystem.create_empty(columns=all_circuits)
+    full_eqsys = DetuningCorrectionEquationSystem.create_empty(columns=correctors)
     for target_data in target.data:
-        try:
-            use_optics = optics[target_data.xing]  # optics for crossing scheme
-        except KeyError:
-            use_optics = optics  # optics for both beams
+        target_data: TargetData
+
+        if target_data.xing is None:
+            use_optics: TwissPerBeam = optics  # should be only one optics per beam
+        else:
+            try:
+                use_optics: TwissPerBeam = optics[target_data.xing]
+            except KeyError:
+                raise ValueError(f"Optics for xing {target_data.xing} not found in optics dict.")
+
+        use_correctors = [c for c in correctors if (c.ip in target_data.ips or c.ip is None)]
 
         eqsys = build_detuning_correction_matrix_per_entry(
             optics=use_optics,
             detuning_data=target_data,
-            correctors=correctors
+            correctors=use_correctors,
         )
 
         full_eqsys.append_all(eqsys)
@@ -122,7 +134,7 @@ def build_detuning_correction_matrix(
 
 
 def build_detuning_correction_matrix_per_entry(
-    optics: dict[int, TfsDataFrame],
+    optics: TwissPerBeam,
     detuning_data: TargetData,
     correctors: Correctors
     ) -> DetuningCorrectionEquationSystem:
@@ -134,101 +146,94 @@ def build_detuning_correction_matrix_per_entry(
     Args:
 
     """
-    ips = detuning_data.ips
-    ips_str = ips2str(ips)
-    all_circuits = get_filled_corrector_attributes(ips, correctors, attribute=CIRCUIT)
-    eqsys = DetuningCorrectionEquationSystem.create_empty(columns=all_circuits)
+    ips_str = ips2str(detuning_data.ips)
+    eqsys = DetuningCorrectionEquationSystem.create_empty(columns=correctors)
 
     for beam, twiss in optics.items():
-        for term in detuning_data.get_detuning(beam).terms():
-            m_row = calculate_matrix_row(beam, twiss, correctors, term, ips)
+        beam_detuning_data = detuning_data.get_detuning(beam)
+        for term in beam_detuning_data.terms():
+            m_row = calculate_matrix_row(beam, twiss, correctors, term)
             m_row.name = ROW_ID.format(beam=beam, ip=ips_str, term=term)
 
             eqsys.append_series_to_matrix(m_row)
-            eqsys.set_value(m_row.name, detuning_data[beam][term])
+            eqsys.set_value(m_row.name, beam_detuning_data[term])
 
-        for term in detuning_data.get_contraints(beam).terms():
-            m_row = calculate_matrix_row(beam, twiss, correctors, term, ips)
+        beam_constraints = detuning_data.get_contraints(beam)
+        for term in beam_constraints.terms():
+            m_row = calculate_matrix_row(beam, twiss, correctors, term)
             m_row.name = ROW_ID.format(beam=beam, ip=ips_str, term=term)
 
-            sign, constraint_val = detuning_data.get_contraints(beam).get_leq(term)
+            sign, constraint_val = beam_constraints.get_leq(term)
             eqsys.append_series_to_constraints_matrix(sign*m_row)
             eqsys.set_constraint(m_row.name, constraint_val)
     return eqsys
 
 
-def calculate_matrix_row(beam: int, twiss: pd.DataFrame, correctors: Correctors, term: str, ips: Sequence[int]) -> pd.Series:
+def calculate_matrix_row(beam: int, twiss: pd.DataFrame, correctors: Correctors, term: DetuningTerm) -> pd.Series:
     """ Get one row of the full matrix for one beam and one detuning term.
     This is a wrapper to select the correct function depending on the order of the term.
     """
     match get_order(term):
         case 1:  # first order detuning -> generated by b4
-            return build_b4_row(beam=beam, twiss=twiss, correctors=correctors, term=term, ips=ips)
+            return build_b4_row(beam=beam, twiss=twiss, correctors=correctors, term=term)
 
         case 2:  # second order detuning -> generated by b6
-            return build_b6_row(beam=beam, twiss=twiss, correctors=correctors, term=term, ips=ips)
+            return build_b6_row(beam=beam, twiss=twiss, correctors=correctors, term=term)
 
         case order:
             raise NotImplementedError(f"Order {order:d} not implemented.")
 
 
-def build_b4_row(beam: int, twiss: pd.DataFrame, correctors: Correctors, term: str, ips: Sequence[int]) -> pd.Series:
+def build_b4_row(beam: int, twiss: pd.DataFrame, correctors: Correctors, term: DetuningTerm) -> pd.Series:
     """ Builds one row of the (feed-down to) first order detuning matrix. """
     fields = get_fields(correctors)
-    if ("b4" not in fields) and ("b5" not in fields) and ("b6" not in fields):
+    if not fields:
         raise ValueError("No detuning correctors defined!")
 
-    all_circuits = get_filled_corrector_attributes(ips, correctors, attribute=CIRCUIT)
-    m = pd.Series(0., index=all_circuits)
+    if any(field not in list(FieldComponent) for field in fields):
+        raise ValueError(f"Field must be one of {list(FieldComponent)}, got {fields}.")
+
+    m = pd.Series(0., index=correctors)
 
     beam_sign = -1 if beam == 2 else 1
     symmetry_sign = 1 if beam % 2 else -1  # takes into account that K6 and K6 in B4/B2 have a minus sign as seen from B1
 
-    for ip in ips:
-        for side in "LR":
-            for corrector in sort_correctors(correctors):
-                magnet = corrector.magnet.format(side=side, ip=ip)
-                circuit = corrector.circuit.format(side=side, ip=ip)
+    for corrector in correctors:
+        magnet = corrector.magnet
 
-                beta = {p: twiss.loc[magnet, f"{BETA}{p}"] for p in "XY"}
-                x = beam_sign * twiss.loc[magnet, "X"]                             # changes signs beam 4 -> beam 2
-                y = twiss.loc[magnet, "Y"]                                         # same sign in beam 2 and beam 4
-                coeff = get_detuning_coeff(term, beta)
+        beta = {p: twiss.loc[magnet, f"{BETA}{p}"] for p in "XY"}
+        x = beam_sign * twiss.loc[magnet, "X"]                             # changes signs beam 4 -> beam 2
+        y = twiss.loc[magnet, "Y"]                                         # same sign in beam 2 and beam 4
+        coeff = get_detuning_coeff(term, beta)
 
-                match corrector.field:
-                    case "b4":
-                        m[circuit] = symmetry_sign * coeff                        # b4 directly contributes
-                    case "b5":
-                        m[circuit] = x * coeff                                    # b5 feeddown to b4
-                    case "b6":
-                        m[circuit] = symmetry_sign * 0.5 * (x**2 - y**2) * coeff  # b6 feeddown to b4
+        match corrector.field:
+            case FieldComponent.b4:
+                m[corrector] = symmetry_sign * coeff                        # b4 directly contributes
+            case FieldComponent.b5:
+                m[corrector] = x * coeff                                    # b5 feeddown to b4
+            case FieldComponent.b6:
+                m[corrector] = symmetry_sign * 0.5 * (x**2 - y**2) * coeff  # b6 feeddown to b4
     return m
 
 
-def build_b6_row(beam: int, twiss: pd.DataFrame, correctors: Correctors, term: str, ips: Sequence[int]):
+def build_b6_row(beam: int, twiss: pd.DataFrame, correctors: Correctors, term: DetuningTerm, ips: Sequence[int]):
     """ Builds one row for the second order amplitude matrix.  """
-    if "b6" not in get_fields(correctors):
+    if FieldComponent.b6 not in get_fields(correctors):
         raise ValueError(f"Term {term} requested, but no b6 correctors defined!")
 
-    all_circuits = get_filled_corrector_attributes(ips, correctors, attribute=CIRCUIT)
-    m = pd.Series(0., index=all_circuits)
+    m = pd.Series(0., index=correctors)
     symmetry_sign = 1 if beam % 2 else -1  # takes into account that K6L-B4/B2 has a minus sign as seen from B1
 
-    for ip in ips:
-        for side in "LR":
-            for corrector in sort_correctors(correctors):
-                if corrector.field != "b6":  # only b6 contributes directly
-                    continue
+    for corrector in correctors:
+        if corrector.field != FieldComponent.b6:  # only b6 contributes directly
+            continue
 
-                magnet = corrector.magnet.format(side=side, ip=ip)
-                circuit = corrector.circuit.format(side=side, ip=ip)
-
-                beta = {p: twiss.loc[magnet, f"{BETA}{p}"] for p in "XY"}
-                m[circuit] = symmetry_sign * get_detuning_coeff(term, beta)
+        beta = {p: twiss.loc[corrector.magnet, f"{BETA}{p}"] for p in "XY"}
+        m[corrector.magnet] = symmetry_sign * get_detuning_coeff(term, beta)
     return m
 
 
-def get_detuning_coeff(term: str, beta: dict[str, float]) -> float:
+def get_detuning_coeff(term: DetuningTerm, beta: dict[str, float]) -> float:
     """ Get the coefficient for first and second order amplitude detuning.
 
     Args:
@@ -241,26 +246,26 @@ def get_detuning_coeff(term: str, beta: dict[str, float]) -> float:
     term = term.upper()
     # First Order ---
     # direct terms:
-    if term in ("X10", "Y01"):
+    if term in (FirstOrderTerm.X10, FirstOrderTerm.Y01):
         return beta[term[0]]**2 / (32 * np.pi)
 
     # cross term:
-    if term in ("X01", "Y10"):
+    if term in (FirstOrderTerm.X01, FirstOrderTerm.Y10):
         return -beta["X"] * beta["Y"] / (16 * np.pi)
 
     # Second Order ---
     # direct terms
-    if term in ("X20",):
-        return beta[term[0]]**3 / (384 * np.pi)
+    if term == SecondOrderTerm.X20:
+        return beta["X"]**3 / (384 * np.pi)
 
-    if term in ("Y02",):
-        return -beta[term[0]]**3 / (384 * np.pi)
+    if term == SecondOrderTerm.Y02:
+        return -beta["Y"]**3 / (384 * np.pi)
 
     # Cross- and Diagonal- Terms
-    if term in ("X11", "Y20"):
+    if term in (SecondOrderTerm.X11, SecondOrderTerm.Y20):
         return -beta["X"]**2 * beta["Y"] / (128 * np.pi)
 
-    if term in ("Y11", "X02"):
+    if term in (SecondOrderTerm.Y11, SecondOrderTerm.X02):
         return beta["X"] * beta["Y"]**2 / (128 * np.pi)
 
     raise KeyError(f"Unknown Term {term}")

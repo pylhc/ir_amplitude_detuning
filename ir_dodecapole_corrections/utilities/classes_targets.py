@@ -10,7 +10,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, ClassVar
 
-from ir_dodecapole_corrections.detuning.targets import Constraints, Detuning
+from ir_dodecapole_corrections.detuning.measurements import Constraints, Detuning
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -29,11 +29,11 @@ class TargetData:
         In the getter methods, Beam 2 and Beam 4 are used interchangeably:
         if only one is defined its values will be returned when
         the other one is requested.
-     """
+    """
     ips: Sequence[int] | int
     detuning: dict[int, Detuning]
-    constraints: dict[int, Constraints] = None
-    xing: str = None
+    constraints: dict[int, Constraints] | None = None
+    xing: str | None = None
     MAIN_XING: ClassVar[str] = 'main'
 
     def __post_init__(self):
@@ -101,7 +101,7 @@ class Target:
         data attribute is always a Sequence.
     """
     name: str
-    data: Sequence[TargetData] | TargetData  # single only for __init__, Sequence when accessed as attribute
+    data: Sequence[TargetData] | TargetData # single only for __init__, Sequence when accessed as attribute
     ips: Sequence[int] = field(init=False)  # set in __post_init__
 
     def __post_init__(self):

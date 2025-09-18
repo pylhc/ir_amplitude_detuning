@@ -10,11 +10,18 @@ from __future__ import annotations
 import logging
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import LiteralString
+from typing import TypeAlias
 
 from ir_dodecapole_corrections.utilities.misc import StrEnum
 
 LOG = logging.getLogger(__name__)
+
+
+class FieldComponent(StrEnum):
+    """ Fields for which detuning calculations are implemented. """
+    b4: str = "b4"
+    b5: str = "b5"
+    b6: str = "b6"
 
 
 @dataclass(slots=True)
@@ -24,50 +31,95 @@ class Corrector:
     Args:
         field: magnetic field component shorthand (e.g. 'b5' or 'b6')
         length: length of the corrector in m
-        magnet: MAD-X magnet name pattern, e.g. "MCTX.3{side}{ip}"
-        circuit: MAD-X circuit name pattern, e.g. "kctx3.{side}{ip}"
-        pattern: regex pattern to identify the magnets, e.g. "MCTX.*[15]$"
+        magnet: MAD-X magnet name, e.g. "MCTX.3L1"
+        circuit: MAD-X circuit name, e.g. "kctx3.l1"
+        ip: IP the corrector is located at (for filtering if only certain IPs are corrected)
+        madx_type: MAD-X magnet type, e.g. "MCTX"
     """
-    field: str
+    field: FieldComponent
     length: float
     magnet: str
     circuit: str
-    pattern: str
+    ip: int | None = None
+    madx_type: str | None = None
+
+    def __post_init__(self):
+        if self.field not in list(FieldComponent):
+            raise ValueError(f"Field must be one of {list(FieldComponent)}, got {self.field}.")
+
+    def __lt__(self, other: Corrector) -> bool:
+        return (self.field, self.circuit) < (other.field, other.circuit)
+
+    def __hash__(self):
+        return hash(self.magnet + self.circuit)
+
+    def __repr__(self):
+        return f"{self.circuit}({self.magnet}>{self.field})"
 
 
-Correctors = Sequence[Corrector]
-
-class CorrectorFillAttributes(StrEnum):
-    circuit: str = "circuit"
-    magnet: str = "magnet"
-
-
-def get_filled_corrector_attributes(ips: Sequence[str], correctors: Correctors, attribute: str) -> list[str]:
-    """
-    Returns a list of filled-in circuits for the given IPs, adding 'L' and 'R' for sides.
-    Assures that the order is always the same.
+@dataclass(slots=True)
+class CorrectorMask:
+    """ Class to hold corrector information.
 
     Args:
-        ips (Sequence[str]): List of IPs as strings, e.g. ["1", "5"]
-        correctors (Correctors): Sequence of correctors to use.
-        attribute (str): Attribute of the corrector to return, e.g. "circuit" or "magnet"
+        field: magnetic field component shorthand (e.g. 'b5' or 'b6')
+        length: length of the corrector in m
+        magnet_pattern: MAD-X magnet name pattern, e.g. "MCTX.3{side}{ip}"
+        circuit_pattern: MAD-X circuit name pattern, e.g. "kctx3.{side}{ip}"
+        ip:
+        madx_type: MAD-X magnet type, e.g. "MCTX"
     """
-    if attribute not in list(CorrectorFillAttributes):
-        raise ValueError(f"Attribute must be one of {list(CorrectorFillAttributes)}, got {attribute}.")
+    field: FieldComponent
+    length: float
+    magnet_pattern: str
+    circuit_pattern: str
+    madx_type: str | None = None
 
-    sorted_correctors = sort_correctors(correctors)
+    def get_corrector(self, side: str, ip: int) -> Corrector:
+        return Corrector(
+            field=self.field,
+            length=self.length,
+            magnet=self.magnet_pattern.format(side=side.upper(), ip=ip),
+            circuit=self.circuit_pattern.format(side=side.lower(), ip=ip),
+            ip=ip,
+            madx_type=self.madx_type,
+        )
 
-    return [
-        getattr(corrector, attribute).format(side=side, ip=ip)
-        for ip in ips for side in "LR" for corrector in sorted_correctors
-    ]
+Correctors: TypeAlias = Sequence[Corrector]
 
 
-def get_fields(correctors: Correctors) -> list[str]:
+def get_fields(correctors: Correctors) -> list[FieldComponent]:
     """ Get the field components available in the correctors. """
     return sorted({corrector.field for corrector in correctors})
 
 
-def sort_correctors(correctors: Correctors) -> list[Corrector]:
-    """ Get the correctors sorted by field and circuit. """
-    return sorted(correctors, key=lambda c: (c.field, c.circuit))
+def assert_corrector_fields(correctors: Correctors):
+    """ Assert the correctors have been defined with the correct fields. """
+    fields = get_fields(correctors)
+    if not fields:
+        raise ValueError("No detuning correctors defined!")
+
+    if any(field not in list(FieldComponent) for field in fields):
+        raise ValueError(f"Field must be one of {list(FieldComponent)}, got {fields}.")
+
+
+def fill_corrector_masks(corrector_masks: Sequence[CorrectorMask | Corrector], ips: Sequence[int], sides: Sequence[str] = "LR") -> Correctors:
+    """ Fill the corrector masks with the ips and sides.
+
+    Args:
+        corrector_masks (Sequence[CorrectorMask | Corrector]): list of corrector masks or correctors.
+        ips (Sequence[int]): list of ips.
+        sides (Sequence[str]): list of sides.
+
+    Returns:
+        list[Corrector]: sorted list of correctors
+    """
+    output = []
+    for mask in corrector_masks:
+        try:
+            for ip in ips:
+                for side in sides:
+                    output.append(mask.get_corrector(side, ip))
+        except AttributeError:
+            output.append(mask)
+    return sorted(output)

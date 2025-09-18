@@ -15,6 +15,8 @@ from typing import TYPE_CHECKING
 import numpy as np
 from omc3.utils.stats import weighted_mean
 
+from ir_dodecapole_corrections.utilities.misc import StrEnum
+
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
 
@@ -110,6 +112,22 @@ class MeasureValue:
         return cls(value.value, value.error)
 
 
+class FirstOrderTerm(StrEnum):
+    X10: str = "X10"  # d Qx / d Jx
+    X01: str = "X01"  # d Qx / d Jy
+    Y10: str = "Y10"  # d Qy / d Jx
+    Y01: str = "Y01"  # d Qy / d Jy
+
+
+class SecondOrderTerm(StrEnum):
+    X20: str = "X20"  # d^2 Qx / (d Jx)^2
+    X11: str = "X11"  # d^2 Qx / (d Jx)(d Jy)
+    X02: str = "X02"  # d^2 Qx / (d Jy)^2
+    Y20: str = "Y20"  # d^2 Qy / (d Jx)^2
+    Y11: str = "Y11"  # d^2 Qy / (d Jx)(d Jy)
+    Y02: str = "Y02"  # d^2 Qy / (d Jy)^2
+
+
 @dataclass(slots=True)
 class Detuning:
     """ Class holding first and second order detuning values.
@@ -117,17 +135,17 @@ class Detuning:
     values are set.
     For convenience, the input values are scaled by scale."""
     # first order
-    X10: float | None = None  # d Qx / d Jx
-    X01: float | None = None  # d Qx / d Jy
-    Y10: float | None = None  # d Qy / d Jx
-    Y01: float | None = None  # d Qy / d Jy
+    X10: float | None = None
+    X01: float | None = None
+    Y10: float | None = None
+    Y01: float | None = None
     # second order
-    X20: float | None = None  # d^2 Qx / (d Jx)^2
-    X11: float | None = None  # d^2 Qx / (d Jx)(d Jy)
-    X02: float | None = None  # d^2 Qx / (d Jy)^2
-    Y20: float | None = None  # d^2 Qy / (d Jx)^2
-    Y11: float | None = None  # d^2 Qy / (d Jx)(d Jy)
-    Y02: float | None = None  # d^2 Qy / (d Jy)^2
+    X20: float | None = None
+    X11: float | None = None
+    X02: float | None = None
+    Y20: float | None = None
+    Y11: float | None = None
+    Y02: float | None = None
     scale: float = 1.
 
     def __post_init__(self):
@@ -142,10 +160,9 @@ class Detuning:
     @staticmethod
     def fieldnames(order=None):
         """ Return all float-terms. """
-        # return iter(field.name for field in fields(self) if field.type is float)
         mapping = {
-            1: ("X10", "X01", "Y10", "Y01"),
-            2: ("X20", "X11", "X02", "Y20", "Y11", "Y02"),
+            1: tuple(FirstOrderTerm),
+            2: tuple(SecondOrderTerm),
         }
         if order:
             return mapping[order]

@@ -15,6 +15,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from ir_dodecapole_corrections.detuning.measurements import scaled_detuningmeasurement
 from ir_dodecapole_corrections.lhc_detuning_corrections import (
     calculate_corrections,
     create_optics,
@@ -25,7 +26,7 @@ from ir_dodecapole_corrections.plotting.detuning import (
 )
 from ir_dodecapole_corrections.simulation.lhc_simulation import LHCCorrectors
 from ir_dodecapole_corrections.utilities import latex
-from ir_dodecapole_corrections.utilities.classes_detuning import scaled_detuningmeasurement
+from ir_dodecapole_corrections.utilities.classes_accelerator import Corrector, CorrectorMask, fill_corrector_masks
 from ir_dodecapole_corrections.utilities.classes_targets import (
     Target,
     TargetData,
@@ -81,6 +82,9 @@ def get_targets() -> Sequence[Target]:
     ]
     return targets  # noqa: R504
 
+def get_correctors() -> Sequence[Corrector]:
+    return fill_corrector_masks([LHCCorrectors.b6], ips=(1, 5))
+
 
 def simulation():
     return create_optics(
@@ -97,8 +101,7 @@ def do_correction(lhc_beams=None):
         outputdir=OUTPUT,
         targets=get_targets(),
         lhc_beams=lhc_beams,
-        correctors=(LHCCorrectors.b6,),
-        main_xing=''
+        correctors=get_correctors(),
     )
 
 
@@ -146,6 +149,6 @@ def plotting():
 if __name__ == '__main__':
     log_setup()
     lhc_beams = None
-    lhc_beams = simulation()
+    # lhc_beams = simulation()
     do_correction(lhc_beams=lhc_beams)
     # plotting()

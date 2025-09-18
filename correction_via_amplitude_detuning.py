@@ -21,7 +21,7 @@ import pandas as pd
 import tfs
 
 from ir_dodecapole_corrections.simulation.lhc_simulation import FakeLHCBeam, LHCBeam
-from ir_dodecapole_corrections.utilities.classes_accelerator import Correctors, get_filled_corrector_attributes
+from ir_dodecapole_corrections.utilities.classes_accelerator import CorrectorFillAttributes, Correctors, get_filled_corrector_attributes
 from ir_dodecapole_corrections.utilities.classes_detuning import MeasureValue
 from ir_dodecapole_corrections.utilities.detuning import (
     calc_effective_detuning,
@@ -113,25 +113,32 @@ def knl_tfs_out(lhc_out: LHCBeam, id_: str, values: pd.Series, correctors: Corre
     df = tfs.TfsDataFrame(index=values.index)
 
     ips = ['1', '5']
-    circuit_length_map = {circuit: corrector.length for corrector in correctors
-                   for circuit in get_filled_corrector_attributes(ips=ips, correctors=[corrector], attribute='circuit')}
-    circuit_magnet_map = dict(
-        zip(get_filled_corrector_attributes(ips=ips, correctors=correctors, attribute='circuit'),
-            get_filled_corrector_attributes(ips=ips, correctors=correctors, attribute='magnet'))
+    circuit_length_map = {
+        circuit: corrector.length
+        for corrector in correctors
+        for circuit in get_filled_corrector_attributes(
+            ips=ips,
+            correctors=[corrector],
+            attribute=CorrectorFillAttributes.circuit
+        )
+    }
+    circuit_magnet_map = dict(zip(
+            get_filled_corrector_attributes(ips=ips, correctors=correctors, attribute=CorrectorFillAttributes.circuit),
+            get_filled_corrector_attributes(ips=ips, correctors=correctors, attribute=CorrectorFillAttributes.magnet))
     )
 
     for circuit, knl in values.items():
         length = circuit_length_map[circuit]
         magnet = circuit_magnet_map[circuit]
+        df.headers[f"l.{magnet}"] = length
         try:
             df.loc[magnet, "KNL"] = knl.value
-        except AttributeError:
-            df.loc[magnet, "KNL"] = knl
-            df.loc[magnet, "KN"] = knl / length
-        else:
             df.loc[magnet, "ERRKNL"] = knl.error
             df.loc[magnet, "KN"] = knl.value / length
             df.loc[magnet, "ERRKN"] = knl.error / length
+        except AttributeError:
+            df.loc[magnet, "KNL"] = knl
+            df.loc[magnet, "KN"] = knl / length
 
     tfs.write(LHCBeam.output_path(lhc_out, 'settings', id_), df, save_index="NAME")
 

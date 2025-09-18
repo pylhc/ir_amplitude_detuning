@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
 import logging
 import re
 from typing import TYPE_CHECKING
@@ -19,7 +18,7 @@ from ir_dodecapole_corrections.simulation.lhc_simulation import get_detuning_fro
 from ir_dodecapole_corrections.utilities.latex import XLABEL_MAP, YLABEL_MAP
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Sequence
     from pathlib import Path
 
 LOG = logging.getLogger(__name__)  # setup in main()

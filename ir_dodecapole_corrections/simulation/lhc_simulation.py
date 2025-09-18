@@ -29,7 +29,7 @@ from cpymad_lhc.logging import MADXCMD, MADXOUT, cpymad_logging_setup
 from optics_functions.coupling import closest_tune_approach, coupling_via_cmatrix
 from tfs import TfsDataFrame
 
-from ir_dodecapole_corrections.utilities.classes_accelerator import Corrector
+from ir_dodecapole_corrections.utilities.classes_accelerator import Corrector, CorrectorMask
 
 LOG = logging.getLogger(__name__)  # setup in main()
 LOG_LEVEL = logging.DEBUG
@@ -133,20 +133,21 @@ class LHCCorrectors:
         The length is set to 0.615 m, which is the length of the MCTs.
         The pattern is used to find the correctors in the MAD-X sequence.
     """
-    b5 = Corrector(
-        field = "b5",
+    b5 = CorrectorMask(
+        field="b5",
         length=0.615,
-        magnet="MCTX.3{side}{ip}",  # installed into the MCTX
-        circuit="kcdx3.{side}{ip}",
-        pattern="MCTX.*[15]$",
+        magnet_pattern="MCTX.3{side}{ip}",  # installed into the MCTX
+        circuit_pattern="kcdx3.{side}{ip}",
+        madx_type="MCTX",
     )
-    b6 = Corrector(
-        field = "b6",
+    b6 = CorrectorMask(
+        field="b6",
         length=0.615,
-        magnet="MCTX.3{side}{ip}",
-        circuit="kctx3.{side}{ip}",
-        pattern="MCTX.*[15]$",
+        magnet_pattern="MCTX.3{side}{ip}",
+        circuit_pattern="kctx3.{side}{ip}",
+        madx_type="MCTX",
     )
+    pattern: str = "MCTX.*[15]$"  # used to find correctors in twiss-table
 
 
 @dataclass()
@@ -381,31 +382,32 @@ class LHCBeam:
         beam_sign_str = "-" if self.beam == 4 else ""
         for ip in (1, 5):
             for side in "LR":
-                magnet = LHCCorrectors.b6.magnet.format(side=side, ip=ip)
-                magnet_b5 = LHCCorrectors.b5.magnet.format(side=side, ip=ip)
+                corrector_b5 = LHCCorrectors.b5.get_corrector(side, ip)
+                corrector_b6 = LHCCorrectors.b6.get_corrector(side, ip)
 
-                assert magnet_b5 == magnet, "Magnet name for b5 and b6 must be the same as we install b5 corrector in same magnet!"
+                assert corrector_b5.magnet == corrector_b6.magnet, "Magnet name for b5 and b6 must be the same as we install b5 corrector in same magnet!"
 
-                deca_circuit = LHCCorrectors.b5.circuit.format(side=side.lower(), ip=ip)
-                dodeca_circuit = LHCCorrectors.b6.circuit.format(side=side.lower(), ip=ip)
+                deca_knl = f"{corrector_b5.circuit} * l.{corrector_b5.madx_type}"
+                dodeca_knl = f"{beam_sign_str}{corrector_b6.circuit} * l.{corrector_b6.madx_type}"
 
-                self.madx.input(f"{magnet}, KNL := {{0, 0, 0, 0, {deca_circuit}*l.MCTX, {beam_sign_str}{dodeca_circuit}*l.MCTX}}, polarity=+1;")
-                self.madx.globals[deca_circuit] = 0
-                self.madx.globals[dodeca_circuit] = 0
+                self.madx.input(f"{corrector_b6.magnet}, KNL := {{0, 0, 0, 0, {deca_knl}, {dodeca_knl}}}, polarity=+1;")
+                self.madx.globals[corrector_b5.circuit] = 0
+                self.madx.globals[corrector_b6.circuit] = 0
 
     def reset_detuning_circuits(self):
         """ Reset all kcdx and kctx circuits (to zero). """
-        for circuit in (LHCCorrectors.b5.circuit, LHCCorrectors.b6.circuit):
-            for ip in (1, 5):
-                for side in "LR":
-                    self.madx.globals[circuit.format(side=side.lower(), ip=ip)] = 0
+        for ip in (1, 5):
+            for side in "LR":
+                for corrector_mask in (LHCCorrectors.b5, LHCCorrectors.b6):
+                    corrector = corrector_mask.get_corrector(side, ip)
+                    self.madx.globals[corrector.circuit] = 0
 
     def set_mctx_circuits_powering(self, knl_values: dict[str, str | float], id_: str = ''):
         """ Set the knl_values at the corrector circuits and write them out.
         Try to also match tune and run twiss and ptc and output data. """
         self.reinstate_loggers()
         id_ = id_ if id_ else 'w_ampdet'
-        magnet_l = "l.MCTX"
+        magnet_l = f"l.{LHCCorrectors.b6.madx_type}"
         magnet_length = self.madx.globals[magnet_l]
         df = tfs.TfsDataFrame(index=list(knl_values.keys()), columns=["VALUE", "KNL"], headers={magnet_l: magnet_length})
 
@@ -422,7 +424,7 @@ class LHCBeam:
 
         try:
             self.match_tune()
-            self.get_twiss(id_, index_regex=LHCCorrectors.b6.pattern)
+            self.get_twiss(id_, index_regex=LHCCorrectors.pattern)
         except cpymad.madx.TwissFailed as e:
             LOG.error("Matching/Twiss failed!")
             return None
@@ -432,9 +434,10 @@ class LHCBeam:
     def check_kctx_limits(self):
         """ Check the corrector kctx limits."""
         self.reinstate_loggers()
+        magnet_type = LHCCorrectors.b6.madx_type
         checks = LimitChecks(madx=self.madx, beam=self.beam,
                              limit_to_max=False,
-                             values_dict={"MCTX1": 'kmax_MCTX'})
+                             values_dict={f"{magnet_type}1": f"kmax_{magnet_type}"})
         checks.run_checks()
         if not checks.success:
             # raise ValueError("One or more strengths are out of its limits, see log.")
