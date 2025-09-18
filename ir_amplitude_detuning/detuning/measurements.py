@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 from omc3.utils.stats import weighted_mean
 
-from ir_dodecapole_corrections.utilities.misc import StrEnum
+from ir_amplitude_detuning.utilities.misc import StrEnum
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence

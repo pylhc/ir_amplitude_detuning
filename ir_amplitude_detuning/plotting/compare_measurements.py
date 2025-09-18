@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from omc3.plotting.utils import annotations as pannot
 from omc3.plotting.utils import colors as pcolors
 from omc3.plotting.utils import style as pstyle
-from ir_dodecapole_corrections.detuning.measurements import DetuningMeasurement, MeasureValue
+from ir_amplitude_detuning.detuning.measurements import DetuningMeasurement, MeasureValue
 
 LOG = logging.getLogger(__name__)
 

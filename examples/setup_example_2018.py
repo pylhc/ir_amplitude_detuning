@@ -4,11 +4,11 @@ Example for a filled template based on the 2018 measurements.
 from pathlib import Path
 from typing import Any, Dict
 
-from ir_dodecapole_corrections.utilities.logging import log_setup
-from ir_dodecapole_corrections.correction_via_amplitude_detuning import run_lhc_and_calc_correction as run_lhc_and_calc_correction
-from ir_dodecapole_corrections.utilities.classes import (Detuning, DetuningMeasurement, Target,
+from ir_amplitude_detuning.utilities.logging import log_setup
+from ir_amplitude_detuning.correction_via_amplitude_detuning import run_lhc_and_calc_correction as run_lhc_and_calc_correction
+from ir_amplitude_detuning.utilities.classes import (Detuning, DetuningMeasurement, Target,
                                                          TargetData, scaled_detuningmeasurement)
-from ir_dodecapole_corrections.utilities.plotting import plot_correctors, plot_detuning_ips
+from ir_amplitude_detuning.utilities.plotting import plot_correctors, plot_detuning_ips
 
 
 def get_sum(meas_a, meas_b):

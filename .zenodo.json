@@ -10,6 +10,6 @@
             "orcid": "0000-0001-7864-5448"
         }
     ],
-    "title": "ir_dodecapole_corrections",
+    "title": "ir_amplitude_detuning",
     "description": "Python 3 package for dodecapole corrections in the LHC insertion regions."
 }

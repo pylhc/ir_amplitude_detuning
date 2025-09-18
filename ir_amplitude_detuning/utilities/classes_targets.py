@@ -10,7 +10,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, ClassVar
 
-from ir_dodecapole_corrections.detuning.measurements import Constraints, Detuning
+from ir_amplitude_detuning.detuning.measurements import Constraints, Detuning
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

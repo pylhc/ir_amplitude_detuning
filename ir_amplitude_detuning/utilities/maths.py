@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from ir_dodecapole_corrections.utilities.classes_detuning import Detuning, DetuningMeasurement
+    from ir_amplitude_detuning.utilities.classes_detuning import Detuning, DetuningMeasurement
 
 
 def get_sum(

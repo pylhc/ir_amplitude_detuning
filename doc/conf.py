@@ -1,5 +1,5 @@
 #
-# ir_dodecapole_corrections documentation build configuration file, created by
+# ir_amplitude_detuning documentation build configuration file, created by
 # sphinx-quickstart on Tue Feb  6 12:10:18 2018.
 #
 # This file is execfile()d with the current directory set to its
@@ -18,7 +18,7 @@ import sys
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
 TOPLEVEL_DIR = pathlib.Path(__file__).parent.parent.absolute()
-ABOUT_FILE = TOPLEVEL_DIR / "ir_dodecapole_corrections" / "__init__.py"
+ABOUT_FILE = TOPLEVEL_DIR / "ir_amplitude_detuning" / "__init__.py"
 
 if str(TOPLEVEL_DIR) not in sys.path:
     sys.path.insert(0, str(TOPLEVEL_DIR))
@@ -183,7 +183,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "ir_dodecapole_correctionspandasdoc"
+htmlhelp_basename = "ir_amplitude_detuningpandasdoc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -206,14 +206,14 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "ir_dodecapole_corrections.tex", "ir_dodecapole_corrections Documentation", "pyLHC/OMC-TEAM", "manual"),
+    (master_doc, "ir_amplitude_detuning.tex", "ir_amplitude_detuning Documentation", "pyLHC/OMC-TEAM", "manual"),
 ]
 
 # -- Options for manual page output ---------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "ir_dodecapole_corrections", "ir_dodecapole_corrections Documentation", [author], 1)]
+man_pages = [(master_doc, "ir_amplitude_detuning", "ir_amplitude_detuning Documentation", [author], 1)]
 
 # -- Options for Texinfo output -------------------------------------------
 
@@ -223,8 +223,8 @@ man_pages = [(master_doc, "ir_dodecapole_corrections", "ir_dodecapole_correction
 texinfo_documents = [
     (
         master_doc,
-        "ir_dodecapole_corrections",
-        "ir_dodecapole_corrections Documentation",
+        "ir_amplitude_detuning",
+        "ir_amplitude_detuning Documentation",
         author,
         "pylhc/OMC-TEAM",
         "One line description of project.",

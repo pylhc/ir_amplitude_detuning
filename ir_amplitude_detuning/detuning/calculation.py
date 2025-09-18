@@ -8,27 +8,27 @@ import numpy as np
 import pandas as pd
 from tfs import TfsDataFrame
 
-from ir_dodecapole_corrections.detuning.equation_system import (
+from ir_amplitude_detuning.detuning.equation_system import (
     build_b4_row,
     build_b6_row,
     build_detuning_correction_matrix,
 )
-from ir_dodecapole_corrections.detuning.measurements import (
+from ir_amplitude_detuning.detuning.measurements import (
     FirstOrderTerm,
     SecondOrderTerm,
 )
-from ir_dodecapole_corrections.utilities.classes_accelerator import (
+from ir_amplitude_detuning.utilities.classes_accelerator import (
     Correctors,
     assert_corrector_fields,
 )
-from ir_dodecapole_corrections.utilities.misc import StrEnum
+from ir_amplitude_detuning.utilities.misc import StrEnum
 
 if TYPE_CHECKING:
-    from ir_dodecapole_corrections.detuning.equation_system import (
+    from ir_amplitude_detuning.detuning.equation_system import (
         OpticsPerXing,
         TwissPerBeam,
     )
-    from ir_dodecapole_corrections.utilities.classes_targets import Target
+    from ir_amplitude_detuning.utilities.classes_targets import Target
 
 
 LOG = logging.getLogger(__name__)

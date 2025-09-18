@@ -34,18 +34,18 @@ from omc3.tune_analysis.constants import (CORRECTED, get_action_col, get_kick_ou
 from omc3.tune_analysis.kick_file_modifiers import read_timed_dataframe
 from tfs.tools import significant_digits
 
-from ir_dodecapole_corrections.lhc_detuning_corrections import (
+from ir_amplitude_detuning.lhc_detuning_corrections import (
     calculate_corrections, check_corrections, create_optics)
-from ir_dodecapole_corrections.utilities.classes import (Detuning, DetuningMeasurement,
+from ir_amplitude_detuning.utilities.classes import (Detuning, DetuningMeasurement,
                                                          MeasureValue, Target, TargetData)
-from ir_dodecapole_corrections.utilities.latex import (
+from ir_amplitude_detuning.utilities.latex import (
     print_correction_and_error_as_latex
 )
-from ir_dodecapole_corrections.simulation.lhc_simulation import get_detuning_from_ptc_output
-from ir_dodecapole_corrections.utilities.plot_utils_measurements_comparison import (
+from ir_amplitude_detuning.simulation.lhc_simulation import get_detuning_from_ptc_output
+from ir_amplitude_detuning.utilities.plot_utils_measurements_comparison import (
     MeasurementSetup, get_ylabel, plot_measurements)
-from ir_dodecapole_corrections.utilities.plotting import get_calc_detuning_ips, get_detuning
-from ir_dodecapole_corrections.utilities.logging import log_setup
+from ir_amplitude_detuning.utilities.plotting import get_calc_detuning_ips, get_detuning
+from ir_amplitude_detuning.utilities.logging import log_setup
 
 LOGGER = logging.getLogger(__name__)
 

@@ -8,7 +8,7 @@ import numpy as np
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from ir_dodecapole_corrections.utilities.classes_detuning import MeasureValue
+    from ir_amplitude_detuning.utilities.classes_detuning import MeasureValue
 
 LOG = logging.getLogger(__name__)
 

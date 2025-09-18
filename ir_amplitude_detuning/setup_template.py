@@ -14,22 +14,22 @@ See the "examples" folder for alredy filled-in examples.
 from collections.abc import Sequence
 from pathlib import Path
 
-from ir_dodecapole_corrections.lhc_detuning_corrections import (
+from ir_amplitude_detuning.lhc_detuning_corrections import (
     calculate_corrections,
 )
-from ir_dodecapole_corrections.plotting.detuning import (
+from ir_amplitude_detuning.plotting.detuning import (
     plot_correctors,
     plot_detuning_ips,
 )
-from ir_dodecapole_corrections.utilities import latex
-from ir_dodecapole_corrections.utilities.classes import (
+from ir_amplitude_detuning.utilities import latex
+from ir_amplitude_detuning.utilities.classes import (
     Detuning,  # noqa: F401 -> used in EXAMPLE
     Target,
     TargetData,
     scaled_detuningmeasurement,
 )
-from ir_dodecapole_corrections.utilities.logging import log_setup
-from ir_dodecapole_corrections.utilities.maths import get_detuning, get_diff
+from ir_amplitude_detuning.utilities.logging import log_setup
+from ir_amplitude_detuning.utilities.maths import get_detuning, get_diff
 
 # Define Machine Data
 # -------------------

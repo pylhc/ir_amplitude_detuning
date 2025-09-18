@@ -20,10 +20,10 @@ from typing import TYPE_CHECKING
 import pandas as pd
 import tfs
 
-from ir_dodecapole_corrections.simulation.lhc_simulation import FakeLHCBeam, LHCBeam
-from ir_dodecapole_corrections.utilities.classes_accelerator import CorrectorFillAttributes, Correctors, get_filled_corrector_attributes
-from ir_dodecapole_corrections.utilities.classes_detuning import MeasureValue
-from ir_dodecapole_corrections.utilities.detuning import (
+from ir_amplitude_detuning.simulation.lhc_simulation import FakeLHCBeam, LHCBeam
+from ir_amplitude_detuning.utilities.classes_accelerator import CorrectorFillAttributes, Correctors, get_filled_corrector_attributes
+from ir_amplitude_detuning.utilities.classes_detuning import MeasureValue
+from ir_amplitude_detuning.utilities.detuning import (
     calc_effective_detuning,
     calculate_correction,
 )
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
     from pathlib import Path
 
-    from ir_dodecapole_corrections.utilities.classes_targets import Target
+    from ir_amplitude_detuning.utilities.classes_targets import Target
 
 LOG = logging.getLogger(__name__)
 

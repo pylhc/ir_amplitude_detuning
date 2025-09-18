@@ -15,24 +15,24 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from ir_dodecapole_corrections.detuning.measurements import scaled_detuningmeasurement
-from ir_dodecapole_corrections.lhc_detuning_corrections import (
+from ir_amplitude_detuning.detuning.measurements import scaled_detuningmeasurement
+from ir_amplitude_detuning.lhc_detuning_corrections import (
     calculate_corrections,
     create_optics,
 )
-from ir_dodecapole_corrections.plotting.detuning import (
+from ir_amplitude_detuning.plotting.detuning import (
     plot_correctors,
     plot_detuning_ips,
 )
-from ir_dodecapole_corrections.simulation.lhc_simulation import LHCCorrectors
-from ir_dodecapole_corrections.utilities import latex
-from ir_dodecapole_corrections.utilities.classes_accelerator import Corrector, CorrectorMask, fill_corrector_masks
-from ir_dodecapole_corrections.utilities.classes_targets import (
+from ir_amplitude_detuning.simulation.lhc_simulation import LHCCorrectors
+from ir_amplitude_detuning.utilities import latex
+from ir_amplitude_detuning.utilities.classes_accelerator import Corrector, CorrectorMask, fill_corrector_masks
+from ir_amplitude_detuning.utilities.classes_targets import (
     Target,
     TargetData,
 )
-from ir_dodecapole_corrections.utilities.logging import log_setup
-from ir_dodecapole_corrections.utilities.maths import get_diff
+from ir_amplitude_detuning.utilities.logging import log_setup
+from ir_amplitude_detuning.utilities.maths import get_diff
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

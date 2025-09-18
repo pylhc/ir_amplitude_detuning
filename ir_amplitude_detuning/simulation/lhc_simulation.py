@@ -29,7 +29,7 @@ from cpymad_lhc.logging import MADXCMD, MADXOUT, cpymad_logging_setup
 from optics_functions.coupling import closest_tune_approach, coupling_via_cmatrix
 from tfs import TfsDataFrame
 
-from ir_dodecapole_corrections.utilities.classes_accelerator import Corrector, CorrectorMask
+from ir_amplitude_detuning.utilities.classes_accelerator import Corrector, CorrectorMask
 
 LOG = logging.getLogger(__name__)  # setup in main()
 LOG_LEVEL = logging.DEBUG

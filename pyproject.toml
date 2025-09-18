@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
-path = "ir_dodecapole_corrections/__init__.py"
+path = "ir_amplitude_detuning/__init__.py"
 
 [tool.hatch.build.targets.sdist]
 exclude = [

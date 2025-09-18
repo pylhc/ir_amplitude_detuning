@@ -15,12 +15,12 @@ from typing import TYPE_CHECKING, Any, TypeAlias
 import numpy as np
 import pandas as pd
 
-from ir_dodecapole_corrections.detuning.measurements import (
+from ir_amplitude_detuning.detuning.measurements import (
     FirstOrderTerm,
     MeasureValue,
     SecondOrderTerm,
 )
-from ir_dodecapole_corrections.utilities.classes_accelerator import (
+from ir_amplitude_detuning.utilities.classes_accelerator import (
     Correctors,
     FieldComponent,
     get_fields,
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 
     from tfs import TfsDataFrame
 
-    from ir_dodecapole_corrections.utilities.classes_targets import Target, TargetData
+    from ir_amplitude_detuning.utilities.classes_targets import Target, TargetData
 
     DetuningTerm: TypeAlias = FirstOrderTerm | SecondOrderTerm
     TwissPerBeam: TypeAlias = dict[int, TfsDataFrame]

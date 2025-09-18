@@ -14,8 +14,8 @@ from omc3.plotting.utils import colors as pcolors
 from omc3.plotting.utils import style as pstyle
 from omc3.plotting.utils.lines import MarkerList
 
-from ir_dodecapole_corrections.simulation.lhc_simulation import get_detuning_from_ptc_output
-from ir_dodecapole_corrections.utilities.latex import XLABEL_MAP, YLABEL_MAP
+from ir_amplitude_detuning.simulation.lhc_simulation import get_detuning_from_ptc_output
+from ir_amplitude_detuning.utilities.latex import XLABEL_MAP, YLABEL_MAP
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
