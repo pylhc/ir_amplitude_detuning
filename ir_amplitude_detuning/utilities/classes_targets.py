@@ -3,6 +3,14 @@ Classes for Targets
 -------------------
 
 Classes used to define correction targets.
+Each Target will be used to calcualate a single correction,
+i.e. transformed into a single detuning equation system.
+
+To accurately correct for different detuning contributions from the errors and
+crossing in each IP (or combination of IPs), each Target contains a list of
+TargetData, which defines the measured detuning and constraints for each machine configuration.
+
+This allows for a combined local and global correction.
 """
 from __future__ import annotations
 
@@ -22,23 +30,29 @@ LOG = logging.getLogger(__name__)
 @dataclass(slots=True)
 class TargetData:
     """ Class to hold the Data of a Target.
-        Single IPs are converted into a tuple automatically.
-        The detuning values should be a dictionary defining the
-        beams.
+    Single IPs are converted into a tuple automatically.
+    The detuning values should be a dictionary defining the
+    beams.
 
-        In the getter methods, Beam 2 and Beam 4 are used interchangeably:
-        if only one is defined its values will be returned when
-        the other one is requested.
+    In the getter methods, Beam 2 and Beam 4 are used interchangeably:
+    if only one is defined its values will be returned when
+    the other one is requested.
+
+    Args:
+        ips (Union[Sequence[int], int]): List of IPs targeted for correction.
+        detuning (dict[int, Detuning]): Dictionary defining the detuning for each beam.
+        constraints (dict[int, Constraints] | None): Dictionary defining the constraints for each beam.
+        xing (str | None): Label for the crossing scheme, if needed.
     """
     ips: Sequence[int] | int
     detuning: dict[int, Detuning]
     constraints: dict[int, Constraints] | None = None
     xing: str | None = None
-    MAIN_XING: ClassVar[str] = 'main'
+    DEFAULT_XING: ClassVar[str] = ''
 
     def __post_init__(self):
         if self.xing is None:
-            self.xing = self.MAIN_XING
+            self.xing = self.DEFAULT_XING
 
         if isinstance(self.ips, int):
             self.ips = (self.ips,)
@@ -51,6 +65,9 @@ class TargetData:
         """ Get the detuning for a specific beam,
         same as self.detuning[beam], but returns an empty Detuning if the beam is not defined
         and does not differentiate between Beam 2 and Beam 4.
+
+        Args:
+            beam (int): Beam number (2 and 4 are interchangeable)
         """
         try:
             return self.detuning[beam]
@@ -74,6 +91,8 @@ class TargetData:
         same as self.constraints[beam], but returns an empty Constraints if the beam is not defined
         and does not differentiate between Beam 2 and Beam 4.
 
+        Args:
+            beam (int): Beam number (2 and 4 are interchangeable)
         """
         if self.constraints is None:
             return Constraints()
@@ -94,20 +113,24 @@ class TargetData:
 class Target:
     """ Class to hold correction Target information.
 
-        The `data` input can be a single TargetData or a list of TargetData
-        each containing the detuning data for this correction Target.
-        This is done so that the TargetData can be split up depending on which IPs are targeted.
-        Single TargetData are converted into a List automatically, so that the
-        data attribute is always a Sequence.
+    The `data` input can be a single TargetData or a list of TargetData
+    each containing the detuning data for this correction Target.
+    This is done so that the TargetData can be split up depending on which IPs are targeted.
+    Single TargetData are converted into a List automatically, so that the
+    data attribute is always a Sequence.
+
+    Args:
+        name (str): Name of the Target
+        data (Union[Sequence[TargetData], TargetData]): Data for the Target
     """
     name: str
     data: Sequence[TargetData] | TargetData # single only for __init__, Sequence when accessed as attribute
-    ips: Sequence[int] = field(init=False)  # set in __post_init__
+    ips: Sequence[int] = field(init=False)  # set in __post_init__, list of all targeted IPs
 
     def __post_init__(self):
         if isinstance(self.data, TargetData):
             self.data = [self.data]
-        self.ips = [ip for data in self.data for ip in data.ips]
+        self.ips = list({ip for data in self.data for ip in data.ips})
 
         if len(self.ips) != len(set(self.ips)):
             LOG.debug(f"Duplicate ips found for {self.name}")

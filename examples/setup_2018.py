@@ -1,5 +1,11 @@
 """
-Example for a filled template based on the 2018 measurements.
+Setup 2018 Data
+---------------
+
+Example for a filled template based on the 2018 measurements from commissioning
+and MD3311.
+
+You can find the data in https://gitlab.cern.ch/jdilly/lhc_amplitude_detuning_summary/ .
 """
 from pathlib import Path
 from typing import Any, Dict

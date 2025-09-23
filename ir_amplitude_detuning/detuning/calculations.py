@@ -1,7 +1,14 @@
+"""
+Detuning Calculations
+---------------------
+
+Functions to calculate detuning and its corrections.
+"""
+
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, TypeAlias
+from typing import TYPE_CHECKING
 
 import cvxpy as cvx
 import numpy as np
@@ -15,7 +22,6 @@ from ir_amplitude_detuning.detuning.equation_system import (
 )
 from ir_amplitude_detuning.detuning.measurements import (
     FirstOrderTerm,
-    SecondOrderTerm,
 )
 from ir_amplitude_detuning.utilities.classes_accelerator import (
     Correctors,

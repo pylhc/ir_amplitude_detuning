@@ -3,7 +3,7 @@ Classes for Accelerators
 ------------------------
 
 Classes used to hold accelerator specific data to make the
-code machine independent.
+code more machine independent.
 """
 from __future__ import annotations
 
@@ -89,12 +89,23 @@ Correctors: TypeAlias = Sequence[Corrector]
 
 
 def get_fields(correctors: Correctors) -> list[FieldComponent]:
-    """ Get the field components available in the correctors. """
+    """ Get all field components available for correction by the correctors.
+
+    Args:
+        correctors (Correctors): list of correctors
+
+    Returns:
+        list[FieldComponent]: sorted list of uniqe field components
+    """
     return sorted({corrector.field for corrector in correctors})
 
 
 def assert_corrector_fields(correctors: Correctors):
-    """ Assert the correctors have been defined with the correct fields. """
+    """ Assert the correctors have been defined with the correct fields.
+
+    Args:
+        correctors (Correctors): list of correctors
+    """
     fields = get_fields(correctors)
     if not fields:
         raise ValueError("No detuning correctors defined!")

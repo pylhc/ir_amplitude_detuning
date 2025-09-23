@@ -1,3 +1,10 @@
+"""
+Latex Utilities
+---------------
+
+Utilities to convert data to latex, useful for plotting and
+copy-pasting into reports.
+"""
 from __future__ import annotations
 
 import logging
@@ -8,7 +15,7 @@ import numpy as np
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from ir_amplitude_detuning.utilities.classes_detuning import MeasureValue
+    from ir_amplitude_detuning.detuning.measurements import MeasureValue
 
 LOG = logging.getLogger(__name__)
 

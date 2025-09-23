@@ -3,14 +3,14 @@
 Classes for Detuning
 --------------------
 
-Classes used to hold and manipulate detuning (measurement) data.
+Classes used to hold and manipulate individual detuning (measurement) data.
 """
 from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
 from functools import partial
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from omc3.utils.stats import weighted_mean
@@ -25,7 +25,12 @@ LOG = logging.getLogger(__name__)
 
 @dataclass(slots=True)
 class MeasureValue:
-    """ Class to hold a value with its error and do basic arithmetics. """
+    """ Class to hold a value with its error and do basic arithmetics.
+
+    Args:
+        value (float): value of the measurement
+        error (float): error of the measurement, treated as standard deviation
+    """
     value: float = 0
     error: float = 0
 
@@ -133,7 +138,7 @@ class Detuning:
     """ Class holding first and second order detuning values.
     The values are only returned via `__getitem__` or `terms()` if their
     values are set.
-    For convenience, the input values are scaled by scale."""
+    For convenience, the input values are scaled by the given `scale` parameter."""
     # first order
     X10: float | None = None
     X01: float | None = None
@@ -158,8 +163,13 @@ class Detuning:
         return iter(name for name in self.fieldnames() if getattr(self, name) is not None)
 
     @staticmethod
-    def fieldnames(order=None):
-        """ Return all float-terms. """
+    def fieldnames(order: int | None = None) -> tuple[str, ...]:
+        """ Return all float-terms.
+
+        Args:
+            order (int): 1 or 2, for first and second order detuning terms respectively.
+                         Or `None` for all terms (Default: `None`).
+        """
         mapping = {
             1: tuple(FirstOrderTerm),
             2: tuple(SecondOrderTerm),
@@ -169,11 +179,15 @@ class Detuning:
         return tuple(e for m in mapping.values() for e in m)
 
     def __getitem__(self, item):
+        """ Convenience wrapper to access terms via `[]` .
+        Not set terms will raise a KeyError.
+        """
         if item not in self.terms():
             raise KeyError(f"'{item}' is not set in Detuning object.")
         return getattr(self, item)
 
     def __setitem__(self, item, value):
+        """ Convenience wrapper to set terms via `[]` . """
         if item not in self.fieldnames():
             raise KeyError(f"'{item}' is not in the available terms of a Detuning object.")
         return setattr(self, item, value)
@@ -216,9 +230,7 @@ class Detuning:
 
 @dataclass(slots=True)
 class DetuningMeasurement(Detuning):
-    """ Class holding first and second order detuning measurement values (i.e. with error).
-    The values are only returned via `__getitem__` or `terms()` if their
-    values are set."""
+    """ Class holding first and second order detuning measurement values (i.e. with error)."""
     # first order
     X10: MeasureValue = None
     X01: MeasureValue = None
@@ -251,7 +263,7 @@ class DetuningMeasurement(Detuning):
 
 @dataclass(slots=True)
 class Constraints:
-    """ Class holding first order detuning contraints.
+    """ Class for holding detuning contraints.
     Thet are only returned via `__getitem__` or `terms()` if they are set.
     So far only ">=" and "<=" are implemented.
     E.g. X10 = "<=0"
@@ -260,6 +272,14 @@ class Constraints:
     X01: str | None = None
     Y10: str | None = None
     Y01: str | None = None
+    #
+    X20: str | None = None
+    X11: str | None = None
+    X02: str | None = None
+    Y20: str | None = None
+    Y11: str | None = None
+    Y02: str | None = None
+    #
     scale: float = 1
 
     def __post_init__(self):
@@ -272,9 +292,10 @@ class Constraints:
         """ Return names for all set terms as iterable. """
         return iter(name for name in self.fieldnames() if getattr(self, name) is not None)
 
-    def fieldnames(self) -> tuple[str, ...]:
+    @staticmethod
+    def fieldnames(order: int | None = None) -> tuple[str, ...]:
         """ Return all float-terms. """
-        return "X10", "X01", "Y10", "Y01"
+        return Detuning.fieldnames(order)
 
     def __getitem__(self, item: str) -> str:
         if item not in self.terms():

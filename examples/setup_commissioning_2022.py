@@ -26,13 +26,16 @@ from ir_amplitude_detuning.plotting.detuning import (
 )
 from ir_amplitude_detuning.simulation.lhc_simulation import LHCCorrectors
 from ir_amplitude_detuning.utilities import latex
-from ir_amplitude_detuning.utilities.classes_accelerator import Corrector, CorrectorMask, fill_corrector_masks
+from ir_amplitude_detuning.utilities.classes_accelerator import (
+    Corrector,
+    fill_corrector_masks,
+)
 from ir_amplitude_detuning.utilities.classes_targets import (
     Target,
     TargetData,
 )
 from ir_amplitude_detuning.utilities.logging import log_setup
-from ir_amplitude_detuning.utilities.maths import get_diff
+from ir_amplitude_detuning.utilities.misc import get_diff
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

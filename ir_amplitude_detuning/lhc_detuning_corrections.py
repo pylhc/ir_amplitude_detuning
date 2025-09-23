@@ -32,7 +32,7 @@ from typing import TYPE_CHECKING, TypeAlias
 import cpymad
 import tfs
 
-from ir_amplitude_detuning.detuning.calculation import (
+from ir_amplitude_detuning.detuning.calculations import (
     calc_effective_detuning,
     calculate_correction,
 )
@@ -131,8 +131,8 @@ def calculate_corrections(
             values = {}
 
         # Save results ---
-        madx_command = generate_madx_command(values, correctors)
-        knl_tfs = generate_knl_tfs(values, correctors)
+        madx_command = generate_madx_command(values)
+        knl_tfs = generate_knl_tfs(values)
         effective_detuning = calc_effective_detuning(optics, values, ips=target.ips)
 
         results[target.name] = CorrectionResults(

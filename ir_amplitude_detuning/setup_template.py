@@ -29,7 +29,7 @@ from ir_amplitude_detuning.utilities.classes import (
     scaled_detuningmeasurement,
 )
 from ir_amplitude_detuning.utilities.logging import log_setup
-from ir_amplitude_detuning.utilities.maths import get_detuning, get_diff
+from ir_amplitude_detuning.detuning.maths import get_detuning, get_diff
 
 # Define Machine Data
 # -------------------
