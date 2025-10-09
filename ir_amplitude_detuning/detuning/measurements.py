@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from functools import partial
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import numpy as np
 from omc3.utils.stats import weighted_mean
@@ -65,6 +65,9 @@ class MeasureValue:
 
     def __str__(self):
         return f"{self.value} +- {self.error}"
+
+    def __format__(self,fmt):
+        return f"{self.value:{fmt}} +- {self.error:{fmt}}"
 
     def __repr__(self):
         return str(self)
@@ -161,6 +164,9 @@ class Detuning:
     def terms(self):
         """ Return names for all set terms."""
         return iter(name for name in self.fieldnames() if getattr(self, name) is not None)
+
+    def items(self):
+        return iter((name, getattr(self, name)) for name in self.terms())
 
     @staticmethod
     def fieldnames(order: int | None = None) -> tuple[str, ...]:

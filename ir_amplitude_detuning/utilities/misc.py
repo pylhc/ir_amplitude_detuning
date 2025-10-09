@@ -8,6 +8,8 @@ from enum import Enum
 from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from ir_amplitude_detuning.detuning.measurements import Detuning, DetuningMeasurement
 
 
@@ -21,6 +23,49 @@ class StrEnum(str, Enum):
 
     def __str__(self) -> str:
         return self.value
+
+
+class BeamDict(dict):
+    __default_when_missing__: callable | None = None
+
+    def __missing__(self, key):
+        if key == 2 and 4 in self:
+            return self[4]
+
+        if key == 4 and 2 in self:
+            return self[2]
+
+        if self.__default_when_missing__ is not None:
+            return self.__default_when_missing__()
+
+        raise KeyError(f"Beam {key} not defined.")
+
+    @classmethod
+    def from_dict(cls, d: dict[int, Any], default=None):
+        obj = cls(d)
+        obj.__default_when_missing__ = default
+        return obj
+
+
+def to_loop(iterable: Iterable[Any]) -> list[Iterable[int]]:
+    """ Get a list to loop over.
+
+    If there is only one entry, the return list will only have this entry wrapped in a list.
+    If there are multiple entry, the first element will be a list of all entries combined,
+    and then single-element lists containing one entry each.
+
+    Args:
+        iterable (Iterable[Any]): List to loop over
+
+    Returns:
+        list[Iterable[int]]: List of lists of elements
+    """
+    combined = [iterable]
+
+    if len(iterable) == 1:
+        return combined
+
+    return combined + [[entry] for entry in iterable]
 
 
 # Convenience functions to loop over dicts ---
@@ -50,5 +95,5 @@ def get_diff( a: dict[Any, Subtractable], b: dict[Any, Subtractable]) -> dict[An
 
 
 def get_detuning(meas: dict[Any, DetuningMeasurement]) -> dict[Any, Detuning]:
-    """ Get detuning values (i.e. without errors) from the measurement data."""
+    """ Get detuning values (i.e. without errors) from the measurement data for each of the items in meas."""
     return {key: meas[key].get_detuning() for key in meas}

@@ -20,22 +20,6 @@ if TYPE_CHECKING:
 LOG = logging.getLogger(__name__)
 
 
-YLABEL_MAP = {
-    "X10": r"$\partial Q_x / \partial (2J_x) \; [10^3 $m$^{-1}]$",
-    "Y01": r"$\partial Q_y / \partial (2J_y) \; [10^3 $m$^{-1}]$",
-    "X01": r"$\partial Q_{x,y} / \partial (2J_{y,x}) \; [10^3 $m$^{-1}]$",
-    "X20": r"$\partial^2 Q_x / \partial (2J_x)^2 \; [10^{12} $m$^{-2}]$",
-    "Y02": r"$\partial^2 Q_y / \partial (2J_y)^2 \; [10^{12} $m$^{-2}]$",
-    "X02": r"$\partial^2 Q_x / \partial (2J_y)^2 \; [10^{12} $m$^{-2}]$",
-    "Y20": r"$\partial^2 Q_y / \partial (2J_x)^2 \; [10^{12} $m$^{-2}]$",
-}
-
-XLABEL_MAP = {
-    "w_ampdet_b5b6": "$K_5L & K_6L$",
-    "w_ampdet_b5": "$K_5L$",
-    "w_ampdet_b6": "$K_6L$",
-    "nominal": "Nominal",
-}
 
 def print_correction_and_error_as_latex(values: Sequence[MeasureValue], correctors: Sequence[str], length: Sequence[float] | float = 0.615) -> None:
     """ Print the correction values with errors as latex table snippet.
@@ -74,33 +58,96 @@ def print_correction_and_error_as_latex(values: Sequence[MeasureValue], correcto
     )
 
 
-def partial_dqdj(tune: str, action: str, power: int = 1) -> str:
+def ylabel_from_detuning_term(detuning_term: str, exponent: float = None) -> str:
+    """ Get the latex representation of a detuning term with partial derivatives to be used as y-label of a plot.
+
+    Args:
+        detuning_term (str): Detuning term, e.g. "X02"
+        exponent (float, optional): Exponent of 10 to be included in the latex representation.
+    """
+    order = int(detuning_term[1]) + int(detuning_term[2])
+    scale = fr" 10^{{{exponent}}} " if exponent else ""
+    return fr"${term2partial_dqdj(detuning_term)}\; [{scale}$m$^{{-{order}}}]$"
+
+
+def term2dqdj(term: str) -> str:
+    """ Wrapper to get the latex representation of a detuning term as in the shorthand.
+
+    Args:
+        term (str): Detuning term, e.g. "X02"
+    """
+    tune, action = detuning_term_to_planes(term)
+    return partial_dqdj(tune, action)
+
+
+def term2partial_dqdj(term: str) -> str:
+    """ Wrapper to get the latex representation of a detuning term with partial derivatives.
+
+    Args:
+        term (str): Detuning term, e.g. "X02"
+    """
+    tune, action = detuning_term_to_planes(term)
+    return partial_dqdj(tune, action)
+
+
+def detuning_term_to_planes(term: str) -> tuple[str, str]:
+    """ Get the tune and action planes given detuning term.
+
+    Args:
+        term (str): Detuning term, e.g. "X02"
+
+    Returns:
+        tuple[str, str]: (tune, action), e.g. ("x", "yy")
+    """
+    tune = term[0].lower()
+    action = "x" * int(term[1]) + "y" * int(term[2])
+    return tune, action
+
+
+def partial_dqdj(tune: str, action: str) -> str:
     r""" Latex representation of detuning term.
-    Example: partial_dqdj("x", "y", 2) -> "\partial^{2}_{y}Q_{x}".
+    Examples:
+        partial_dqdj("x", "yy") -> "\partial^{2}_{y}Q_{x}".
+        partial_dqdj("x", "xy") -> "\partial_{x}\partial_{y}Q_{x}".
+        partial_dqdj("y", "x") -> "\partial_{x}Q_{y}".
 
     Args:
         tune: "x" or "y"
         action: "x" or "y"
         power: integer power, default 1
     """
-    if power == 1:
-        return fr"\partial_{action}Q_{tune}"
-    return fr"\partial^{{{power}}}_{action}Q_{tune}"
+    if len(action) > 2:
+        raise NotImplementedError("Not implemented for derivative > 2.")
+
+    def partial(plane: str, exponent: int = 1) -> str:
+        if exponent == 1:
+            return fr"\partial_{{2J_{plane}}}"
+        return fr"\partial^{{{exponent}}}_{{2J_{plane}}}"
+
+    if len(action) == 1:
+        return fr"{partial(action)}Q_{tune}"
+
+    if action[0] != action[1]:
+        return fr"{partial(action[0])}{partial(action[1])}Q_{tune}"
+
+    return fr"{partial(action[0], 2)}Q_{tune}"
 
 
-def dqd2j(tune: str, action: str, power: int = 1) -> str:
+def dqd2j(tune: str, action: str) -> str:
     """ Latex representation of detuning term
     (in the shorthand version, used in my thesis/paper, jdilly).
-    Example: dqd2j("x", "y", 2) -> "Q_{x,y^{2}}".
+
+    Examples:
+        dqd2j("x", "y", 2) -> "Q_{x,yy}"
+        dqd2j("x", "xy") -> "Q_{x,xy}"
+        dqd2j("y", "x") -> "Q_{y,x}"
 
     Args:
         tune: "x" or "y"
         action: "x" or "y"
         power: integer power, default 1
     """
-    if power == 1:
-        return f"Q_{{{tune},{action}}}"
-    return f"Q_{{{tune},{action}^{{{power}}}}}"
+    return f"Q_{{{tune},{action}}}"
 
 
 def exp_m(e_power: int, m_power: int) -> str:

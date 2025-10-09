@@ -8,6 +8,7 @@ code more machine independent.
 from __future__ import annotations
 
 import logging
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import TypeAlias
@@ -48,7 +49,25 @@ class Corrector:
             raise ValueError(f"Field must be one of {list(FieldComponent)}, got {self.field}.")
 
     def __lt__(self, other: Corrector) -> bool:
-        return (self.field, self.circuit) < (other.field, other.circuit)
+        if self.field != other.field:
+            return self.field < other.field
+
+        pattern = re.compile(r".*(\d+\.[lr]\d)$", re.IGNORECASE)
+        self_loc = pattern.match(self.magnet)
+        other_loc = pattern.match(other.magnet)
+        if self_loc is None or other_loc is None:
+            return self.circuit < other.circuit
+
+        self_loc = self_loc.group(0)
+        other_loc = other_loc.group(0)
+
+        if self_loc != other_loc:
+            return self.circuit[:-3:-1] < other.circuit[:-3:-1]
+
+        if self_loc[0].lower() == "l":
+            return self_loc > other.circuit  # further downstream
+        return self.circuit < other.circuit
+
 
     def __hash__(self):
         return hash(self.magnet + self.circuit)
@@ -59,7 +78,7 @@ class Corrector:
 
 @dataclass(slots=True)
 class CorrectorMask:
-    """ Class to hold corrector information.
+    """ Class to hold corrector templates to be filled in with IP and side.
 
     Args:
         field: magnetic field component shorthand (e.g. 'b5' or 'b6')

@@ -2,23 +2,21 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Dict, Sequence
+from typing import TYPE_CHECKING
 
 from matplotlib import pyplot as plt
 from omc3.plotting.utils import annotations as pannot
 from omc3.plotting.utils import colors as pcolors
 from omc3.plotting.utils import style as pstyle
+
 from ir_amplitude_detuning.detuning.measurements import DetuningMeasurement, MeasureValue
+from ir_amplitude_detuning.utilities import latex
+from ir_amplitude_detuning.utilities.misc import detuning_short_to_planes
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 LOG = logging.getLogger(__name__)
-
-
-xtick_map = {
-    "X10": "Q$_{x,x}$",
-    "X01": "Q$_{x,y}$",
-    "Y10": "Q$_{y,x}$",
-    "Y01": "Q$_{y,y}$",
-}
 
 
 @dataclass
@@ -33,7 +31,8 @@ class MeasurementSetup:
         return pcolors.get_mpl_color(idx)
 
 
-def get_ylabel(rescale: int = 0, delta: bool = False):
+def get_ylabel(rescale: int = 0, delta: bool = False) -> str:
+    """ Generate a y-axis label for the plot. """
     rescale_str = f"10$^{rescale:d}$ " if rescale else ""
     delta_str = r"$\Delta$" if delta else ""
     return f"{delta_str}Q$_{{a,b}}$ [{rescale_str}m$^{{-1}}$]"
@@ -49,20 +48,36 @@ def get_components(measurements: Sequence[MeasurementSetup]):
 
 
 def plot_measurements(measurements: Sequence[MeasurementSetup], **kwargs):
-    pstyle.set_style(kwargs.get("style", "standard"), kwargs.get("manual_style", None))
+    """ Plot multiple measurements on the same plot.
+
+    Args:
+        measurements (Sequence[MeasurementSetup]): List of MeasurementSetup objects to plot.
+
+    Keyword Args (optional):
+        manual_style (dict): Dictionary of matplotlib style settings.
+        ylim (Sequence[float, float]): y-axis limits.
+        rescale (int): Number of digits to rescale to.
+        ncol (int): Number of columns in the plot.
+        add_rms (bool): Add rms values to the plot.
+    """
+
+    # Set Style ---
+    pstyle.set_style(kwargs.get("style", "standard"), kwargs.get("manual_style"))
 
     rescale: int = kwargs.get('rescale', 3)
     rescale_value = 10**-rescale
     ylabel: str = kwargs.get("ylabel", get_ylabel(rescale=rescale))
-    ylim: Sequence[float, float] = kwargs.get("ylim", None)
+    ylim: Sequence[float, float] = kwargs.get("ylim")
     ncol: int = kwargs.get('ncol', 3)
-    add_rms: int = kwargs.get('add_rms', False)
+    add_rms: bool = kwargs.get('add_rms', False)
 
+    # Prepare Constatns ---
     field_components = get_components(measurements)
     n_components = len(field_components) + add_rms
     n_measurements = len(measurements)
     measurement_width = 1 / (n_measurements + 1)
 
+    # Generate Plot ---
     fig, ax = plt.subplots()
 
     # plot lines
@@ -109,7 +124,7 @@ def plot_measurements(measurements: Sequence[MeasurementSetup], **kwargs):
     ax.set_ylim(ylim)
 
     ax.set_xticks([x + 0.5 for x in range(n_components)])
-    ax.set_xticklabels([xtick_map[fn] for fn in field_components] + (["RMS"] if add_rms else []))
+    ax.set_xticklabels([f"${latex.dqd2j(*detuning_short_to_planes(fc))}$" for fc in field_components] + (["RMS"] if add_rms else []))
     ax.set_xlim([0, n_components])
 
     pannot.make_top_legend(ax, ncol=ncol, frame=False)

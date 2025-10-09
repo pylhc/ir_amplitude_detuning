@@ -35,7 +35,7 @@ from omc3.tune_analysis.kick_file_modifiers import read_timed_dataframe
 from tfs.tools import significant_digits
 
 from ir_amplitude_detuning.lhc_detuning_corrections import (
-    calculate_corrections, check_corrections, create_optics)
+    calculate_corrections, check_corrections_ptc, create_optics)
 from ir_amplitude_detuning.utilities.classes import (Detuning, DetuningMeasurement,
                                                          MeasureValue, Target, TargetData)
 from ir_amplitude_detuning.utilities.latex import (
@@ -272,7 +272,7 @@ def simulation(output_dir: Path):
     lhc_beams = create_optics(paths, xings=XINGS, year=2022, tune_x=62.28, tune_y=60.31)
 
     calculate_corrections(paths, targets=get_targets(output_dir), main_xing=MAIN_XING, lhc_beams=lhc_beams)
-    check_corrections(paths, lhc_beams[MAIN_XING])
+    check_corrections_ptc(paths, lhc_beams[MAIN_XING])
 
     for beams in lhc_beams.values():
         for lhcbeam in beams.values():
@@ -284,7 +284,7 @@ def do_all_corrections(output_dir: Path):
     # calculate_corrections(paths, targets=get_targets(output_dir), main_xing='full')
     calculate_corrections(paths, targets=get_targets(output_dir, prefix="sub_"), main_xing=MAIN_XING)
     calculate_corrections(paths, targets=get_targets(output_dir, prefix="so_"), main_xing=MAIN_XING)
-    check_corrections(paths, id_suffix="_ptc_recheck", year=2022, tune_x=62.28, tune_y=60.31)
+    check_corrections_ptc(paths, id_suffix="_ptc_recheck", year=2022, tune_x=62.28, tune_y=60.31)
 
 
 # SUBTRACT SECOND ORDER DETUNING -----------------------------------------------

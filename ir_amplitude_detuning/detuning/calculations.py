@@ -8,36 +8,38 @@ Functions to calculate detuning and its corrections.
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import cvxpy as cvx
 import numpy as np
 import pandas as pd
-from tfs import TfsDataFrame
 
 from ir_amplitude_detuning.detuning.equation_system import (
-    build_b4_row,
-    build_b6_row,
     build_detuning_correction_matrix,
+    calculate_matrix_row,
 )
 from ir_amplitude_detuning.detuning.measurements import (
     FirstOrderTerm,
+    SecondOrderTerm,
 )
-from ir_amplitude_detuning.utilities.classes_accelerator import (
-    Correctors,
-    assert_corrector_fields,
-)
-from ir_amplitude_detuning.utilities.misc import StrEnum
+from ir_amplitude_detuning.utilities.misc import StrEnum, to_loop
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from ir_amplitude_detuning.detuning.equation_system import (
-        OpticsPerXing,
         TwissPerBeam,
+    )
+    from ir_amplitude_detuning.utilities.classes_accelerator import (
+        Correctors,
     )
     from ir_amplitude_detuning.utilities.classes_targets import Target
 
 
 LOG = logging.getLogger(__name__)
+
+FIELDS: str = "FIELDS"
+IP: str = "IP"
 
 
 class Method(StrEnum):
@@ -46,9 +48,7 @@ class Method(StrEnum):
 
 
 def calculate_correction(
-        optics: TwissPerBeam | OpticsPerXing,
         target: Target,
-        correctors: Correctors,
         method: Method = Method.cvxpy
     ) -> pd.Series[float]:
     """ Calculates the values for either kcdx or kctx as installed into the Dodecapol corrector.
@@ -58,9 +58,7 @@ def calculate_correction(
     and everything that contributes to the right hand side (i.e. the detuning values v, or similarly the constraint values) with v_.
 
     Args:
-        optics (OpticsPerBeam | OpticsPerBeamPerXing): A dictionary of optics per beam or per xing per beam.
         target (Target): A Target object defining the target detuning and constraints.
-        correctors (Correctors): A sequence of correctors to be used.
         method (Method): The results of which method used to solve the equation system to be returned.
 
     Returns:
@@ -70,11 +68,10 @@ def calculate_correction(
 
     if method not in list(Method):
         raise ValueError(f"Unknown method: {method}. Use one of: {list(Method)}")
-    assert_corrector_fields(correctors)
 
     # Build equation system ---
 
-    eqsys = build_detuning_correction_matrix(optics, target, correctors)
+    eqsys = build_detuning_correction_matrix(target)
 
     # Solve as convex system ---
 
@@ -106,70 +103,34 @@ def calculate_correction(
     return x_numpy
 
 
-def calc_effective_detuning(optics: TwissPerBeam, corrector_values: pd.Series, correctors: Correctors, ips) -> dict[int, TfsDataFrame]:
+def calc_effective_detuning(optics: TwissPerBeam, values: pd.Series) -> dict[int, pd.DataFrame]:
     """ Build a dataframe that calculates the detuning based on the given optics and corrector values
     individually for the given IPs and corrector fields.
 
-    The detuning is "effective" as it is only based on the current optics.
-    For a full detuning calculation the corrector values would need to be individually set,
+    The detuning is "effective" as it is calculated from the pre-simulated optics.
+    In contrast, for an exact detuning calculation the corrector values would need to be individually set,
     detuning gathered per PTC and then and compared to the unset detuning values.
     """
-    loop_ips = [ips] + ([] if len(ips) == 1 else [[ip] for ip in ips])
-    ip_strings = ['all' if len(current_ips) > 1 else str(current_ips[0]) for current_ips in loop_ips]
-    fields_list = ('b5', 'b6', 'b5b6')
+    correctors: Correctors = values.index
 
-    dfs = [
-        TfsDataFrame(
-            index=pd.MultiIndex.from_product([fields_list, ip_strings], names=["FIELDS", "IP"]),
-            columns=terms_first + terms_second,)
-        for _ in enumerate(optics)
-    ]
-    for current_ips, ip_str in zip(loop_ips, ip_strings):
-        m_first = {
-            t: pd.DataFrame(
-                [
-                    build_b4_row(
-                        beam,
-                        optics[beam],
-                        correctors=correctors,
-                        term=t,
-                        ips=current_ips,
-                    )
-                    for beam in optics
-                ]
-            )
-            for t in list(FirstOrderTerm)
-        }
+    loop_ips: list[Iterable[int]] = to_loop(sorted({c.ip for c in correctors if c.ip is not None}))
+    ip_strings: list[str] = [''.join(map(str, ips)) for ips in loop_ips]
 
-        m_second = {
-            t: pd.DataFrame(
-                [
-                    build_b6_row(
-                        beam,
-                        optics[beam],
-                        magnet_pattern=DODECAPOLE_CORRECTOR,
-                        term=t,
-                        ips=current_ips,
-                    )
-                    for beam in optics
-                ]
-            )
-            for t in terms_second
-        }
+    loop_fields: list[str] = to_loop(sorted({c.field for c in correctors}))
+    field_strings: list[str] = [''.join(map(str, fields)) for fields in loop_fields]
 
-        for m_order in (m_first, m_second):
-            for term, m in m_order.items():
-                for fields in fields_list:
-                    columns_mask = (m.columns.str.endswith("b5") & ("5" in fields)) | (m.columns.str.endswith("b6") & ("6" in fields))
-                    m_filtered = m.loc[:, columns_mask].rename(columns=circuits_map)
-                    x_filtered = x.loc[m_filtered.columns]
-                    v = m_filtered.dot(x_filtered)
-                    for idx, value in enumerate(v):
-                        dfs[idx].loc[(fields, ip_str), term] = value
-                        # try:
-                        #     dfs[idx].loc[(fields, ip_str), term] = value.value
-                        # except AttributeError:
-                        #     dfs[idx].loc[(fields, ip_str), term] = value
-                        # else:
-                        #     dfs[idx].loc[(fields, ip_str), f"ERR{term}"] = value.error
-    return [df.reset_index() for df in dfs]
+    dfs = {}
+    for beam in optics:
+        df = pd.DataFrame(
+            index=pd.MultiIndex.from_product([field_strings, ip_strings], names=[FIELDS, IP]),
+            columns=list(FirstOrderTerm) + list(SecondOrderTerm),
+        )
+        for fields, fields_str in zip(loop_fields, field_strings):
+            for ips, ip_str in zip(loop_ips, ip_strings):
+                filtered_correctors = [c for c in correctors if (c.ip in ips or c.ip is None) and (c.field in fields)]
+                for term in df.columns:
+                    m = calculate_matrix_row(beam, optics[beam], filtered_correctors, term)
+                    detuning = m.dot(values.loc[filtered_correctors])
+                    df.loc[(fields_str, ip_str), term] = detuning
+        dfs[beam] = df.reset_index()
+    return dfs

@@ -1,4 +1,7 @@
 """
+LHC Simulation Class
+--------------------
+
 Run a cpymad MAD-X simulation for the LHC optics (2018) without errors.
 In addition, extra functionality is added to install kcdx decapole correctors
 into the MCTX and assign powering for decapole and dodecapole circuits.
@@ -29,7 +32,7 @@ from cpymad_lhc.logging import MADXCMD, MADXOUT, cpymad_logging_setup
 from optics_functions.coupling import closest_tune_approach, coupling_via_cmatrix
 from tfs import TfsDataFrame
 
-from ir_amplitude_detuning.utilities.classes_accelerator import Corrector, CorrectorMask
+from ir_amplitude_detuning.utilities.classes_accelerator import CorrectorMask, FieldComponent
 
 LOG = logging.getLogger(__name__)  # setup in main()
 LOG_LEVEL = logging.DEBUG
@@ -72,6 +75,7 @@ def get_optics_path(year: int, name: str | Path):
     if isinstance(name, Path):
         return str(name)
 
+    # Predefined optics paths ---
     optics_map = {
         2018: {
             'inj': pathstr("optics2018", "PROTON", "opticsfile.1"),
@@ -109,21 +113,6 @@ def drop_allzero_columns(df: TfsDataFrame) -> TfsDataFrame:
     return df.loc[:, (df != 0).any(axis="index")]
 
 
-def get_detuning_from_ptc_output(df, beam=None, log=True, terms=("X10", "Y01", "X01")):
-    """ Convert PTC output to DataFrame. """
-    results = dict.fromkeys(terms)
-    if log:
-        LOG.info("Current Detuning Values" + ("" if not beam else f" in Beam {beam}"))
-    for term in terms:
-        value = df.query(
-            f'NAME == "ANH{term[0]}" and '
-            f'ORDER1 == {term[1]} and ORDER2 == {term[2]} '
-            f'and ORDER3 == 0 and ORDER4 == 0'
-        )["VALUE"].to_numpy()[0]
-        if log:
-            LOG.info(f"  {term:<3s}: {value}")
-        results[term] = value
-    return results
 
 
 class LHCCorrectors:
@@ -134,14 +123,14 @@ class LHCCorrectors:
         The pattern is used to find the correctors in the MAD-X sequence.
     """
     b5 = CorrectorMask(
-        field="b5",
+        field=FieldComponent.b5,
         length=0.615,
         magnet_pattern="MCTX.3{side}{ip}",  # installed into the MCTX
         circuit_pattern="kcdx3.{side}{ip}",
         madx_type="MCTX",
     )
     b6 = CorrectorMask(
-        field="b6",
+        field=FieldComponent.b6,
         length=0.615,
         magnet_pattern="MCTX.3{side}{ip}",
         circuit_pattern="kctx3.{side}{ip}",
@@ -250,9 +239,7 @@ class LHCBeam:
         if output_id is not None:
             file = self.output_path('ampdet', output_id)
             LOG.info(f"Calculating amplitude detuning for {output_id}.")
-        df_ampdet = amplitude_detuning_ptc(self.madx, ampdet=2, chroma=4, file=file)
-        get_detuning_from_ptc_output(df_ampdet, beam=self.beam)
-        return df_ampdet
+        return amplitude_detuning_ptc(self.madx, ampdet=2, chroma=4, file=file)
 
     def write_tfs(self, df: TfsDataFrame, type_: str, output_id: str):
         """ Write the given TfsDataFrame with the standardized name (see ``output_path``)
@@ -435,9 +422,12 @@ class LHCBeam:
         """ Check the corrector kctx limits."""
         self.reinstate_loggers()
         magnet_type = LHCCorrectors.b6.madx_type
-        checks = LimitChecks(madx=self.madx, beam=self.beam,
-                             limit_to_max=False,
-                             values_dict={f"{magnet_type}1": f"kmax_{magnet_type}"})
+        checks = LimitChecks(
+            madx=self.madx,
+            beam=self.beam,
+            limit_to_max=False,
+            values_dict={f"{magnet_type}1": f"kmax_{magnet_type}"},
+        )
         checks.run_checks()
         if not checks.success:
             # raise ValueError("One or more strengths are out of its limits, see log.")
@@ -454,3 +444,6 @@ class FakeLHCBeam:
 
     def __post_init__(self):
         self.outputdir.mkdir(exist_ok=True, parents=True)
+
+    def output_path(self, *args, **kwargs):
+        return LHCBeam.output_path(self, *args, **kwargs)
