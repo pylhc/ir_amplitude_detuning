@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 from omc3.utils.stats import weighted_mean
 
-from ir_amplitude_detuning.utilities.misc import StrEnum
+from ir_amplitude_detuning.utilities.common import StrEnum
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
@@ -43,13 +43,18 @@ class MeasureValue:
 
         return MeasureValue(value=self.value + other.value, error=np.sqrt(self.error**2 + other.error**2))
 
-    def __radd__(self, other: float):  # make sum work
-        if other:
-            raise NotImplementedError("Addition of Measurements with scalar values other than 0 are not implemented.")
-        return MeasureValue(value=self.value, error=self.error)
+    def __radd__(self, other: MeasureValue | float):  # make sum work
+        if isinstance(other, MeasureValue):
+            return MeasureValue(value=self.value + other.value, error=np.sqrt(self.error**2 + other.error**2))
+        return MeasureValue(value=self.value + other, error=self.error)
 
-    def __sub__(self, other: MeasureValue):
-        return MeasureValue(value=self.value - other.value, error=np.sqrt(self.error**2 + other.error**2))
+    def __sub__(self, other: MeasureValue | float):
+        if isinstance(other, MeasureValue):
+            return MeasureValue(value=self.value - other.value, error=np.sqrt(self.error**2 + other.error**2))
+        return MeasureValue(value=self.value - other, error=self.error)
+
+    def __neg__(self):
+        return MeasureValue(value=-self.value, error=self.error)
 
     def __mul__(self, other: float):
         return MeasureValue(value=self.value * other, error=self.error * other)
@@ -72,8 +77,8 @@ class MeasureValue:
     def __repr__(self):
         return str(self)
 
-    def to_list(self):
-        return [self.value, self.error]
+    def __iter__(self):
+        return iter((self.value, self.error))
 
     @staticmethod
     def rms(measurements: Sequence[MeasureValue]):
@@ -163,13 +168,13 @@ class Detuning:
 
     def terms(self):
         """ Return names for all set terms."""
-        return iter(name for name in self.fieldnames() if getattr(self, name) is not None)
+        return iter(name for name in self.all_terms() if getattr(self, name) is not None)
 
     def items(self):
         return iter((name, getattr(self, name)) for name in self.terms())
 
     @staticmethod
-    def fieldnames(order: int | None = None) -> tuple[str, ...]:
+    def all_terms(order: int | None = None) -> tuple[str, ...]:
         """ Return all float-terms.
 
         Args:
@@ -194,7 +199,7 @@ class Detuning:
 
     def __setitem__(self, item, value):
         """ Convenience wrapper to set terms via `[]` . """
-        if item not in self.fieldnames():
+        if item not in self.all_terms():
             raise KeyError(f"'{item}' is not in the available terms of a Detuning object.")
         return setattr(self, item, value)
 
@@ -205,6 +210,9 @@ class Detuning:
     def __sub__(self, other: Detuning):
         self._check_terms(other)
         return self.__class__(**{term: self[term] - other[term] for term in self.terms()})
+
+    def __neg__(self):
+        return self.__class__(**{term: -self[term] for term in self.terms()})
 
     def __mul__(self, other: float | Detuning):
         if isinstance(other, Detuning):
@@ -296,12 +304,12 @@ class Constraints:
 
     def terms(self) -> Iterator[str]:
         """ Return names for all set terms as iterable. """
-        return iter(name for name in self.fieldnames() if getattr(self, name) is not None)
+        return iter(name for name in self.all_terms() if getattr(self, name) is not None)
 
     @staticmethod
-    def fieldnames(order: int | None = None) -> tuple[str, ...]:
+    def all_terms(order: int | None = None) -> tuple[str, ...]:
         """ Return all float-terms. """
-        return Detuning.fieldnames(order)
+        return Detuning.all_terms(order)
 
     def __getitem__(self, item: str) -> str:
         if item not in self.terms():
@@ -309,7 +317,7 @@ class Constraints:
         return getattr(self, item)
 
     def __setitem__(self, item: str, value: str):
-        if item not in self.fieldnames():
+        if item not in self.all_terms():
             raise KeyError(f"'{item}' is not in the available terms of a Constraints object.")
         return setattr(self, item, value)
 

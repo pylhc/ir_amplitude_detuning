@@ -19,7 +19,6 @@ from omc3.plotting.utils import annotations as pannot
 from omc3.plotting.utils import colors as pcolors
 from omc3.plotting.utils import style as pstyle
 
-from ir_amplitude_detuning.utilities.classes_accelerator import FieldComponent
 from ir_amplitude_detuning.utilities.constants import CIRCUIT, KNL, SETTINGS_ID
 
 if TYPE_CHECKING:
@@ -27,6 +26,8 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     import pandas as pd
+
+    from ir_amplitude_detuning.utilities.classes_accelerator import FieldComponent
 
 LOG = logging.getLogger(__name__)
 
@@ -58,18 +59,20 @@ def plot_correctors(
     """
     # STYLE -------
     manual = {
-        "figure.figsize": kwargs.pop('figsize', [5.2, 4.8]),
+        "figure.figsize": [5.2, 4.8],
         "markers.fillstyle": "none",
         "grid.alpha": 0,
         "savefig.format": "pdf",
     }
+    manual.update(kwargs.pop('manual_style', {}))
+    plot_styles: Iterable[Path | str] = kwargs.pop('plot_styles', 'standard')
+    pstyle.set_style(plot_styles, manual)
 
     lim: tuple[float, float] | None = kwargs.pop('lim', None)
     ncol: int = kwargs.pop('ncol', 2)
-    plot_styles: Iterable[Path | str] = kwargs.pop('plot_styles', 'standard')
 
-    manual.update(kwargs)
-    pstyle.set_style(plot_styles, manual)
+    if kwargs:
+        raise ValueError(f"Unknown keyword arguments: {', '.join(kwargs.keys())}")
 
     if not isinstance(ids, dict):
         ids = {id_: id_ for id_ in ids}

@@ -13,7 +13,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import TypeAlias
 
-from ir_amplitude_detuning.utilities.misc import StrEnum
+from ir_amplitude_detuning.utilities.common import StrEnum
 
 LOG = logging.getLogger(__name__)
 

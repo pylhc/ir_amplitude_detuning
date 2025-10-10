@@ -19,19 +19,16 @@ from ir_amplitude_detuning.detuning.measurements import scaled_detuningmeasureme
 from ir_amplitude_detuning.lhc_detuning_corrections import (
     LHCBeams,
     calculate_corrections,
-    check_corrections_ptc,
     check_corrections_analytically,
+    check_corrections_ptc,
     create_optics,
     get_nominal_optics,
 )
-from ir_amplitude_detuning.plotting.compare_measurements import plot_measurements, MeasurementSetup
-
-from ir_amplitude_detuning.plotting.detuning import (
-    plot_detuning_ips,
-)
 from ir_amplitude_detuning.plotting.correctors import plot_correctors
+from ir_amplitude_detuning.plotting.detuning import MeasurementSetup, plot_measurements
+from ir_amplitude_detuning.plotting.utils import get_full_target_labels
 from ir_amplitude_detuning.simulation.lhc_simulation import LHCCorrectors
-from ir_amplitude_detuning.utilities import latex
+from ir_amplitude_detuning.simulation.results_loader import get_detuning_change_ptc
 from ir_amplitude_detuning.utilities.classes_accelerator import (
     FieldComponent,
     fill_corrector_masks,
@@ -40,8 +37,8 @@ from ir_amplitude_detuning.utilities.classes_targets import (
     Target,
     TargetData,
 )
+from ir_amplitude_detuning.utilities.common import Container, dict_diff
 from ir_amplitude_detuning.utilities.logging import log_setup
-from ir_amplitude_detuning.utilities.misc import get_diff, detuning_short_to_planes
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -49,18 +46,13 @@ if TYPE_CHECKING:
 
 # Define Machine Data
 # -------------------
-
-class LHCSimulationParameters:
+class LHCSimulationParameters(Container):
     beams: tuple[int, int] = 1, 4
     year: int = 2022
     outputdir: Path = Path("commissioning2022")
     xing: dict[str, str | float] = {'scheme': 'flat', 'on_x1_v': -150, 'on_x5_h': 150}  # scheme: all off ("flat") apart from IP1 and IP5
-    tune_x: float = 62.28,  # horizontal tune
-    tune_y: float = 60.31,  # vertical tune
-
-    @classmethod
-    def as_dict(cls) -> dict[str, int | float | str]:
-        return {k: getattr(cls, k) for k in cls.__annotations__}
+    tune_x: float = 62.28  # horizontal tune
+    tune_y: float = 60.31  # vertical tune
 
 
 # Fill in measurement data in 10^3 m^-1
@@ -74,8 +66,6 @@ MEAS_FULL = {
     1: scaled_detuningmeasurement(X10=(20, 4), X01=(43, 4), Y01=(-10, 3)),
     2: scaled_detuningmeasurement(X10=(26, 0.8), X01=(-27, 4), Y01=(18, 7)),
 }
-
-
 
 
 # Steps of calculations --------------------------------------------------------
@@ -104,7 +94,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
             data=[
                 TargetData(
                     correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(1, 5)),
-                    detuning=get_diff(MEAS_FLAT, MEAS_FULL),
+                    detuning=dict_diff(MEAS_FLAT, MEAS_FULL),
                     optics=get_nominal_optics(lhc_beams, outputdir=LHCSimulationParameters.outputdir),
                 ),
             ]
@@ -119,7 +109,7 @@ def simulation():
     Here:
     IP1 and IP5 crossing active.
     """
-    return create_optics(**LHCSimulationParameters.as_dict())
+    return create_optics(**LHCSimulationParameters)
 
 
 def do_correction(lhc_beams: LHCBeams | None = None):
@@ -145,13 +135,19 @@ def check_correction(lhc_beams: LHCBeams | None = None):
     """ Check the corrections via PTC. """
     check_corrections_ptc(
         lhc_beams=lhc_beams,
-        **LHCSimulationParameters.as_dict(),  # apart form outputdir only used if lhc_beams is None
+        **LHCSimulationParameters,  # apart form outputdir only used if lhc_beams is None
     )
 
 
-def plot_measured():
-    """ Plot the measured detuning values. """
-    diff = get_diff(MEAS_FULL, MEAS_FLAT)
+def plot_detuning_comparison():
+    """ Plot the measured detuning values.
+    As well as the target (i.e. the detuning that should be compensated) and the reached detuning values by the correction."""
+    target = get_targets()[0]  # only one target here
+    ptc_diff = get_detuning_change_ptc(
+        LHCSimulationParameters.outputdir,
+        ids=[target.name],
+        beams=LHCSimulationParameters.beams
+    )
     for beam in (1, 2):
         setup = [
             MeasurementSetup(
@@ -159,87 +155,49 @@ def plot_measured():
                 measurement=MEAS_FLAT[beam],
             ),
             MeasurementSetup(
-                label="Full Crossing",
+                label="Full X-ing",
                 measurement=MEAS_FULL[beam],
             ),
             MeasurementSetup(
-                label="Difference",
-                measurement=diff[beam],
+                label="Delta",
+                measurement=-target.data[0].detuning[beam],
+                simulation=-ptc_diff[target.name][beam],
+            ),
+            MeasurementSetup(
+                label="Expected",
+                measurement=-(target.data[0].detuning[beam] - ptc_diff[target.name][beam]),  # keep order to keep errorbars
             ),
         ]
-        fig = plot_measurements(setup)
-        fig.savefig(LHCSimulationParameters.outputdir / f"measurements_b{beam}.pdf")
+        style_adaptions = {
+            "figure.figsize": [7.0, 3.0],
+            "legend.handletextpad": 0.4,
+            "legend.columnspacing": 1.0,
+        }
+        fig = plot_measurements(setup, ylim=[-55, 55], average=True, ncol=4, manual_style=style_adaptions)
+        fig.savefig(LHCSimulationParameters.outputdir / f"plot.ampdet_comparison.b{beam}.pdf")
 
-
-def get_plot_labels(nchar: int = 13, scale: float = 1e-3) -> dict[str, str]:
-    targets = get_targets()
-
-    ids = [targets[0].name]
-    target_data = targets[0].data[0]  # only one in this setup
-
-    scaled_values = {
-        term: (target_data.detuning[1][term]*scale, target_data.detuning[2][term]*scale) for term in target_data.detuning[1].terms()
-    }
-    labels = [
-        "\n".join([
-            f"${latex.dqd2j(*detuning_short_to_planes(term))}$ = {f'{values[0].value: 2.1f} | {values[1].value: 2.1f}'.center(nchar)}"
-            for term, values in scaled_values.items()
-        ])
-    ]
-    return dict(zip(ids, labels))
 
 
 def plot_corrector_strengths():
     outputdir = LHCSimulationParameters.outputdir
+    target = get_targets()[0]  # only one target here
     ips = '15'
     fig = plot_correctors(
         outputdir,
-        ids=get_plot_labels(),
+        ids={target.name: "Feed-Down Correction"},
         corrector_pattern=LHCCorrectors.b6.circuit_pattern.format(side="[LR]", ip=f"[{ips}]").replace(".", r"\."),
         field=FieldComponent.b6,
         beam=1,  # does not matter as the same correctors are used for both beams
     )
-    fig.savefig(outputdir / f"correctors_ip{ips}.pdf")
-
-
-def plotting():
-    outputdir = LHCSimulationParameters.outputdir
-
-    targets = get_targets()
-    ids = [f"{target.name}_b6" for target in targets]
-    scaled = [{term: targets[0].data[0][b][term]*1e-3 for term in terms} for b in (1, 2)]
-    labels = [
-        "\n".join([
-            f"{latex.dqd2j(term[0], action_map[term[1:]])} = {f'{scaled[0][term]:.1f} | {scaled[1][term]}'.center(nchar)}"
-            for term in terms
-            ]
-        )
-    ]
-
-    output_id = "_corrections"
-    plot_detuning_ips(
-        outputdir,
-        ids=ids,
-        labels=labels,
-        fields="b6",
-        size=[6, 3.9],
-        measurement=measurement,
-        beams=(1, 4),
-        ylims={1: [-62, 62], 2: [-3, 3]},
-        tickrotation=0,
-        output_id=output_id,
-        alternative="separate",  # "separate", "normal"
-        delta=True,
-    )
+    fig.savefig(outputdir / f"plot.b6_correctors.ip{ips}.pdf")
 
 
 
 if __name__ == '__main__':
     log_setup()
-    lhc_beams = None
-    # lhc_beams = simulation()
-    # do_correction(lhc_beams=lhc_beams)
-    # check_correction(lhc_beams=lhc_beams)
-    # plot_measured()
+    lhc_beams = None  # in case you want to skip the simulation
+    lhc_beams = simulation()
+    do_correction(lhc_beams=lhc_beams)
+    check_correction(lhc_beams=lhc_beams)
+    plot_detuning_comparison()
     plot_corrector_strengths()
-    # plotting()

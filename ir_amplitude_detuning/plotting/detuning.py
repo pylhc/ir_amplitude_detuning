@@ -1,383 +1,187 @@
 from __future__ import annotations
 
 import logging
-import re
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-import numpy as np
-import pandas as pd
-import tfs
 from matplotlib import pyplot as plt
-from matplotlib.lines import Line2D
-from matplotlib.patches import Patch
 from omc3.plotting.utils import annotations as pannot
 from omc3.plotting.utils import colors as pcolors
 from omc3.plotting.utils import style as pstyle
-from omc3.plotting.utils.lines import MarkerList
 
-from ir_amplitude_detuning.detuning.measurements import FirstOrderTerm, SecondOrderTerm
-from ir_amplitude_detuning.simulation.common import get_detuning_from_ptc_output
+from ir_amplitude_detuning.detuning.measurements import Detuning, DetuningMeasurement, MeasureValue
 from ir_amplitude_detuning.utilities import latex
-from ir_amplitude_detuning.utilities.classes_accelerator import FieldComponent
-from ir_amplitude_detuning.utilities.constants import AMPDET_CALC_ID, AMPDET_ID, NOMINAL_ID
-from ir_amplitude_detuning.utilities.latex import XLABEL_MAP, YLABEL_MAP
-from ir_amplitude_detuning.utilities.misc import to_loop
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Sequence
-    from pathlib import Path
+    from collections.abc import Sequence
 
-LOG = logging.getLogger(__name__)  # setup in main()
-
-
-SETTINGS_ID_MAP = {"corrected": "mcx_b1b4"}
+LOG = logging.getLogger(__name__)
 
 
-BEAMS = 1, 4
+@dataclass
+class MeasurementSetup:
+    label: str
+    measurement: DetuningMeasurement
+    simulation: Detuning = None
+    color: str = None
 
-ALL_IDS = list(XLABEL_MAP.keys())
-
-FIELDS: str = "FIELDS"
-IP: str = "IP"
-
-COLOR_MARKER_MAP = dict(zip(
-        XLABEL_MAP.keys(),
-        [
-            # b5b6
-            (pcolors.change_color_brightness(pcolors.get_mpl_color(0), 1.0), "o"),
-            (pcolors.change_color_brightness(pcolors.get_mpl_color(1), 1.0), "o"),
-            (pcolors.change_color_brightness(pcolors.get_mpl_color(2), 1.0), "o"),
-            # Nominal
-            ("k", "o"),
-        ],
-    ))
-
-def get_scaling(term: str) -> float:
-    exponent = {1: 3, 2: 12}[int(term[1]) + int(term[2])]
-    scaling = 10**-exponent
-    return exponent, scaling
+    def get_color(self, idx: int):
+        if self.color is not None:
+            return self.color
+        return pcolors.get_mpl_color(idx)
 
 
-def load_calculated_detuning(folder: Path, beam: int, id_: str) -> tfs.TfsDataFrame:
-    return load_detuning(folder, beam, id_, AMPDET_CALC_ID)
+def get_ylabel(rescale: int = 0, delta: bool = False) -> str:
+    """ Generate a y-axis label for the plot.
+
+    Args:
+        rescale (int, optional): The rescaling factor for the y-axis.
+        delta (bool, optional): Indicate if the data is a "detuning shift" e.g. difference between two setups;
+                                adds a "Delta" prefix.
+    """
+    rescale_str = f"10$^{rescale:d}$ " if rescale else ""
+    delta_str = r"$\Delta$" if delta else ""
+    return f"{delta_str}Q$_{{a,b}}$ [{rescale_str}m$^{{-1}}$]"
 
 
-def load_simulated_detuning(folder: Path, beam: int, id_: str) -> pd.DataFrame:
-    df = load_detuning(folder, beam, id_, AMPDET_ID)
-    series = get_detuning_from_ptc_output(df, beam=None, log=False, terms=list(FirstOrderTerm) + list(SecondOrderTerm))
-    return series.to_frame().T
+def get_defined_detuning_terms(measurements: Sequence[MeasurementSetup]):
+    """ Get all terms for which at least one measurement has a value. """
+    terms = list(DetuningMeasurement.all_terms())
+    for term in DetuningMeasurement.all_terms():
+        if all(getattr(m.measurement, term) is None for m in measurements):
+            terms.remove(term)
+    return terms
 
 
-def load_detuning(folder: Path, beam: int, id_: str, type_: str):
-    glob = f"{type_}.*.b{beam}.{id_}.tfs"
-    for filename in folder.glob(glob):
-        return tfs.read(filename)
-    raise FileNotFoundError(f"No file matching '{glob}' in {folder}.")
+def plot_measurements(measurements: Sequence[MeasurementSetup], **kwargs):
+    """ Plot multiple measurements on the same plot.
 
+    Args:
+        measurements (Sequence[MeasurementSetup]): List of MeasurementSetup objects to plot.
 
-
-def get_calc_detuning_for_ip(folder: Path, beam: int, id_: str, ip: str) -> pd.DataFrame:
-    df = load_calculated_detuning(folder, beam, id_)
-    ip_mask = df[IP] == ip
-    return df.loc[ip_mask, :].set_index(FIELDS, drop=True)
-
-
-def get_calc_detuning_for_field(folder: Path, beam: int, id_: str, fields: Iterable[FieldComponent] | FieldComponent
-    ) -> pd.DataFrame:
-    df = load_calculated_detuning(folder, beam, id_)
-
-    if not isinstance(fields, FieldComponent):
-        fields = ''.join(sorted(fields))
-
-    fields_mask = df[FIELDS] == fields
-    return df.loc[fields_mask, :].set_index(IP, drop=True)
-
-
-def subtract_detuning(detuning_a: dict[int, pd.DataFrame], detuning_b: dict[int, pd.DataFrame]):
-    return {beam: detuning_a[beam] - detuning_b[beam] for beam in detuning_a}
-
-
-def get_all_detuning_data_for_ip(folder: Path, ids: Iterable[str], beams: Iterable[int], ip: str
-    ) -> tuple[dict[str, dict[int, pd.DataFrame]], dict[str, dict[int, pd.DataFrame]]]:
-    """ Load and sort the detuning data for a given IP."""
-    ptc_data = {id_: {beam: load_simulated_detuning(folder, beam, id_) for beam in beams} for id_ in ids}
-    nominal_data = {beam: load_simulated_detuning(folder, beam, NOMINAL_ID) for beam in beams}
-
-    calculated_data = {id_: {beam: get_calc_detuning_for_ip(folder, beam, id_, ip) for beam in beams} for id_ in ids}
-
-    for id_ in ids:
-        ptc_data[id_] = subtract_detuning(ptc_data[id_], nominal_data)
-        calculated_data[id_] = subtract_detuning(calculated_data[id_], nominal_data)
-
-    return ptc_data, calculated_data
-
-
-def get_all_detuning_data_for_field(
-    folder: Path,
-    ids: Iterable[str],
-    beams: Iterable[int],
-    fields: Iterable[FieldComponent] | FieldComponent
-    ) -> tuple[dict[str, dict[int, pd.DataFrame]], dict[str, dict[int, pd.DataFrame]]]:
-    """ Load and sort the detuning data for a given set of fields."""
-    ptc_data = {id_: {beam: load_simulated_detuning(folder, beam, id_) for beam in beams} for id_ in ids}
-    nominal_data = {beam: load_simulated_detuning(folder, beam, NOMINAL_ID) for beam in beams}
-
-    calculated_data = {id_: {beam: get_calc_detuning_for_field(folder, beam, id_, fields) for beam in beams} for id_ in ids}
-
-    for id_ in ids:
-        ptc_data[id_] = subtract_detuning(ptc_data[id_], nominal_data)
-        calculated_data[id_] = subtract_detuning(calculated_data[id_], nominal_data)
-
-    return ptc_data, calculated_data
-
-
-def get_color_for_field(field: FieldComponent):
-    match field:
-        case FieldComponent.b5:
-            return pcolors.get_mpl_color(4)
-        case FieldComponent.b6:
-            return pcolors.get_mpl_color(2)
-        case FieldComponent.b4:
-            return pcolors.get_mpl_color(1)
-
-
-
-def plot_detuning_by_fields(
-    folder: Path,
-    ids: Iterable[str] | dict[str, str],
-    fields: Iterable[FieldComponent],
-    ips: str,
-    measurement=None,
-    **kwargs):
-
-    # STYLE -------
-    size = kwargs.pop('size', None)
-    if not size:
-        fig_width = 0.8 * len(ids)
-        min_width = 4.8 + 2*bool(measurement)
-        if fig_width < min_width:
-            fig_width = min_width
-        size = [fig_width, 4.80]
-
-    manual = {
-        "figure.figsize": size,
-        "markers.fillstyle": "none",
-        "grid.alpha": 0,
-        "savefig.format": "pdf",
-    }
-
-    tickrotation: float = kwargs.pop('tickrotation', 45)
-    ylims: tuple[float, float] = kwargs.pop('ylims', None)
-    beams: tuple[int, ...] = kwargs.pop('beams', BEAMS)
-    plot_styles: Iterable[Path | str] = kwargs.pop('plot_styles', 'standard')
-
-    manual.update(kwargs)
-    pstyle.set_style(plot_styles, manual)
-
-    # Data
-    data, calculated_data = get_all_detuning_data_for_ip(folder, ids, beams, ips)
-
-    bar_width = 1/(len(beams) + 1)
-    stack_width = 0.15 * bar_width
-    xlim = [- bar_width / 2, (len(ids) - 1) + bar_width * (len(beams) + 0.5)]
-    figs = {}
-
-    all_terms = list(FirstOrderTerm) + list(SecondOrderTerm)
-    for term in all_terms:
-        scale_exponent, scaling = get_scaling(term)
-        fig, ax = plt.subplots()
-        figs[term] = fig
-
-        # plot zero line
-        ax.axhline(0, color="black", lw=1, ls="-", marker="", zorder=0)
-
-        # plot separation lines
-        for idx, id_ in enumerate(ids):
-            if not idx:
-                continue
-            ax.axvline(idx-bar_width/2, ls="--", lw=1, color="black", alpha=0.2, marker="", zorder=-5)
-
-        for idx_beam, beam in enumerate(beams):
-            color = pcolors.get_mpl_color(idx_beam)
-
-            # plot measurement
-            meas_val, meas_err = None, None
-            if measurement:
-                try:
-                    meas_val, meas_err = measurement[beam][term]
-                except KeyError:
-                    pass
-                else:
-                    ax.axhspan(ymin=meas_val-meas_err, ymax=meas_val+meas_err, color=color, alpha=0.3)
-
-            for idx_id, id_name in enumerate(ids):
-                x_pos = idx_id + bar_width * (idx_beam + 0.5)
-
-                # Plot calculated Data ---
-                loop_fields: list[str] = to_loop(sorted(fields))
-                field_strings: list[str] = [''.join(map(str, fs)) for fs in loop_fields]
-
-                # Individual contributions per field component
-                for field in field_strings[1:]:
-                    y_pos = calculated_data[id_name][beam].loc[field, term] * scaling
-                    ax.bar(
-                        x_pos, y_pos, stack_width, bottom=0,
-                        label=f"_{beam}.{id_name}.{field}",
-                        color=get_color_for_field(field), alpha=0.3
-                    )
-
-                # Total contribution
-                y_pos = calculated_data[id_name][beam].loc[field_strings[0], term] * scaling
-                ax.plot(x_pos, y_pos, ls="none", marker="x", color=color, alpha=0.5)
-
-                # Plot PTC Data
-                y_pos = data[id_name][beam][term] * scaling
-                ax.plot(x_pos, y_pos, marker='o', color=color, label=f'_b{beam}.{id_name}')
-
-        ax.set_ylabel(latex.ylabel_from_detuning_term(term, scale_exponent))
-        ax.set_xticks(np.arange(len(ids)) + (bar_width * len(beams)) / 2)
-
-        ax.set_xticklabels(ids.values(), rotation=tickrotation)
-        ax.set_xlim(xlim)
-        ax.set_ylim(ylims)
-
-        fig.canvas.manager.set_window_title(f"ampdet.{term}")
-    return figs
-
-
-def plot_detuning_ips(folder, ids, fields='b6', labels=None, measurement=None, output_id='', **kwargs):
-    # STYLE -------
-    size = kwargs.pop('size', None)
-    delta = kwargs.pop('delta', False)
-    if not size:
-        fig_width = 0.8 * len(ids)
-        min_width = 4.8 + 2*bool(measurement)
-        if fig_width < min_width:
-            fig_width = min_width
-        size = [fig_width, 4.80]
-
-    manual = {
-        "figure.figsize": size,
-        "legend.columnspacing": 1,
-        "legend.handlelength": 1.5,
-        "markers.fillstyle": "none",
-        "grid.alpha": 0,
-        "savefig.format": "pdf",
+    Keyword Args (optional):
+        manual_style (dict): Dictionary of matplotlib style settings.
+        is_shift (bool): Indicate if the given data is a "detuning shift" e.g. difference between two setups.
+                         This simply adds a "Delta" prefix to the y-axis label, if no label is given.
+        ylim (Sequence[float, float]): y-axis limits.
+        rescale (int): Exponent of the scaling factor.
+                       (e.g. 3 to give data in units of 10^3, which multiplies the data by 10^-3)
+                       Default: 3.
+        ncol (int): Number of columns in the plot.
+        average (bool | str): Add an average values to the plot,
+                              Can be "rms", "weighted_rms", "mean", "weighted_mean".
+                              The default for `True` is "weighted_rms".
+                              Default: False.
+    """
+    # Set Style ---
+    manual_style = {
+        "figure.figsize": [6.50, 3.0],
+        "figure.subplot.left": 0.12,
+        "figure.subplot.bottom": 0.15,
+        "figure.subplot.right": 0.99,
+        "figure.subplot.top": 0.77,
+        "errorbar.capsize": 5,
+        "lines.marker": "x",
+        "lines.markersize": 4,
+        "axes.grid": False,
         "ytick.minor.visible": True,
     }
+    manual_style.update(kwargs.pop('manual_style', {}))
+    pstyle.set_style(kwargs.pop("style", "standard"), manual_style)
 
-    tickrotation: np.numeric = kwargs.pop('tickrotation', 45)
-    ylims: np.numeric = kwargs.pop('ylims', None)
-    beams: np.numeric = kwargs.pop('beams', BEAMS)
-    alternative: str = kwargs.pop('alternative', 'normal')
-    plot_styles: Iterable[Path | str] = kwargs.pop('plot_styles', 'standard')
+    rescale: int = kwargs.pop('rescale', 3)
+    is_shift: bool = kwargs.pop("is_shift", False)
+    ylabel: str = kwargs.pop("ylabel", get_ylabel(rescale=rescale, delta=is_shift))
+    ylim: Sequence[float, float] = kwargs.pop("ylim")
+    ncol: int = kwargs.pop('ncol', 3)
+    average: str | bool = kwargs.pop('average', False)
 
-    manual.update(kwargs)
-    pstyle.set_style(plot_styles, manual)
+    if kwargs:
+        raise ValueError(f"Unknown keyword arguments: {kwargs.keys()}")
 
-    # Data
-    data, calculated_data = get_all_detuning_data(folder, ids, beams, for_ips=True)
+    # Prepare Constatns ---
+    detuning_terms = get_defined_detuning_terms(measurements)
+    n_components = len(detuning_terms) + bool(average)
+    n_measurements = len(measurements)
+    measurement_width = 1 / (n_measurements + 1)
+    bar_width = measurement_width * 0.15
+    rescale_value = 10**-rescale
 
-    bar_width = 1/(len(beams) + 1)
-    stack_width = 0.15 * bar_width
-    xlim = [- bar_width / 2, (len(ids) - 1) + bar_width * (len(beams) + 0.5)]
-    figs = dict.fromkeys(YLABEL_MAP.keys())
+    # Generate Plot ---
+    fig, ax = plt.subplots()
 
-    color_ip1 = pcolors.get_mpl_color(4)
-    color_ip5 = pcolors.get_mpl_color(2)
+    # plot lines
+    ax.axhline(0, color="black", lw=1, ls="-", marker="", zorder=-10)  # y = 0
+    for idx in range(1, n_components):
+        ax.axvline(idx, color="grey", lw=1, ls="--", marker="", zorder=-10)  # split components
 
-    for term in YLABEL_MAP:
-        order = sum(int(c) for c in term[1:])
-        scale = SCALE[order]
-        fig, ax = plt.subplots()
-        figs[term] = fig
+    for idx_measurement, measurement_setup in enumerate(measurements):
+        for idx_component, detuning_component in enumerate(detuning_terms):
+            x_pos = idx_component + (idx_measurement + 1) * measurement_width
+            label_prefix = f"_{detuning_component}" if idx_component else ""
 
-        # plot zero line
-        ax.axhline(0, color="black", lw=1, ls="-", marker="", zorder=0)
+            measurement: MeasureValue = getattr(measurement_setup.measurement, detuning_component)
+            if measurement is not None:
+                measurement = measurement * rescale_value
+                ax.errorbar(x=x_pos, y=measurement.value,
+                            yerr=measurement.error,
+                            label=f"{label_prefix}{measurement_setup.label}",
+                            color=measurement_setup.get_color(idx_measurement),
+                            elinewidth=1,  # looks offset otherwise
+                            ls="",  # for the legend only
+                            )
 
-        # plot separation lines
-        for idx, id_ in enumerate(ids):
-            if not idx:
-                continue
-            ax.axvline(idx-bar_width/2, ls="--", lw=1, color="black", alpha=0.2, marker="", zorder=-5)
+            if measurement_setup.simulation is not None:
+                simulation : Detuning = getattr(measurement_setup.simulation, detuning_component)
+                if simulation is not None:
+                    simulation = simulation * rescale_value
+                    ax.bar(
+                        x=x_pos, height=simulation,
+                        width=bar_width, bottom=0,
+                        label=f"_{detuning_component}{measurement_setup.label}_sim",
+                        color=measurement_setup.get_color(idx_measurement),
+                        alpha=0.3,
+                    )
 
-        for idx_beam, beam in enumerate(beams):
-            color = pcolors.get_mpl_color(idx_beam)
+        av_label = []
+        if average:
+            meas_values = [getattr(measurement_setup.measurement, detuning_component) for detuning_component in DetuningMeasurement.all_terms()]
+            meas_values = [mv for mv in meas_values if mv is not None]
+            if average is True:
+                average = "weighted_rms"
 
-            # plot measurement
-            meas_val, meas_err = None, None
-            if measurement:
-                try:
-                    meas_val, meas_err = measurement[beam][term].to_list()
-                except KeyError:
-                    pass
-                else:
-                    ax.axhspan(ymin=(meas_val-meas_err)*scale, ymax=(meas_val+meas_err)*scale, color=color, alpha=0.3)
+            match average:
+                case "rms":
+                    av_meas: MeasureValue = MeasureValue.rms(meas_values) * rescale_value
+                    av_label = "RMS"
+                case "weighted_rms":
+                    av_meas: MeasureValue = MeasureValue.weighted_rms(meas_values) * rescale_value
+                    av_label = "RMS"
+                case "mean":
+                    av_meas: MeasureValue = MeasureValue.mean(meas_values) * rescale_value
+                    av_label = "Mean"
+                case "weighted_mean":
+                    av_meas: MeasureValue = MeasureValue.weighted_mean(meas_values) * rescale_value
+                    av_label = "Mean"
 
-            for idx_id, id_name in enumerate(ids):
-                x_pos = idx_id + bar_width * (idx_beam + 0.5)
+            LOG.debug(f"{measurement_setup.label} RMS: {str(av_meas)}")
 
-                # Plot calculated Data:
-                calc = {f: calculated_data[beam][id_name].loc[f, term]*scale for f in ("5", "1", "all")}
-                if alternative == 'normal':
-                    ax.bar(x_pos, calc["5"], stack_width, bottom=0, label=f"_{beam}.{id_name}.ip5", color=color_ip5, alpha=0.3)
-                    ax.bar(x_pos, calc["1"], stack_width, bottom=calc["5"], label=f"_{beam}.{id_name}.ip1", color=color_ip1, alpha=0.3)
-                    ax.plot(x_pos, calc["all"], ls="none", marker="_", color=color, alpha=0.3)
-                elif alternative == 'separate':
-                    ax.bar(x_pos, calc["5"], stack_width, bottom=0, label=f"_{beam}.{id_name}.ip5", color=color_ip5, alpha=0.3)
-                    ax.bar(x_pos, calc["1"], stack_width, bottom=0, label=f"_{beam}.{id_name}.ip1", color=color_ip1, alpha=0.3)
-                    ax.plot(x_pos, calc["all"], ls="none", marker="x", color=color, alpha=0.5)
+            x_pos = n_components - 1 + (idx_measurement + 1) * measurement_width
+            ax.errorbar(x=x_pos, y=av_meas.value,
+                        # yerr=rms.error,
+                        label=f"_{measurement_setup.label}{av_label}",
+                        color=measurement_setup.get_color(idx_measurement),
+                        elinewidth=1,  # looks offset otherwise
+                        ls="",  # for the legend only
+                        )
+            av_label = [av_label]
 
+    ax.set_ylabel(ylabel)
+    ax.set_ylim(ylim)
 
-                y_pos = data[beam][id_name][term] * scale
-                ax.plot(x_pos, y_pos, marker='o', color=color, label=f'_b{beam}.{id_name}')
+    ax.set_xticks([x + 0.5 for x in range(n_components)])
+    ax.set_xticklabels([f"${latex.term2dqdj(term)}$" for term in detuning_terms] + av_label)
+    ax.set_xlim([0, n_components])
 
-
-        if delta:
-            ax.set_ylabel(fr"$\Delta {YLABEL_MAP[term][1:]}")
-            ax.tick_params(axis="x", pad=12)  # to be able to remove cross-term ticklabels in latex
-        else:
-            ax.set_ylabel(YLABEL_MAP[term])
-
-        ax.set_xticks(np.arange(len(ids)) + (bar_width * len(beams)) / 2)
-        if labels is None:
-            ax.set_xticklabels([XLABEL_MAP[c] for c in ids], rotation=tickrotation)
-        else:
-            ax.set_xticklabels(labels, rotation=tickrotation)
-        ax.set_xlim(xlim)
-        ax.set_ylim(ylims[order])
-
-        empty = Line2D([0], [0], ls='none', marker='', label='')
-        b1_color = pcolors.get_mpl_color(0)
-        b2_color = pcolors.get_mpl_color(1)
-
-        if alternative == 'normal':
-            pannot.make_top_legend(ax, ncol=3 + bool(measurement), frame=False,
-                                   handles=[
-                                               Line2D([0], [0], marker='', ls='none', color=b1_color, label='Beam 1'),
-                                               Line2D([0], [0], marker='', ls='none', color=b2_color, label='Beam 2'),
-                                               Line2D([0], [0], marker='o', ls='none', color=b1_color, label='PTC'),
-                                               Line2D([0], [0], marker='o', ls='none', color=b2_color, label='PTC'),
-                                           ]
-                                           + ([Patch(facecolor=b1_color, edgecolor=b1_color, alpha=0.3, label='Measured'), Patch(facecolor=b2_color, edgecolor=b2_color, alpha=0.3, label='Measured')] if measurement else [])
-                                           + [Patch(facecolor=color_ip5, edgecolor=color_ip5, label='IP5', alpha=0.3), Patch(facecolor=color_ip1, edgecolor=color_ip1, alpha=0.3, label='IP1')],
-                                   )
-        elif alternative == 'separate':
-            pannot.make_top_legend(ax, ncol=4 + bool(measurement), frame=False,
-                                   handles=[
-                                               Line2D([0], [0], marker='', ls='none', color=b1_color, label='Beam 1'),
-                                               Line2D([0], [0], marker='', ls='none', color=b2_color, label='Beam 2'),
-                                               Line2D([0], [0], marker='o', ls='none', color=b1_color, label='PTC'),
-                                               Line2D([0], [0], marker='o', ls='none', color=b2_color, label='PTC'),
-                                               Line2D([0], [0], marker='x', ls='none', color=b1_color, label='Eq.'),
-                                               Line2D([0], [0], marker='x', ls='none', color=b2_color, label='Eq.'),
-                                           ]
-                                           + ([Patch(facecolor=b1_color, edgecolor=b1_color, alpha=0.3, label='Measured'), Patch(facecolor=b2_color, edgecolor=b2_color, alpha=0.3, label='Measured')] if measurement else [])
-                                           + [Patch(facecolor=color_ip5, edgecolor=color_ip5, label='IP5', alpha=0.3), Patch(facecolor=color_ip1, edgecolor=color_ip1, alpha=0.3, label='IP1')],
-                                   )
-
-        fig.canvas.manager.set_window_title(f"ampdet.ips_{term}{output_id or ''}")
-        if output_id is not None:
-            fig.savefig(folder / f"plot.{fig.canvas.get_default_filename()}")
-    # plt.show()
-    return figs
+    pannot.make_top_legend(ax, ncol=ncol, frame=False)
+    return fig

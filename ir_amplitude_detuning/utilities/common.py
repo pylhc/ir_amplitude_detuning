@@ -25,6 +25,29 @@ class StrEnum(str, Enum):
         return self.value
 
 
+class ContainerMeta(type):
+    """ MetaClass to store data in class attributes.
+    Minimal implementation to make this usable as a 'Mapping', i.e. dict-like.
+    """
+    def __getitem__(cls, key):
+        return cls.__dict__[key]
+
+    def __iter__(cls):
+        # everything in the class, but ignore all private attributes and functions/attributes defined here
+        return iter(key for key in cls.__dict__ if not key.startswith("_") and key not in ContainerMeta.__dict__)
+
+    def __len__(cls):
+        return len(tuple(cls.__iter__()))
+
+    def keys(cls):
+        return cls.__iter__()
+
+
+class Container(metaclass=ContainerMeta):
+    """ Convenience wrapper to inherit directly, instead of using a metaclass. """
+    ...
+
+
 class BeamDict(dict):
     __default_when_missing__: callable | None = None
 
@@ -36,16 +59,18 @@ class BeamDict(dict):
             return self[2]
 
         if self.__default_when_missing__ is not None:
-            return self.__default_when_missing__()
+            return self.__default_when_missing__()  # e.g. used to return an empty instance
 
         raise KeyError(f"Beam {key} not defined.")
 
     @classmethod
-    def from_dict(cls, d: dict[int, Any], default=None):
+    def from_dict(cls, d: dict[int, Any], default: callable = None):
         obj = cls(d)
         obj.__default_when_missing__ = default
         return obj
 
+
+# Looping Related Utilities -----------------------------------------------------
 
 def to_loop(iterable: Iterable[Any]) -> list[Iterable[int]]:
     """ Get a list to loop over.
@@ -68,7 +93,7 @@ def to_loop(iterable: Iterable[Any]) -> list[Iterable[int]]:
     return combined + [[entry] for entry in iterable]
 
 
-# Convenience functions to loop over dicts ---
+# Loop over dicts ---
 
 class Addable(Protocol):
     def __add__(self, other):
@@ -80,20 +105,20 @@ class Subtractable(Protocol):
         ...
 
 
-def get_sum( a: dict[Any, Addable], b: dict[Any, Addable]) -> dict[Any, Addable]:
+def dict_sum(a: dict[Any, Addable], b: dict[Any, Addable]) -> dict[Any, Addable]:
     """ Add the values of two dicts for each entry in a.
     Assumes all keys in a are present in b.
     """
     return {key: a[key] + b[key] for key in a}
 
 
-def get_diff( a: dict[Any, Subtractable], b: dict[Any, Subtractable]) -> dict[Any, Subtractable]:
+def dict_diff(a: dict[Any, Subtractable], b: dict[Any, Subtractable]) -> dict[Any, Subtractable]:
     """ Subtract the values of meas_b from meas_a for each entry in the dicts.
     Assumes all keys in a are present in b.
     """
     return {key: a[key] - b[key] for key in a}
 
 
-def get_detuning(meas: dict[Any, DetuningMeasurement]) -> dict[Any, Detuning]:
+def get_dict_detuning(meas: dict[Any, DetuningMeasurement]) -> dict[Any, Detuning]:
     """ Get detuning values (i.e. without errors) from the measurement data for each of the items in meas."""
     return {key: meas[key].get_detuning() for key in meas}

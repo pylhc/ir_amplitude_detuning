@@ -270,8 +270,6 @@ def detuning_tfs_out_with_and_without_errors(lhc_out: LHCBeam | FakeLHCBeam, id_
             df_errors[f"{ERR}{column}"] = values.apply(lambda x: x.error).fillna(0)
             has_errors = has_errors or df_errors[f"{ERR}{column}"].any()
 
-    df = df.astype(float, errors='ignore')
-    df_errors = df_errors.astype(float, errors='ignore')
     tfs.write(lhc_out.output_path(AMPDET_CALC_ID, id_), df)
     if has_errors:
         tfs.write(lhc_out.output_path(AMPDET_CALC_ERR_ID, id_), df_errors)

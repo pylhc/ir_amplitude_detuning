@@ -67,7 +67,7 @@ def ylabel_from_detuning_term(detuning_term: str, exponent: float = None) -> str
     """
     order = int(detuning_term[1]) + int(detuning_term[2])
     scale = fr" 10^{{{exponent}}} " if exponent else ""
-    return fr"${term2partial_dqdj(detuning_term)}\; [{scale}$m$^{{-{order}}}]$"
+    return fr"${term2dqdj(detuning_term)}\; [{scale}$m$^{{-{order}}}]$"
 
 
 def term2dqdj(term: str) -> str:
@@ -77,7 +77,7 @@ def term2dqdj(term: str) -> str:
         term (str): Detuning term, e.g. "X02"
     """
     tune, action = detuning_term_to_planes(term)
-    return partial_dqdj(tune, action)
+    return dqd2j(tune, action)
 
 
 def term2partial_dqdj(term: str) -> str:
@@ -87,7 +87,7 @@ def term2partial_dqdj(term: str) -> str:
         term (str): Detuning term, e.g. "X02"
     """
     tune, action = detuning_term_to_planes(term)
-    return partial_dqdj(tune, action)
+    return partial_dqd2j(tune, action)
 
 
 def detuning_term_to_planes(term: str) -> tuple[str, str]:
@@ -104,7 +104,7 @@ def detuning_term_to_planes(term: str) -> tuple[str, str]:
     return tune, action
 
 
-def partial_dqdj(tune: str, action: str) -> str:
+def partial_dqd2j(tune: str, action: str) -> str:
     r""" Latex representation of detuning term.
     Examples:
         partial_dqdj("x", "yy") -> "\partial^{2}_{y}Q_{x}".

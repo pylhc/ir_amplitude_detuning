@@ -22,7 +22,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from ir_amplitude_detuning.detuning.measurements import Constraints, Detuning
-from ir_amplitude_detuning.utilities.misc import BeamDict
+from ir_amplitude_detuning.utilities.common import BeamDict
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

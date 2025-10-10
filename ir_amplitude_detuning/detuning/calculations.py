@@ -22,7 +22,7 @@ from ir_amplitude_detuning.detuning.measurements import (
     FirstOrderTerm,
     SecondOrderTerm,
 )
-from ir_amplitude_detuning.utilities.misc import StrEnum, to_loop
+from ir_amplitude_detuning.utilities.common import StrEnum, to_loop
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
