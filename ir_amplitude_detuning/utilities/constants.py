@@ -1,3 +1,10 @@
+"""
+Constants
+---------
+
+Constants used throught the package.
+"""
+
 ERR: str = "ERR"
 KNL: str = "KNL"
 KN: str = "KN"

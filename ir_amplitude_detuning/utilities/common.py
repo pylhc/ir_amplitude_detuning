@@ -1,6 +1,8 @@
 """
-Misc Utilities
---------------
+Common Utilities
+----------------
+
+This module contains common utilities for use in other modules.
 """
 from __future__ import annotations
 

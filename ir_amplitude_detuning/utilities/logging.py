@@ -4,7 +4,6 @@ Logging
 
 Provides a basic logging setup for the package.
 """
-
 from __future__ import annotations
 
 import logging

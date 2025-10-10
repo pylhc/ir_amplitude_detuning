@@ -1,3 +1,10 @@
+"""
+Detuning Plots
+--------------
+
+Plotting utilities to compare detuning measurements and simulation results.ßß
+"""
+
 from __future__ import annotations
 
 import logging
@@ -15,13 +22,27 @@ from ir_amplitude_detuning.utilities import latex
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from matplotlib.axes import Axes
+    from matplotlib.container import ErrorbarContainer
+    from matplotlib.lines import Line2D
+
+
 LOG = logging.getLogger(__name__)
 
 
 @dataclass
 class MeasurementSetup:
+    """ Container to define different detuning measurements to plot
+    with the plot_measurements function.
+
+    Args:
+        label (str): Label for the measurement.
+        measurement (DetuningMeasurement | Detuning): Measurement to plot.
+        simulation (Detuning, optional): Simulation results to plot, corresponding to the given measurement.
+        color (str, optional): Color for the measurement.
+    """
     label: str
-    measurement: DetuningMeasurement
+    measurement: DetuningMeasurement | Detuning
     simulation: Detuning = None
     color: str = None
 
@@ -29,28 +50,6 @@ class MeasurementSetup:
         if self.color is not None:
             return self.color
         return pcolors.get_mpl_color(idx)
-
-
-def get_ylabel(rescale: int = 0, delta: bool = False) -> str:
-    """ Generate a y-axis label for the plot.
-
-    Args:
-        rescale (int, optional): The rescaling factor for the y-axis.
-        delta (bool, optional): Indicate if the data is a "detuning shift" e.g. difference between two setups;
-                                adds a "Delta" prefix.
-    """
-    rescale_str = f"10$^{rescale:d}$ " if rescale else ""
-    delta_str = r"$\Delta$" if delta else ""
-    return f"{delta_str}Q$_{{a,b}}$ [{rescale_str}m$^{{-1}}$]"
-
-
-def get_defined_detuning_terms(measurements: Sequence[MeasurementSetup]):
-    """ Get all terms for which at least one measurement has a value. """
-    terms = list(DetuningMeasurement.all_terms())
-    for term in DetuningMeasurement.all_terms():
-        if all(getattr(m.measurement, term) is None for m in measurements):
-            terms.remove(term)
-    return terms
 
 
 def plot_measurements(measurements: Sequence[MeasurementSetup], **kwargs):
@@ -120,16 +119,15 @@ def plot_measurements(measurements: Sequence[MeasurementSetup], **kwargs):
             x_pos = idx_component + (idx_measurement + 1) * measurement_width
             label_prefix = f"_{detuning_component}" if idx_component else ""
 
-            measurement: MeasureValue = getattr(measurement_setup.measurement, detuning_component)
+            measurement: MeasureValue | float = getattr(measurement_setup.measurement, detuning_component)
             if measurement is not None:
                 measurement = measurement * rescale_value
-                ax.errorbar(x=x_pos, y=measurement.value,
-                            yerr=measurement.error,
-                            label=f"{label_prefix}{measurement_setup.label}",
-                            color=measurement_setup.get_color(idx_measurement),
-                            elinewidth=1,  # looks offset otherwise
-                            ls="",  # for the legend only
-                            )
+                plot_value_or_measurement(ax,
+                    measurement=measurement,
+                    x=x_pos,
+                    label=f"{label_prefix}{measurement_setup.label}",
+                    color=measurement_setup.get_color(idx_measurement)
+                )
 
             if measurement_setup.simulation is not None:
                 simulation : Detuning = getattr(measurement_setup.simulation, detuning_component)
@@ -185,3 +183,61 @@ def plot_measurements(measurements: Sequence[MeasurementSetup], **kwargs):
 
     pannot.make_top_legend(ax, ncol=ncol, frame=False)
     return fig
+
+
+# Helper Functions -------------------------------------------------------------
+
+def get_ylabel(rescale: int = 0, delta: bool = False) -> str:
+    """ Generate a y-axis label for the plot.
+
+    Args:
+        rescale (int, optional): The rescaling factor for the y-axis.
+        delta (bool, optional): Indicate if the data is a "detuning shift" e.g. difference between two setups;
+                                adds a "Delta" prefix.
+    """
+    rescale_str = f"10$^{rescale:d}$ " if rescale else ""
+    delta_str = r"$\Delta$" if delta else ""
+    return f"{delta_str}Q$_{{a,b}}$ [{rescale_str}m$^{{-1}}$]"
+
+
+def get_defined_detuning_terms(measurements: Sequence[MeasurementSetup]) -> list[str]:
+    """ Get all terms for which at least one measurement has a value.
+
+    Args:
+        measurements (Sequence[MeasurementSetup]): The measurements to check.
+    """
+    terms = list(DetuningMeasurement.all_terms())
+    for term in DetuningMeasurement.all_terms():
+        if all(getattr(m.measurement, term) is None for m in measurements):
+            terms.remove(term)
+    return terms
+
+
+def plot_value_or_measurement(
+    ax: Axes,
+    measurement: MeasureValue | float,
+    x: float,
+    label: str = None,
+    color: str = None,
+    ) -> Line2D | ErrorbarContainer:
+    """ Plots an errorbar if the given measurement has an error,
+    otherwise a simple point.
+
+    Args:
+        ax (Axes): The axes to plot on.
+        measurement (MeasureValue | float): The measurement to plot.
+        x (float): The x-position of the measurement.
+        label (str, optional): Label for the measurement.
+        color (str, optional): Color for the measurement.
+    """
+    if hasattr(measurement, "error") and measurement.error:
+        return ax.errorbar(
+            x=x,
+            y=measurement.value,
+            yerr=measurement.error,
+            label=label,
+            color=color,
+            elinewidth=1,  # looks offset otherwise
+            ls="",
+        )
+    return ax.plot(x=x, y=measurement, label=label, color=color, ls="")

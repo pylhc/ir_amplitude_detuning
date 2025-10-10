@@ -1,3 +1,10 @@
+"""
+General Plotting Utilities
+--------------------------
+
+This module contains general utilities to help with the plotting.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

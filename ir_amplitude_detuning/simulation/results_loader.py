@@ -13,8 +13,8 @@ import tfs
 
 from ir_amplitude_detuning.detuning.calculations import FIELDS, IP
 from ir_amplitude_detuning.detuning.measurements import Detuning
-from ir_amplitude_detuning.utilities.constants import AMPDET_CALC_ID, AMPDET_ID, NOMINAL_ID
 from ir_amplitude_detuning.utilities.common import BeamDict, dict_diff
+from ir_amplitude_detuning.utilities.constants import AMPDET_CALC_ID, AMPDET_ID, NOMINAL_ID
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
