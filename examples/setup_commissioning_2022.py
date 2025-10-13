@@ -27,9 +27,12 @@ from ir_amplitude_detuning.lhc_detuning_corrections import (
 )
 from ir_amplitude_detuning.plotting.correctors import plot_correctors
 from ir_amplitude_detuning.plotting.detuning import MeasurementSetup, plot_measurements
-from ir_amplitude_detuning.plotting.utils import get_color_for_ip, get_full_target_labels
+from ir_amplitude_detuning.plotting.utils import get_color_for_ip
 from ir_amplitude_detuning.simulation.lhc_simulation import LHCCorrectors
-from ir_amplitude_detuning.simulation.results_loader import get_calculated_detuning_for_field, get_detuning_change_ptc
+from ir_amplitude_detuning.simulation.results_loader import (
+    get_calculated_detuning_for_field,
+    get_detuning_change_ptc,
+)
 from ir_amplitude_detuning.utilities.classes_accelerator import (
     FieldComponent,
     fill_corrector_masks,
@@ -50,7 +53,7 @@ if TYPE_CHECKING:
 class LHCSimulationParameters(Container):
     beams: tuple[int, int] = 1, 4
     year: int = 2022
-    outputdir: Path = Path("commissioning2022")
+    outputdir: Path = Path("2022_commissioning")
     xing: dict[str, str | float] = {'scheme': 'flat', 'on_x1_v': -150, 'on_x5_h': 150}  # scheme: all off ("flat") apart from IP1 and IP5
     tune_x: float = 62.28  # horizontal tune
     tune_y: float = 60.31  # vertical tune
@@ -75,21 +78,21 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
     """ Define the targets to be used.
 
     Here:
-    Calculate the values for the dodecapole correctors in the LHC to compensate
-    for the shift in measured detuning from the flat to the full crossing scheme
-    (i.e. crossing active in IP1 and IP5).
-    The optics used are only with crossing scheme in IP1 and IP5 active,
-    assuming zero detuning at flat-orbit in the simulation.
+        Calculate the values for the dodecapole correctors in the LHC to compensate
+        for the shift in measured detuning from the flat to the full crossing scheme
+        (i.e. crossing active in IP1 and IP5).
+        The optics used are only with crossing scheme in IP1 and IP5 active,
+        assuming zero detuning at flat-orbit in the simulation.
 
     Note:
-    The detuning target should be the opposite of the measured detuning,
-    such that the calculated correction compensates the measured detuning.
-    This is why here it is "flat-full".
+        The detuning target should be the opposite of the measured detuning,
+        such that the calculated correction compensates the measured detuning.
+        This is why here it is "flat-full".
     """
     if lhc_beams is None:
         lhc_beams = LHCSimulationParameters.beams
 
-    targets = [
+    return [
         Target(
             name="X10X01Y01_IP15",
             data=[
@@ -101,14 +104,13 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
             ]
         ),
     ]
-    return targets  # noqa: R504
 
 
 def simulation():
     """ Create LHC optics with the set crossing scheme.
 
     Here:
-    IP1 and IP5 crossing active.
+        IP1 and IP5 crossing active.
     """
     return create_optics(**LHCSimulationParameters)
 
@@ -142,9 +144,12 @@ def check_correction(lhc_beams: LHCBeams | None = None):
     )
 
 
+# Plotting ---------------------------------------------------------------------
+
 def plot_detuning_comparison():
     """ Plot the measured detuning values.
-    As well as the target (i.e. the detuning that should be compensated) and the reached detuning values by the correction."""
+    As well as the target (i.e. the detuning that should be compensated) and
+    the reached detuning values by the correction."""
     target = get_targets()[0]  # only one target here
     ptc_diff = get_detuning_change_ptc(
         LHCSimulationParameters.outputdir,
@@ -266,13 +271,14 @@ def plot_corrector_strengths():
     fig.savefig(outputdir / f"plot.b6_correctors.ip{ips}.pdf")
 
 
+# Run --------------------------------------------------------------------------
 
 if __name__ == '__main__':
     log_setup()
     lhc_beams = None  # in case you want to skip the simulation
-    # lhc_beams = simulation()
-    # do_correction(lhc_beams=lhc_beams)
-    # check_correction(lhc_beams=lhc_beams)
-    # plot_detuning_comparison()
-    # plot_corrector_strengths()
-    # plot_simulation_comparison()
+    lhc_beams = simulation()
+    do_correction(lhc_beams=lhc_beams)
+    check_correction(lhc_beams=lhc_beams)
+    plot_detuning_comparison()
+    plot_corrector_strengths()
+    plot_simulation_comparison()

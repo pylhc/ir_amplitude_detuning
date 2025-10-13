@@ -104,6 +104,11 @@ class DetuningCorrectionEquationSystem:
             new_value = pd.concat([getattr(self, attr), getattr(other, attr)], axis=0)
             setattr(self, attr, new_value)
 
+    def fillna(self) -> None:
+        """ Fill the NaN in the matrices with zeros. """
+        self.m = self.m.fillna(0.)
+        self.m_constr = self.m_constr.fillna(0.)
+
 
 def build_detuning_correction_matrix(
     target: Target,
@@ -114,12 +119,20 @@ def build_detuning_correction_matrix(
     Filtering needs to be done afterwards.
 
     Args:
+        target (Target): The target to build the equation system for.
+
+    Returns:
+        DetuningCorrectionEquationSystem: The full equation system as object defined above for the given target,
+        build from the individual equation systems for each target data.
     """
     full_eqsys = DetuningCorrectionEquationSystem.create_empty(columns=target.correctors)
+
     for target_data in target.data:
         target_data: TargetData
         eqsys = build_detuning_correction_matrix_per_entry(target_data)
         full_eqsys.append_all(eqsys)
+
+    full_eqsys.fillna()
     return full_eqsys
 
 
@@ -131,7 +144,11 @@ def build_detuning_correction_matrix_per_entry(target_data: TargetData) -> Detun
     Both beams are appended to the same system.
 
     Args:
+        target_data (TargetData): The target to build the equation system for.
 
+    Returns:
+        DetuningCorrectionEquationSystem: The equation system as object defined above,
+        but containing only the rows for the given target_data.
     """
     ips_str = ips2str(target_data.ips)
     correctors = target_data.correctors
@@ -161,6 +178,15 @@ def build_detuning_correction_matrix_per_entry(target_data: TargetData) -> Detun
 def calculate_matrix_row(beam: int, twiss: pd.DataFrame, correctors: Correctors, term: DetuningTerm) -> pd.Series:
     """ Get one row of the full matrix for one beam and one detuning term.
     This is a wrapper to select the correct function depending on the order of the term.
+
+    Args:
+        beam (int): The beam to calculate the row for.
+        twiss (pd.DataFrame): The twiss/optics of the beam.
+        correctors (Correctors): The correctors to calculate the row for.
+        term (DetuningTerm): The term to calculate the row for.
+
+    Returns:
+        pd.Series: The row of the matrix.
     """
     # Check order of amplitude detuning
     order = get_order(term)

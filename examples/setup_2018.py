@@ -7,164 +7,162 @@ and MD3311.
 
 You can find the data in https://gitlab.cern.ch/jdilly/lhc_amplitude_detuning_summary/ .
 """
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Any, Dict
+from typing import TYPE_CHECKING
 
+from ir_amplitude_detuning.detuning.calculations import Method
+from ir_amplitude_detuning.detuning.measurements import FirstOrderTerm, scaled_detuningmeasurement
+from ir_amplitude_detuning.lhc_detuning_corrections import (
+    LHCBeams,
+    calculate_corrections,
+    check_corrections_analytically,
+    check_corrections_ptc,
+    create_optics,
+    get_nominal_optics,
+)
+from ir_amplitude_detuning.plotting.correctors import plot_correctors
+from ir_amplitude_detuning.plotting.detuning import MeasurementSetup, plot_measurements
+from ir_amplitude_detuning.plotting.utils import get_color_for_ip
+from ir_amplitude_detuning.simulation.lhc_simulation import LHCCorrectors
+from ir_amplitude_detuning.simulation.results_loader import (
+    get_calculated_detuning_for_field,
+    get_detuning_change_ptc,
+)
+from ir_amplitude_detuning.utilities.classes_accelerator import (
+    FieldComponent,
+    fill_corrector_masks,
+)
+from ir_amplitude_detuning.utilities.classes_targets import (
+    Target,
+    TargetData,
+)
+from ir_amplitude_detuning.utilities.common import Container, dict_diff, dict_sum
 from ir_amplitude_detuning.utilities.logging import log_setup
-from ir_amplitude_detuning.correction_via_amplitude_detuning import run_lhc_and_calc_correction as run_lhc_and_calc_correction
-from ir_amplitude_detuning.utilities.classes import (Detuning, DetuningMeasurement, Target,
-                                                         TargetData, scaled_detuningmeasurement)
-from ir_amplitude_detuning.utilities.plotting import plot_correctors, plot_detuning_ips
 
-
-def get_sum(meas_a, meas_b):
-    return {beam: meas_a[beam] + meas_b[beam] for beam in meas_a.keys()}
-
-def get_diff(meas_a, meas_b):
-    return {beam: meas_a[beam] - meas_b[beam] for beam in meas_a.keys()}
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 # Define Machine Data
 # -------------------
+class LHCSimulationParameters(Container):
+    beams: tuple[int, int] = 1, 4
+    year: int = 2018
+    outputdir: Path = Path("2018_md3311")
+    xing: dict[str, str | float] = {'scheme': 'top'}  # scheme: crossing scheme of top-energy collisions
+    tune_x: float = 62.28  # horizontal tune
+    tune_y: float = 60.31  # vertical tune
 
-# Output Path
-output = Path("2018_xing_b1b4")
 
-
-# Fill in special values for crossing if needed:
-xing = {'scheme': 'top'}
-
-# Fill in measurement data in 10^3 m^-1, (value, error):
-meas_flat = {
+# Fill in measurement data in 10^3 m^-1
+# dictionary keys represent beam, 2 or 4 will make no difference
+MEAS_FLAT = {
     1: scaled_detuningmeasurement(X10=(0.8, 0.5), Y01=(-3, 1)),
     2: scaled_detuningmeasurement(X10=(-7.5, 0.5), Y01=(6, 1)),
 }
-meas_full = {
+MEAS_FULL = {
     1: scaled_detuningmeasurement(X10=(34, 1), Y01=(-38, 1)),
     2: scaled_detuningmeasurement(X10=(-3, 1), Y01=(13, 3)),
 }
-meas_ip5 = {
+MEAS_IP5 = {
     1: scaled_detuningmeasurement(X10=(56, 6), Y01=(3, 2)),
     2: scaled_detuningmeasurement(X10=(1.5, 0.5), Y01=(12, 1)),
 }
 
-# If one or the other was not measured (for local corrections in IP)
+# IP1 was not measured, but we can infer from the difference to the IP5 contribution
+MEAS_IP1 = dict_sum(dict_diff(MEAS_FULL, MEAS_IP5), MEAS_FLAT)
 
-meas_ip1 = get_sum(get_diff(meas_full, meas_ip5), meas_flat)
-# meas_ip5 = get_sum(get_diff(meas_full, meas_ip1), meas_flat)
 
 
 # Steps of calculations --------------------------------------------------------
 
-def ltx_dqd2j(tune, action, power=1):
-    if power == 1:
-        return f"$Q_{{{tune},{action}}}$"
-    return f"$Q_{{{tune},{action}^{{{power}}}}}$"
+def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
+    """ Define the targets to be used.
+
+    Here:
 
 
-def get_detuning(meas: Dict[Any, DetuningMeasurement]) ->  Dict[Any, Detuning]:
-    return {beam: meas[beam].get_detuning() for beam in meas.keys()}
+    Note:
+    The detuning target should be the opposite of the measured detuning,
+    such that the calculated correction compensates the measured detuning.
+    This is why here it is "flat-full".
+    """
+    if lhc_beams is None:
+        lhc_beams = LHCSimulationParameters.beams
+
+    optics = get_nominal_optics(lhc_beams, outputdir=LHCSimulationParameters.outputdir)
 
 
-def get_targets():
-    detuning_flat = get_detuning(meas_flat)
-    detuning_full = get_detuning(meas_full)
-    detuning_ip1 = get_detuning(meas_ip1)
-    detuning_ip5 = get_detuning(meas_ip5)
-    targets = [
+    # Compensate the global contribution using the
+    # decapole correctors in IP1 and IP5.
+    target_global = TargetData(
+        correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(1, 5)),
+        detuning=dict_diff(MEAS_FLAT, MEAS_FULL),
+        optics=optics,
+    )
+
+    # Compensate the IP5 contribution using the
+    # decapole correctors in IP5 only.
+    target_ip5 = TargetData(
+        correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(5, )),
+        detuning=dict_diff(MEAS_FLAT, MEAS_IP5),
+        optics=optics,  # can use same optics, as the xing in IP5 is the same
+    )
+
+    return [
         Target(
-            name="X10Y01_local_global",
-            data=[
-                # GLOBAL CORRECTION
-                TargetData(
-                    ips=(1, 5),
-                    detuning=get_diff(detuning_flat, detuning_full),
-                    # constraints={
-                    #     1: ScaledConstraints(X01="<=0"),
-                    #     2: ScaledConstraints(X01="<=0"),
-                    # }
-                ),
-                # LOCAL CORRECTION
-                # TargetData(
-                #     ips=(1, ),
-                #     detuning=get_diff(detuning_flat, detuning_ip1),
-                #     # constraints={
-                #     #     1: ScaledConstraints(X01="<=0"),
-                #     #     2: ScaledConstraints(X01="<=0"),
-                #     # }
-                # ),
-                TargetData(
-                    ips=(5, ),
-                    detuning=get_diff(detuning_flat, detuning_ip5),
-                    # constraints={
-                    #     1: ScaledConstraints(X01="<=0"),
-                    #     2: ScaledConstraints(X01="<=0"),
-                    # }
-                ),
-            ]
+            name="global",
+            data=[target_global]
         ),
-        # # TARGET TEMPLATE
-        # Target(
-        #     name="X10X01Y01_",
-        #     data=[
-        #         TargetData(
-        #             ips=(1, ),
-        #             detuning={
-        #                 1: ScaledDetuning(X10=0, X01=0, Y01=0),
-        #                 2: ScaledDetuning(X10=0, X01=0, Y01=0),
-        #             },
-        #             constraints={
-        #                 1: ScaledConstraints(X01="<=0"),
-        #                 2: ScaledConstraints(X01="<=0"),
-        #             }
-        #         ),
-        #     ]
-        # )
+        Target(
+            name="local_and_global",
+            data=[target_global, target_ip5]
+        ),
     ]
-    return targets
 
 
 def simulation():
-    paths = {i: output / f"b{i}" for i in (1, 4)}
-    run_lhc_and_calc_correction(paths, xing=xing, targets=get_targets())
+    """ Create LHC optics with the set crossing scheme.
+
+    Here:
+        IP1 and IP5 crossing active.
+    """
+    return create_optics(**LHCSimulationParameters)
 
 
-def plotting():
-    action_map = {"10": 'x', "01": 'y'}
+def do_correction(lhc_beams: LHCBeams | None = None):
+    """ Calculate the dodecapole corrections for the LHC for the set targets.
 
-    nchar = 10
-    measurement = get_diff(meas_flat, meas_full)
-    measurement[4] = measurement.pop(2)
-    measurement = {k: meas*1e-3 for k, meas in measurement.items()}
+    Also calculates the individual contributions per corrector order and IP to
+    the individual detuning terms.
+    """
+    results = calculate_corrections(
+        beams=LHCSimulationParameters.beams,
+        outputdir=LHCSimulationParameters.outputdir,
+        targets=get_targets(lhc_beams),
+        method=Method.numpy,  # as we do not define any constraints, we can use numpy and get errorbars on the results
 
-    targets = get_targets()
-    ids = [f"{target.name}_b6" for target in targets]
-    labels = [
-            f"{ltx_dqd2j('x', 'x')} = {'55.2,-22 | 9,-4.5'.center(nchar)}"
-    ]
-
-    output_id = f"_corrections"
-    plot_detuning_ips(
-        output,
-        ids=ids,
-        labels=labels,
-        fields="b6",
-        size=[20., 7.],
-        measurement=measurement,
-        beams=(1, 4),
-        ylims={1: [-62, 62], 2: [-3, 3]},
-        tickrotation=0,
-        output_id=output_id,
-        alternative="separate",  # "separate", "normal"
     )
-    corr_size = [6.00, 6.90]
 
-    plot_correctors(output, ids=ids, labels=labels, size=corr_size, corrector_pattern='kctx3\.[lr][15]', order="6", output_id=f'{output_id}_b6')
-    plot_correctors(output, ids=ids, labels=labels, size=corr_size, corrector_pattern='kctx3\.[lr]5', order="6", output_id=f'{output_id}_b6_ip5')
-    plot_correctors(output, ids=ids, labels=labels, size=corr_size, corrector_pattern='kctx3\.[lr]1', order="6", output_id=f'{output_id}_b6_ip1')
+    optics = get_nominal_optics(lhc_beams or LHCSimulationParameters.beams, outputdir=LHCSimulationParameters.outputdir)
 
+    for values in results.values():
+        check_corrections_analytically(
+            outputdir=LHCSimulationParameters.outputdir,
+            optics=optics,
+            results=values,
+        )
+
+# Run --------------------------------------------------------------------------
 
 if __name__ == '__main__':
     log_setup()
-    simulation()
-    plotting()
+    lhc_beams = None  # in case you want to skip the simulation
+    # lhc_beams = simulation()
+    do_correction(lhc_beams=lhc_beams)
+    # check_correction(lhc_beams=lhc_beams)
+    # plot_detuning_comparison()
+    # plot_corrector_strengths()
+    # plot_simulation_comparison()
