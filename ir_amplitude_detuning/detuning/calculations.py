@@ -8,7 +8,7 @@ Functions to calculate detuning and its corrections.
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import cvxpy as cvx
 import numpy as np
@@ -54,8 +54,8 @@ def calculate_correction(
     """ Calculates the values for either kcdx or kctx as installed into the Dodecapol corrector.
     Returns a dictionary of circuit names and their settings in KNL values (i.e. needs to be divided by the lenght of the decapole corrector).
 
-    In this function the equation system is named m * x = v, and everything contributing to the left hand side (i.e. the matrix m, or similarly, the contstriaints) is named with m_,
-    and everything that contributes to the right hand side (i.e. the detuning values v, or similarly the constraint values) with v_.
+    In this function the equation system is named m * x = v, and everything contributing to the left hand side (i.e. the matrix m, or similarly, the contstriaints) is named with `m_*`,
+    and everything that contributes to the right hand side (i.e. the detuning values v, or similarly the constraint values) with `v_*`.
 
     Args:
         target (Target): A Target object defining the target detuning and constraints.

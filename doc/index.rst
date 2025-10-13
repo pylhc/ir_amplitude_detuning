@@ -24,7 +24,16 @@ Contents
    :maxdepth: 2
 
    examples
-   modules/index
+
+.. toctree::
+   :caption: API
+   :maxdepth: 2
+
+   modules/main
+   modules/detuning
+   modules/simulation
+   modules/plotting
+   modules/utilities
 
 .. toctree::
    :caption: Bibliography

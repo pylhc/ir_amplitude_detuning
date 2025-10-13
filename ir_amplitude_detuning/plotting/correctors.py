@@ -11,6 +11,7 @@ import re
 from collections import defaultdict
 from typing import TYPE_CHECKING
 
+from matplotlib.patches import Rectangle
 import numpy as np
 import tfs
 from matplotlib import pyplot as plt
@@ -19,7 +20,7 @@ from omc3.plotting.utils import annotations as pannot
 from omc3.plotting.utils import colors as pcolors
 from omc3.plotting.utils import style as pstyle
 
-from ir_amplitude_detuning.utilities.constants import CIRCUIT, KNL, SETTINGS_ID
+from ir_amplitude_detuning.utilities.constants import CIRCUIT, ERR, KNL, SETTINGS_ID
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
@@ -84,21 +85,29 @@ def plot_correctors(
     ax.axhline(0, color="black", ls="--", marker="", zorder=-10, alpha=0.1)
     ax.axvline(0, color="black", ls="--", marker="", zorder=-10, alpha=0.1)
 
-    handles = []
+    handles, labels = [], []
 
-    for idx, (label, values) in enumerate(data.items()):
+    for idx, (label, (values, errors)) in enumerate(data.items()):
         color = pcolors.get_mpl_color(idx)
         ip_correctors = pair_correctors(values.index)
         handles.append(Line2D([0], [0], marker=f"${''.join(ip_correctors.keys())}$", color=color, ls='none', label=label))
+        labels.append(label)
 
         for ip, correctors in pair_correctors(values.index).items():
             left, right = correctors.get("l"), correctors.get("r")
             if not left or not right:
                 raise ValueError(f"Could not find both correctors for {ip_correctors}")
-
-            # num_marker_size = mpl.rcParams['lines.markersize'] * 0.9
-            # ax.plot(values[left], values[right], ls='none',  c=color, marker=marker, label=f"_{label}{ip_name}" if ip_idx else label)
-            # ax.plot(values[left], values[right], ls='none',  c=color, marker=f"${ip_name}$", markersize=num_marker_size, label=f"_{label}{ip_name}num")
+            if errors is not None:
+                ax.add_patch(
+                    Rectangle(
+                        (values[left] - errors[left], values[right] - errors[right]),
+                        errors[left] * 2,
+                        errors[right] * 2,
+                        alpha=0.3,
+                        color=color,
+                        label=f"_{label}{ip}err"
+                    )
+                )
             ax.plot(values[left], values[right], ls='none',  c=color, marker=f"${ip}$", label=f"_{label}{ip}")
 
 
@@ -113,7 +122,7 @@ def plot_correctors(
         lim = [-lim, lim]
     ax.set_xlim(lim)
     ax.set_ylim(lim)
-    pannot.make_top_legend(ax, ncol=ncol, frame=False, handles=handles)
+    pannot.make_top_legend(ax, ncol=ncol, frame=False, handles=handles, labels=labels)
 
     fig.canvas.manager.set_window_title("Corrector Strengths")
     return fig
@@ -153,7 +162,11 @@ def get_corrector_strengths(folder: Path, beam: int, id_: str, corrector_pattern
     df = df.loc[df.index.str.match(corrector_pattern, flags=re.IGNORECASE), :]
     if df.empty:
         raise AttributeError(f"No matching corrector '{corrector_pattern}' values found.")
-    return df[KNL]
+
+    errknl = f"{ERR}{KNL}"
+    if errknl not in df.columns:
+        return df[KNL], None
+    return df[KNL], df[errknl]
 
 
 def pair_correctors(correctors: Sequence[str]) -> dict[str, dict[str, str]]:

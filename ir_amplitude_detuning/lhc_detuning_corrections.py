@@ -2,11 +2,11 @@
 LHC Detuning Corrections
 ------------------------
 
-!!! THIS IS NOT THE MAIN SCRIPT TO BE RUN !!!
+.. caution:: THIS FILE CANNOT BE RUN AS A SCRIPT !!!
 
-it only contains the main simulation functions for this specific scenario,
-but to set the parameters needed (e.g. the measurement),
-see setup_example_2018.py or setup_commish_2022.py.
+    It does contain the main simulation functions for the LHC scenarios,
+    but to set the parameters needed (e.g. the measurement),
+    see the examples.
 
 This module contains the main function to run an LHC simulation with
 the given parameters via MAD-X and calculate the corrections based on
@@ -33,6 +33,7 @@ import cpymad
 import tfs
 
 from ir_amplitude_detuning.detuning.calculations import (
+    Method,
     calc_effective_detuning,
     calculate_correction,
 )
@@ -120,8 +121,16 @@ def calculate_corrections(
     beams: Sequence[int],
     outputdir: Path,
     targets: Sequence[Target],
+    method: Method = Method.cvxpy
     ) -> dict[str, CorrectionResults]:
-    """ Calculate corrections based on targets and given correctors. """
+    """ Calculate corrections based on targets and given correctors.
+
+    Args:
+        beams (Sequence[int]): The beam numbers to calculate corrections for.
+        outputdir (Path): The output directory.
+        targets (Sequence[Target]): The targets to calculate corrections for.
+        method (Method): The method to use for calculating the corrections (see :func:`ir_amplitude_detuning.detuning.calculations`).
+    """
     results = {}
 
     for target in targets:
@@ -130,7 +139,7 @@ def calculate_corrections(
 
         # Calculate correction ---
         try:
-            values = calculate_correction(target)
+            values = calculate_correction(target, method=method)
         except ValueError:
             LOG.error(f"Optimization failed for {target.name}  (fields: {get_fields(target)}.")
             values = {}

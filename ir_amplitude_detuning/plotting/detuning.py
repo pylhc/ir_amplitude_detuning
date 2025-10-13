@@ -2,7 +2,7 @@
 Detuning Plots
 --------------
 
-Plotting utilities to compare detuning measurements and simulation results.ßß
+Plotting utilities to compare detuning measurements and simulation results.
 """
 
 from __future__ import annotations
@@ -11,12 +11,18 @@ import logging
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.lines import Line2D
 from omc3.plotting.utils import annotations as pannot
 from omc3.plotting.utils import colors as pcolors
 from omc3.plotting.utils import style as pstyle
 
-from ir_amplitude_detuning.detuning.measurements import Detuning, DetuningMeasurement, MeasureValue
+from ir_amplitude_detuning.detuning.measurements import (
+    Detuning,
+    DetuningMeasurement,
+    MeasureValue,
+)
 from ir_amplitude_detuning.utilities import latex
 
 if TYPE_CHECKING:
@@ -24,7 +30,6 @@ if TYPE_CHECKING:
 
     from matplotlib.axes import Axes
     from matplotlib.container import ErrorbarContainer
-    from matplotlib.lines import Line2D
 
 
 LOG = logging.getLogger(__name__)
@@ -37,13 +42,17 @@ class MeasurementSetup:
 
     Args:
         label (str): Label for the measurement.
-        measurement (DetuningMeasurement | Detuning): Measurement to plot.
-        simulation (Detuning, optional): Simulation results to plot, corresponding to the given measurement.
+        measurement (DetuningMeasurement | Detuning | None):
+                    Measurement to plot. Is expected, but can be `None` if you only want to plot simulation results.
+        simulation (Detuning | DetuningMeasurement | None):
+                    Simulation results to plot, corresponding to the given measurement.
+                    Is expected to be a `Detuning` object, so without errors, but can be given as `DetuningMeasurement` instead,
+                    yet the errors will be ignored.
         color (str, optional): Color for the measurement.
     """
     label: str
-    measurement: DetuningMeasurement | Detuning
-    simulation: Detuning = None
+    measurement: DetuningMeasurement | Detuning | None
+    simulation: Detuning | DetuningMeasurement | None = None
     color: str = None
 
     def get_color(self, idx: int):
@@ -53,24 +62,26 @@ class MeasurementSetup:
 
 
 def plot_measurements(measurements: Sequence[MeasurementSetup], **kwargs):
-    """ Plot multiple measurements on the same plot.
+    """Plot multiple measurements on the same plot.
 
     Args:
         measurements (Sequence[MeasurementSetup]): List of MeasurementSetup objects to plot.
 
-    Keyword Args (optional):
+    Keyword Args:
         manual_style (dict): Dictionary of matplotlib style settings.
         is_shift (bool): Indicate if the given data is a "detuning shift" e.g. difference between two setups.
-                         This simply adds a "Delta" prefix to the y-axis label, if no label is given.
+            This simply adds a "Delta" prefix to the y-axis label, if no label is given.
         ylim (Sequence[float, float]): y-axis limits.
         rescale (int): Exponent of the scaling factor.
-                       (e.g. 3 to give data in units of 10^3, which multiplies the data by 10^-3)
-                       Default: 3.
+            (e.g. 3 to give data in units of 10^3, which multiplies the data by 10^-3)
+            Default: 3.
         ncol (int): Number of columns in the plot.
+        transpose_legend (bool): Transpose the legend order.
+        terms (Sequence[str]): Terms to plot.
         average (bool | str): Add an average values to the plot,
-                              Can be "rms", "weighted_rms", "mean", "weighted_mean".
-                              The default for `True` is "weighted_rms".
-                              Default: False.
+            Can be "rms", "weighted_rms", "mean", "weighted_mean".
+            The default for `True` is "weighted_rms".
+            Default: False.
     """
     # Set Style ---
     manual_style = {
@@ -88,100 +99,91 @@ def plot_measurements(measurements: Sequence[MeasurementSetup], **kwargs):
     manual_style.update(kwargs.pop('manual_style', {}))
     pstyle.set_style(kwargs.pop("style", "standard"), manual_style)
 
+    # Parse Keyword Args ---
     rescale: int = kwargs.pop('rescale', 3)
     is_shift: bool = kwargs.pop("is_shift", False)
     ylabel: str = kwargs.pop("ylabel", get_ylabel(rescale=rescale, delta=is_shift))
     ylim: Sequence[float, float] = kwargs.pop("ylim")
     ncol: int = kwargs.pop('ncol', 3)
+    transpose_legend: bool = kwargs.pop('transpose_legend', False)
+    terms: Sequence[str] = kwargs.pop('terms', Detuning.all_terms())
     average: str | bool = kwargs.pop('average', False)
 
     if kwargs:
         raise ValueError(f"Unknown keyword arguments: {kwargs.keys()}")
 
-    # Prepare Constatns ---
-    detuning_terms = get_defined_detuning_terms(measurements)
+    # Prepare Constants ---
+    detuning_terms = get_defined_detuning_terms(measurements, terms)
     n_components = len(detuning_terms) + bool(average)
     n_measurements = len(measurements)
     measurement_width = 1 / (n_measurements + 1)
     bar_width = measurement_width * 0.15
     rescale_value = 10**-rescale
 
-    # Generate Plot ---
+    # Generate Plot ------
     fig, ax = plt.subplots()
 
-    # plot lines
+    # plot Lines ---
     ax.axhline(0, color="black", lw=1, ls="-", marker="", zorder=-10)  # y = 0
     for idx in range(1, n_components):
         ax.axvline(idx, color="grey", lw=1, ls="--", marker="", zorder=-10)  # split components
 
     for idx_measurement, measurement_setup in enumerate(measurements):
+        color = measurement_setup.get_color(idx_measurement)
         for idx_component, detuning_component in enumerate(detuning_terms):
             x_pos = idx_component + (idx_measurement + 1) * measurement_width
-            label_prefix = f"_{detuning_component}" if idx_component else ""
+            line_label = f"_{measurement_setup.label}_{detuning_component}"
 
-            measurement: MeasureValue | float = getattr(measurement_setup.measurement, detuning_component)
-            if measurement is not None:
-                measurement = measurement * rescale_value
-                plot_value_or_measurement(ax,
-                    measurement=measurement,
-                    x=x_pos,
-                    label=f"{label_prefix}{measurement_setup.label}",
-                    color=measurement_setup.get_color(idx_measurement)
-                )
+            # Plot Measurement ---
+            if measurement_setup.measurement is not None:
+                measurement: MeasureValue | float | None = getattr(measurement_setup.measurement, detuning_component)
+                if measurement is not None:
+                    plot_value_or_measurement(
+                        ax,
+                        measurement=measurement * rescale_value,
+                        x=x_pos,
+                        label=line_label,
+                        color=color,
+                    )
 
+            # Plot Simulation ---
             if measurement_setup.simulation is not None:
-                simulation : Detuning = getattr(measurement_setup.simulation, detuning_component)
+                simulation : MeasureValue | float | None = getattr(measurement_setup.simulation, detuning_component)
                 if simulation is not None:
-                    simulation = simulation * rescale_value
+                    simulation = getattr(simulation, "value", simulation)  # no errors on the bars. Just show the value
                     ax.bar(
-                        x=x_pos, height=simulation,
-                        width=bar_width, bottom=0,
-                        label=f"_{detuning_component}{measurement_setup.label}_sim",
-                        color=measurement_setup.get_color(idx_measurement),
+                        x=x_pos,
+                        height=simulation * rescale_value,
+                        width=bar_width,
+                        bottom=0,
+                        label=f"{line_label}_sim",
+                        color=color,
                         alpha=0.3,
                     )
 
-        av_label = []
+        # Add Average ---
+        extra_labels = []
         if average:
-            meas_values = [getattr(measurement_setup.measurement, detuning_component) for detuning_component in DetuningMeasurement.all_terms()]
-            meas_values = [mv for mv in meas_values if mv is not None]
-            if average is True:
-                average = "weighted_rms"
-
-            match average:
-                case "rms":
-                    av_meas: MeasureValue = MeasureValue.rms(meas_values) * rescale_value
-                    av_label = "RMS"
-                case "weighted_rms":
-                    av_meas: MeasureValue = MeasureValue.weighted_rms(meas_values) * rescale_value
-                    av_label = "RMS"
-                case "mean":
-                    av_meas: MeasureValue = MeasureValue.mean(meas_values) * rescale_value
-                    av_label = "Mean"
-                case "weighted_mean":
-                    av_meas: MeasureValue = MeasureValue.weighted_mean(meas_values) * rescale_value
-                    av_label = "Mean"
-
-            LOG.debug(f"{measurement_setup.label} RMS: {str(av_meas)}")
-
+            av_meas, av_label = get_average(measurement_setup, average, detuning_terms)
             x_pos = n_components - 1 + (idx_measurement + 1) * measurement_width
-            ax.errorbar(x=x_pos, y=av_meas.value,
-                        # yerr=rms.error,
-                        label=f"_{measurement_setup.label}{av_label}",
-                        color=measurement_setup.get_color(idx_measurement),
-                        elinewidth=1,  # looks offset otherwise
-                        ls="",  # for the legend only
-                        )
-            av_label = [av_label]
+            plot_value_or_measurement(
+                ax, measurement=av_meas * rescale_value,
+                x=x_pos,
+                label=f"_{measurement_setup.label}_{av_label}",
+                color=measurement_setup.get_color(idx_measurement),
+            )
+            extra_labels = [av_label]
 
     ax.set_ylabel(ylabel)
     ax.set_ylim(ylim)
 
     ax.set_xticks([x + 0.5 for x in range(n_components)])
-    ax.set_xticklabels([f"${latex.term2dqdj(term)}$" for term in detuning_terms] + av_label)
+    ax.set_xticklabels([f"${latex.term2dqdj(term)}$" for term in detuning_terms] + extra_labels)
     ax.set_xlim([0, n_components])
 
-    pannot.make_top_legend(ax, ncol=ncol, frame=False)
+    # Add Legend ---
+    handles, labels = get_handles_labels(measurements)
+    pannot.make_top_legend(ax, ncol=ncol, frame=False, handles=handles, labels=labels, transposed=transpose_legend)
     return fig
 
 
@@ -200,17 +202,57 @@ def get_ylabel(rescale: int = 0, delta: bool = False) -> str:
     return f"{delta_str}Q$_{{a,b}}$ [{rescale_str}m$^{{-1}}$]"
 
 
-def get_defined_detuning_terms(measurements: Sequence[MeasurementSetup]) -> list[str]:
+def get_defined_detuning_terms(measurements: Sequence[MeasurementSetup], terms: Sequence[str]) -> list[str]:
     """ Get all terms for which at least one measurement has a value.
 
     Args:
         measurements (Sequence[MeasurementSetup]): The measurements to check.
     """
-    terms = list(DetuningMeasurement.all_terms())
-    for term in DetuningMeasurement.all_terms():
-        if all(getattr(m.measurement, term) is None for m in measurements):
-            terms.remove(term)
-    return terms
+    return [term for term in terms if any(getattr(m.measurement, term) is not None for m in measurements)]
+
+
+def get_average(measurement_setup: MeasurementSetup, average: bool | str, terms: Sequence[str]) -> tuple[MeasureValue | float, str]:
+    """ Calculate the average of the measurements.
+
+    Args:
+        measurement_setup (MeasurementSetup): The measurements to average.
+        average (bool | str): The average method to use.
+        terms (Sequence[str]): The terms to average.
+    """
+    meas_values = [getattr(measurement_setup.measurement, detuning_component) for detuning_component in terms]
+    meas_values = [mv for mv in meas_values if mv is not None]
+    is_measurement = all(isinstance(mv, MeasureValue) for mv in meas_values)
+
+    # determine average method
+    weighted = "weighted_"
+    if average is True:
+        av_method = f"{weighted if is_measurement else ''}rms"
+
+    if weighted in av_method and not all(isinstance(mv, MeasureValue) for mv in meas_values):
+        raise ValueError(f"Average {average} requires all measurements to be of type MeasureValue.")
+
+    # calculate average
+    match av_method:
+        case "rms":
+            if is_measurement:
+                av_meas: MeasureValue = MeasureValue.rms(meas_values)
+            else:
+                av_meas: float = np.sqrt(np.mean([getattr(mv, "value", mv)**2 for mv in meas_values]))
+            av_label = "RMS"
+        case "weighted_rms":
+            av_meas: MeasureValue = MeasureValue.weighted_rms(meas_values)
+            av_label = "RMS"
+        case "mean":
+            av_meas: MeasureValue | float = MeasureValue.mean(meas_values)
+            if is_measurement:
+                av_meas = getattr(av_meas, "value", av_meas)
+            av_label = "Mean"
+        case "weighted_mean":
+            av_meas: MeasureValue = MeasureValue.weighted_mean(meas_values)
+            av_label = "Mean"
+
+    LOG.debug(f"{measurement_setup.label} RMS: {str(av_meas)}")
+    return av_meas, av_label
 
 
 def plot_value_or_measurement(
@@ -240,4 +282,19 @@ def plot_value_or_measurement(
             elinewidth=1,  # looks offset otherwise
             ls="",
         )
-    return ax.plot(x=x, y=measurement, label=label, color=color, ls="")
+    return ax.plot(x, measurement, label=label, color=color, ls="")
+
+
+def get_handles_labels(measurements: Sequence[MeasurementSetup]) -> tuple[list[Line2D], list[str]]:
+    """ Generate the handles and labels for the legend based on the given measurements.
+
+    Args:
+        measurements (Sequence[MeasurementSetup]): The measurements to plot.
+    """
+    return (
+        [
+            Line2D([], [], color=measurement_setup.get_color(idx_measurement), label=measurement_setup.label, ls="")
+            for idx_measurement, measurement_setup in enumerate(measurements)
+        ],
+        [measurement_setup.label for measurement_setup in measurements],
+    )

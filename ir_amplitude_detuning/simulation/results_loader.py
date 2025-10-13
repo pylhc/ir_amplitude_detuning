@@ -9,18 +9,23 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
+import pandas as pd
 import tfs
 
 from ir_amplitude_detuning.detuning.calculations import FIELDS, IP
-from ir_amplitude_detuning.detuning.measurements import Detuning
+from ir_amplitude_detuning.detuning.measurements import Detuning, DetuningMeasurement, MeasureValue
 from ir_amplitude_detuning.utilities.common import BeamDict, dict_diff
-from ir_amplitude_detuning.utilities.constants import AMPDET_CALC_ID, AMPDET_ID, NOMINAL_ID
+from ir_amplitude_detuning.utilities.constants import (
+    AMPDET_CALC_ERR_ID,
+    AMPDET_CALC_ID,
+    AMPDET_ID,
+    ERR,
+    NOMINAL_ID,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
     from pathlib import Path
-
-    import pandas as pd
 
     from ir_amplitude_detuning.utilities.classes_accelerator import FieldComponent
 
@@ -41,6 +46,8 @@ def load_simulation_output_tfs(folder: Path, type_: str, beam: int, id_: str) ->
         beam (int): The beam number.
         id_ (str): The id of the data (e.g. target name).
     """
+    if beam in (2, 4):
+        beam = '[24]'
     glob = f"{type_}.*.b{beam}.{id_}.tfs"
     for filename in folder.glob(glob):
         return tfs.read(filename)
@@ -74,21 +81,41 @@ def load_ptc_detuning(folder: Path, beam: int, id_: str) -> Detuning:
         beam (int): The beam number.
         id_ (str): The id of the data (target name).
     """
-    df = load_simulation_output_tfs(folder, AMPDET_ID,beam, id_)
+    df = load_simulation_output_tfs(folder=folder, type_=AMPDET_ID, beam=beam, id_=id_)
     return get_detuning_from_ptc_output(df)
 
 
-def convert_dataframe_to_dict(df: pd.DataFrame) -> dict[str, Detuning]:
+def convert_dataframe_to_dict(df: pd.DataFrame) -> dict[str, Detuning | DetuningMeasurement]:
     """ Convert a dataframe containing detuning-term columns into a dictionary of Detuning objects,
     sorted by the index of the dataframe.
 
     Args:
         df (pd.Dataframe): Dataframe to be converted.
     """
-    return {key: Detuning(**series) for key, series in df.iterrows()}
+    error_columns = df.columns.str.startswith(ERR)
+
+    # without errors
+    if not any(error_columns):
+        return {key: Detuning(**series) for key, series in df.iterrows()}
+
+    # with errors
+    result = {}
+    for key, series in df.iterrows():
+        values = series[~error_columns]
+        measure_values = pd.Series(
+            {term: MeasureValue(value, series.loc[f"{ERR}{term}"]) for term, value in values.items()}
+        )
+        result[key] = DetuningMeasurement(**measure_values)
+    return result
 
 
-def get_calculated_detuning_for_ip(folder: Path, beam: int, id_: str, ip: str) -> dict[str, Detuning]:
+def get_calculated_detuning_for_ip(
+    folder: Path,
+    beam: int,
+    id_: str,
+    ip: str,
+    errors: bool = False
+    ) -> dict[str, Detuning]:
     """ Load and sort the detuning data for a given IP.
 
     Args:
@@ -97,20 +124,27 @@ def get_calculated_detuning_for_ip(folder: Path, beam: int, id_: str, ip: str) -
         id_ (str): The id of the data (target name).
         ip (str): The IP(s) to load. If multiple can be given as a single string, e.g. "15",
             as this is how the data should be stored in the dataframe.
+        errors (bool, optional): Whether to load the errors or not.
 
     Returns:
         pd.DataFrame: The detuning data for the given IP in a dictionary, sorted by the different fields in the file.
     """
-    df = load_simulation_output_tfs(folder, AMPDET_CALC_ID, beam, id_)
+    type_ = AMPDET_CALC_ID if not errors else AMPDET_CALC_ERR_ID
+    df = load_simulation_output_tfs(folder=folder, type_=type_, beam=beam, id_=id_)
     ip_mask = df[IP] == ip
     if sum(ip_mask) == 0:
         raise ValueError(f"No data for IP {ip} in {folder} for beam {beam} and id {id_}.")
-    df_ip = df.loc[ip_mask, :].set_index(FIELDS, drop=True)
+    df_ip = df.loc[ip_mask, :].drop(columns=[IP]).set_index(FIELDS, drop=True)
     return convert_dataframe_to_dict(df_ip)
 
 
 
-def get_calculated_detuning_for_field(folder: Path, beam: int, id_: str, field: Iterable[FieldComponent] | FieldComponent | str
+def get_calculated_detuning_for_field(
+    folder: Path,
+    beam: int,
+    id_: str,
+    field: Iterable[FieldComponent] | FieldComponent | str,
+    errors: bool = False,
     ) -> dict[str, Detuning]:
     """ Load and sort the detuning data for a given set of fields.
 
@@ -121,11 +155,13 @@ def get_calculated_detuning_for_field(folder: Path, beam: int, id_: str, field: 
         field (Iterable[FieldComponent] | FieldComponent):
             The field(s) to load. If multiple are given they will be converted into a single string, e.g. "b5b6",
             as this is how the data should be stored in the dataframe.
+        errors (bool, optional): Whether to load the errors or not.
 
     Returns:
         dict[str, Detuning]: The Detuning data in a dictionary, sorted by the different IPs in the file.
     """
-    df = load_simulation_output_tfs(folder, beam, id_, AMPDET_CALC_ID)
+    type_ = AMPDET_CALC_ID if not errors else AMPDET_CALC_ERR_ID
+    df = load_simulation_output_tfs(folder=folder, type_=type_, beam=beam, id_=id_)
 
     if not isinstance(field, str):
         field = ''.join(sorted(field))
@@ -134,7 +170,7 @@ def get_calculated_detuning_for_field(folder: Path, beam: int, id_: str, field: 
     if sum(fields_mask) == 0:
         raise ValueError(f"No data for fields {field} in {folder} for beam {beam} and id {id_}.")
 
-    df_fields = df.loc[fields_mask, :].set_index(IP, drop=True)
+    df_fields = df.loc[fields_mask, :].drop(columns=[FIELDS]).set_index(IP, drop=True)
     return convert_dataframe_to_dict(df_fields)
 
 

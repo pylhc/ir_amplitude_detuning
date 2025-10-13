@@ -94,7 +94,7 @@ class MeasureValue:
     def weighted_rms(measurements: Sequence[MeasureValue]):
         """ Returns rms of values and errors. """
         rms_values = np.sqrt(np.average([m.value**2 for m in measurements], weights=[1/m.error**2 for m in measurements]))
-        rms_errors = 0  # TODO
+        rms_errors = np.sqrt(np.average([m.error**2 for m in measurements], weights=[1/m.error**2 for m in measurements]))
         return MeasureValue(
             value=rms_values,
             error=1/np.sqrt(len(measurements)) * rms_errors / rms_values,
@@ -144,8 +144,7 @@ class SecondOrderTerm(StrEnum):
 @dataclass(slots=True)
 class Detuning:
     """ Class holding first and second order detuning values.
-    The values are only returned via `__getitem__` or `terms()` if their
-    values are set.
+    Only set values are returned via `__getitem__` or `terms()`.
     For convenience, the input values are scaled by the given `scale` parameter."""
     # first order
     X10: float | None = None
@@ -159,7 +158,7 @@ class Detuning:
     Y20: float | None = None
     Y11: float | None = None
     Y02: float | None = None
-    scale: float = 1.
+    scale: float | None = None
 
     def __post_init__(self):
         if self.scale:
@@ -278,7 +277,10 @@ class DetuningMeasurement(Detuning):
 @dataclass(slots=True)
 class Constraints:
     """ Class for holding detuning contraints.
-    Thet are only returned via `__getitem__` or `terms()` if they are set.
+    Only set definitions are returned via `__getitem__` or `terms()`,
+    yet as they are used to build an equation system, it is assumed that they will
+    only be used via the `get_leq` method, which also applies the set scaling.
+
     So far only ">=" and "<=" are implemented.
     E.g. X10 = "<=0"
     """
@@ -294,7 +296,7 @@ class Constraints:
     Y11: str | None = None
     Y02: str | None = None
     #
-    scale: float = 1
+    scale: float | None = None
 
     def __post_init__(self):
         for t in self.terms():

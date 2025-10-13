@@ -15,7 +15,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from ir_amplitude_detuning.detuning.measurements import scaled_detuningmeasurement
+from ir_amplitude_detuning.detuning.calculations import Method
+from ir_amplitude_detuning.detuning.measurements import FirstOrderTerm, scaled_detuningmeasurement
 from ir_amplitude_detuning.lhc_detuning_corrections import (
     LHCBeams,
     calculate_corrections,
@@ -26,9 +27,9 @@ from ir_amplitude_detuning.lhc_detuning_corrections import (
 )
 from ir_amplitude_detuning.plotting.correctors import plot_correctors
 from ir_amplitude_detuning.plotting.detuning import MeasurementSetup, plot_measurements
-from ir_amplitude_detuning.plotting.utils import get_full_target_labels
+from ir_amplitude_detuning.plotting.utils import get_color_for_ip, get_full_target_labels
 from ir_amplitude_detuning.simulation.lhc_simulation import LHCCorrectors
-from ir_amplitude_detuning.simulation.results_loader import get_detuning_change_ptc
+from ir_amplitude_detuning.simulation.results_loader import get_calculated_detuning_for_field, get_detuning_change_ptc
 from ir_amplitude_detuning.utilities.classes_accelerator import (
     FieldComponent,
     fill_corrector_masks,
@@ -122,6 +123,8 @@ def do_correction(lhc_beams: LHCBeams | None = None):
         beams=LHCSimulationParameters.beams,
         outputdir=LHCSimulationParameters.outputdir,
         targets=get_targets(lhc_beams),
+        method=Method.numpy,  # as we do not define any constraints, we can use numpy and get errorbars on the results
+
     )
 
     check_corrections_analytically(
@@ -177,6 +180,77 @@ def plot_detuning_comparison():
         fig.savefig(LHCSimulationParameters.outputdir / f"plot.ampdet_comparison.b{beam}.pdf")
 
 
+def plot_simulation_comparison():
+    """ Plot the target and how close the different simulation results are.
+    Shows:
+    - Target vs. PTC
+    - Target vs. calculated contributions from IP1 & IP5
+    - PTC vs. calculated contributions from IP1 & IP5
+    - Calculated contributions from IP1 & IP5 vs. IP1
+    """
+    target = get_targets()[0]  # only one target here
+    ptc_diff = get_detuning_change_ptc(
+        LHCSimulationParameters.outputdir,
+        ids=[target.name],
+        beams=LHCSimulationParameters.beams
+    )
+    for beam in (1, 2):
+        calculated = get_calculated_detuning_for_field(
+            folder=LHCSimulationParameters.outputdir,
+            beam=beam,
+            id_=target.name,
+            field=FieldComponent.b6,
+            errors=True,
+            )
+
+        setup = [
+            MeasurementSetup(
+                label="Target & PTC",
+                measurement=target.data[0].detuning[beam],
+                simulation=ptc_diff[target.name][beam],
+                color='#d62728',  # blue already used for IP15
+            ),
+            MeasurementSetup(
+                label="Target & Calc. IP15",
+                measurement=target.data[0].detuning[beam],
+                simulation=calculated['15'],
+            ),
+            MeasurementSetup(
+                label="Calculated IP15",
+                measurement=calculated['15'],  # plot marker with errors
+                simulation=calculated['15'],   # plot bar
+                color=get_color_for_ip('15'),
+            ),
+            MeasurementSetup(
+                label="Calculated IP1",
+                measurement=calculated['1'],
+                simulation=calculated['1'],
+                color=get_color_for_ip('1'),
+            ),
+            MeasurementSetup(
+                label="Calculated IP5",
+                measurement=calculated['5'],
+                simulation=calculated['5'],
+                color=get_color_for_ip('5'),
+            )
+        ]
+        style_adaptions = {
+            "figure.figsize": [7.0, 4.0],
+            "legend.handletextpad": 0.4,
+            "legend.columnspacing": 1.0,
+        }
+        fig = plot_measurements(
+            setup,
+            ylim=[-55, 55],
+            ncol=2,
+            manual_style=style_adaptions,
+            terms=[FirstOrderTerm.X10, FirstOrderTerm.X01, FirstOrderTerm.Y01],
+            transpose_legend=True,
+            is_shift=True,
+        )
+        fig.savefig(LHCSimulationParameters.outputdir / f"plot.ampdet_sim_comparison.b{beam}.pdf")
+
+
 
 def plot_corrector_strengths():
     outputdir = LHCSimulationParameters.outputdir
@@ -196,8 +270,9 @@ def plot_corrector_strengths():
 if __name__ == '__main__':
     log_setup()
     lhc_beams = None  # in case you want to skip the simulation
-    lhc_beams = simulation()
-    do_correction(lhc_beams=lhc_beams)
-    check_correction(lhc_beams=lhc_beams)
-    plot_detuning_comparison()
-    plot_corrector_strengths()
+    # lhc_beams = simulation()
+    # do_correction(lhc_beams=lhc_beams)
+    # check_correction(lhc_beams=lhc_beams)
+    # plot_detuning_comparison()
+    # plot_corrector_strengths()
+    # plot_simulation_comparison()
