@@ -266,4 +266,5 @@ intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org/stable/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "cpymad": ("https://hibtc.github.io/cpymad/", None),
+    "cvxpy": ("https://www.cvxpy.org/", None),
 }

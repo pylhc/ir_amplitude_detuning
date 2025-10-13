@@ -48,7 +48,14 @@ ROW_ID: str = "b{beam}{ip}.{term}"
 
 @dataclass(slots=True)
 class DetuningCorrectionEquationSystem:
-    """ Class to hold the equation system for detuning correction.
+    r""" Class to hold the equation system for detuning correction.
+    The equation system is of the form
+
+    .. math::
+
+        M_{\beta \text{-coefficients}} \times K_NL = V_\text{Detuning}
+
+    as described in the Chapter "Correction Approach" of [DillyControllingLandauDamping2022]_.
 
     Attributes:
         m (pd.DataFrame): Coefficient matrix

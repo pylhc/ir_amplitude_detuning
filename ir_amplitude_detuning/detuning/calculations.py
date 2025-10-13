@@ -43,6 +43,11 @@ IP: str = "IP"
 
 
 class Method(StrEnum):
+    """ Methods to calculate the detuning corrections.
+    Use ``cvxpy`` for the convex :class:`~cvxpy.Problem` solver,
+    use the ``numpy`` method to calculate the corrections with the
+    :func:`pseudo-inverse <numpy.linalg.pinv>`.
+    """
     cvxpy: str = "cvxpy"
     numpy: str = "numpy"
 
@@ -51,11 +56,28 @@ def calculate_correction(
         target: Target,
         method: Method = Method.cvxpy
     ) -> pd.Series[float]:
-    """ Calculates the values for either kcdx or kctx as installed into the Dodecapol corrector.
-    Returns a dictionary of circuit names and their settings in KNL values (i.e. needs to be divided by the lenght of the decapole corrector).
+    r""" Calculates the values to power the detuning correctors by solving
+    the equation system of the form
 
-    In this function the equation system is named m * x = v, and everything contributing to the left hand side (i.e. the matrix m, or similarly, the contstriaints) is named with `m_*`,
-    and everything that contributes to the right hand side (i.e. the detuning values v, or similarly the constraint values) with `v_*`.
+    .. math::
+
+        M_{\beta \text{-coefficients}} \times K_NL = V_\text{Detuning}
+
+    as described in the Chapter "Correction Approach" of [DillyControllingLandauDamping2022]_.
+    In addition, :class:`~ir_amplitude_detuning.detuning.measurements.Constraints`
+    can be added to the correction equation system,
+    which are respected when using the :class:`cvxpy.Problem` solver (method ``cvxpy``).
+
+    In fact, this function always calculates the values with the :class:`convex solver<cvxpy.Problem>` (``cvxpy``),
+    as well as with the :func:`pseudo-inverse <numpy.linalg.pinv>` method (``numpy``),
+    but only returns the results of the method specified in `method`.
+    The ``cvxpy`` method has the advantage that the constraints are respected,
+    the ``numpy`` method has the advantage that the uncertainties are propagated.
+    The function returns a series of correctors and their settings in KNL values, with uncertainties if available.
+
+    In this function everything contributing to the left hand side of the equation system (i.e. the matrix *M*) is named ``m_*``,
+    while everything that contributes to the right hand side (i.e. the detuning values *V*, or similarly the constraint values)
+    is named ``v_*``.
 
     Args:
         target (Target): A Target object defining the target detuning and constraints.

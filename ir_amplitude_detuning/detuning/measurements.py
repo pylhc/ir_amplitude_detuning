@@ -277,12 +277,17 @@ class DetuningMeasurement(Detuning):
 @dataclass(slots=True)
 class Constraints:
     """ Class for holding detuning contraints.
-    Only set definitions are returned via `__getitem__` or `terms()`,
-    yet as they are used to build an equation system, it is assumed that they will
-    only be used via the `get_leq` method, which also applies the set scaling.
+    These are useful when trying to force a detuning term to have a specific sign,
+    but not a specific value.
+    Examples of this can be found in Fig. 1 of [DillyControllingLandauDamping2022]_.
 
-    So far only ">=" and "<=" are implemented.
-    E.g. X10 = "<=0"
+    Only set definitions are returned via `__getitem__` or `terms()`,
+    yet as they are used to build an equation system with minimization constraints,
+    it is assumed that the values will only be used via the `get_leq()` method,
+    which also applies the set scaling.
+
+    Only ">=" and "<=" are implemented.
+    E.g. ``X10 = "<=0"``.
     """
     X10: str | None = None
     X01: str | None = None
@@ -324,16 +329,20 @@ class Constraints:
         return setattr(self, item, value)
 
     def get_leq(self, item: str) -> tuple[int, float]:
-        """ Returns a tuple (sign, value) such that given the constraint
-        is sign*term <= value.
+        """ Returns a tuple ``(sign, value)`` such that
+        the given contraint is converted into a minimization constraint
+        of the form ``sign * term <= value``.
 
-        Example: X10="<=4" returns (1, 4)
-                 X01=">=-2" returns (-1, 2)
+        .. admonition:: Examples
+
+            | ``"<=4"`` returns ``(1, 4)``
+            | ``">=3"`` returns ``(-1, -3)``
+            | ``">=-2"`` returns ``(-1, 2)``
 
         Values are rescaled if scale is set.
 
         Args:
-            item (str): term name, e.g. "X10"
+            item (str): term name, e.g. ``"X10"``.
         """
         str_item = self[item]
         sign = 1 if str_item[:2] == "<=" else -1
