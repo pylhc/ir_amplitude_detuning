@@ -82,7 +82,11 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
     """ Define the targets to be used.
 
     Here:
+        Calculate the values for the dodecapole correctors in the LHC to compensate
+        for the shift in measured detuning from the flat to the full crossing scheme
+        (i.e. crossing active in IP1 and IP5) and from flat to the IP5 crossing scheme.
 
+        The defined targets are as in Scenarios D and G in [DillyControllingLandauDamping2022]_.
 
     Note:
     The detuning target should be the opposite of the measured detuning,
@@ -113,11 +117,11 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
 
     return [
         Target(
-            name="global",
+            name="global",  # scenario D
             data=[target_global]
         ),
         Target(
-            name="local_and_global",
+            name="local_and_global",  # scenario G
             data=[target_global, target_ip5]
         ),
     ]

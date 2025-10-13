@@ -8,7 +8,13 @@ the measurements performed during the commissioning in 2022.
 This data has been analyzed via the amplitude detuning analysis tool of omc3
 and the resulting detuning values have been entered manually below to be used here.
 
-You can find the data in https://gitlab.cern.ch/jdilly/lhc_amplitude_detuning_summary/ .
+You can find the data in Table 7.2 of [DillyThesis2024]_ .
+Some more information can be found in Chapter 7.4.1 of the same document.
+In particular, Table 7.3 contrains, in the "Commissioning 2022" rows,
+the results of the correction performed here.
+The values are slightly different, due to the use of the wrong tunes (.31, .32) in the simulation.
+As you can see from the plots, this does not change the trends:
+The resulting detuning values are depicted in Figure 7.4 (blue and orange values).
 """
 from __future__ import annotations
 

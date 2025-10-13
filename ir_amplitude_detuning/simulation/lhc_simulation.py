@@ -149,8 +149,8 @@ class LHCBeam:
     optics: str
     year: int = 2018
     thin: bool = False
-    tune_x: float = 62.31
-    tune_y: float = 60.32
+    tune_x: float = 62.28
+    tune_y: float = 60.31
     chroma: float = 3
     emittance: float = 7.29767146889e-09
     n_particles: float = 1.0e10   # number of particles in beam
