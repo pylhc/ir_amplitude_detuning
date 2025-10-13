@@ -77,6 +77,16 @@ LHCBeamsPerXing: TypeAlias = dict[str, LHCBeams]
 
 @dataclass(slots=True)
 class CorrectionResults:
+    """ Class to store the results of a correction calculation.
+
+    Attributes:
+        name (str): The name of the correction target.
+        series (pd.Series): Series of the correction KNL values for each corrector.
+        dataframe (tfs.TfsDataFrame): Same information as the Series, but in a DataFrame format,
+                                      with the corrector-magnet names as index and the other data
+                                      split into columns. See :func:`~ir_amplitude_detuning.lhc_detuning_corrections.generate_knl_tfs`.
+        madx (str): The MAD-X code to apply the correction.
+    """
     name: str
     series: pd.Series
     dataframe: tfs.TfsDataFrame
@@ -93,7 +103,24 @@ def create_optics(
     tune_x: float = 62.31,  # horizontal tune
     tune_y: float = 60.32,  # vertical tune
 ) -> LHCBeams:
-    """ Run MAD-X to create optics for all crossing-schemes. """
+    """ Run MAD-X to create optics for all crossing-schemes.
+
+    The optics are saved in subfolders of the output directory.
+
+    Args:
+        beams (Sequence[int]): The beam numbers.
+        outputdir (Path): The output directory.
+        output_id (str, optional): The output id. Defaults to ''.
+        xing (dict[str, dict], optional): The crossing scheme. Defaults to `None`,
+                                          which is set to the top-energy collision scheme below.
+        optics (str, optional): The optics. Defaults to "round3030".
+        year (int, optional): The year. Defaults to 2018.
+        tune_x (float, optional): The horizontal tune. Defaults to 62.31.
+        tune_y (float, optional): The vertical tune. Defaults to 60.32.
+
+    Returns:
+        LHCBeams: The LHC beams, i.e. a dictionary of LHCBeam objects.
+    """
     # set mutable defaults ----
     if xing is None:
         xing = {'scheme': 'top'}  # use top-energy crossing scheme
@@ -130,6 +157,9 @@ def calculate_corrections(
         outputdir (Path): The output directory.
         targets (Sequence[Target]): The targets to calculate corrections for.
         method (Method): The method to use for calculating the corrections (see :func:`ir_amplitude_detuning.detuning.calculations`).
+
+    Returns:
+        dict[str, CorrectionResults]: The results for each target.
     """
     results = {}
 
@@ -169,7 +199,9 @@ def get_nominal_optics(beams: LHCBeams | Sequence[int], outputdir: Path | None =
     LHCBeams objects (if given) or reading from the labeled sub-folder in the output-path.
 
     Args:
-
+        beams (LHCBeams | Sequence[int]): The LHCBeams objects or a sequence of beam numbers.
+        outputdir (Path): The output directory.
+        label (str): The label for the sub-dir (e.g. a name for the optics)
     """
     optics = {}
     for beam in beams:
@@ -185,7 +217,13 @@ def get_nominal_optics(beams: LHCBeams | Sequence[int], outputdir: Path | None =
 
 
 def get_label_outputdir(outputdir: Path, label: str, beam: int) -> Path:
-    """ Get the outputdir sub-dir for a given label and beam. """
+    """ Get the outputdir sub-dir for a given label and beam.
+
+    Args:
+        outputdir (Path): The output directory.
+        label (str): The label for the sub-dir (e.g. a name for the optics)
+        beam (int): The beam number.
+    """
     if label == "":
         return outputdir  / f"b{beam}"
     return outputdir / f"{label}_b{beam}"
@@ -198,7 +236,6 @@ def generate_madx_command(values: pd.Series) -> str:
 
     Args:
         values (pd.Series): The correction values. Assumes the index are the Corrector objects.
-
     """
     correctors: Correctors = values.index
     length_map = {f"l.{corrector.madx_type}": corrector.length for corrector in correctors if corrector.madx_type is not None}
@@ -217,7 +254,8 @@ def generate_knl_tfs(values: pd.Series) -> tfs.TfsDataFrame:
     """ Generate a TFS dataframe with the corrector values.
 
     Args:
-        values (pd.Series): The correction values. Assumes the index are the Corrector objects.
+        values (pd.Series): The correction values. Assumes the index are
+                            :class:`~ir_amplitude_detuning.utilities.classes_accelerator.Corrector` objects.
     """
     correctors: Correctors = sorted(values.index)
     df = tfs.TfsDataFrame(index=[c.magnet for c in correctors])
@@ -247,12 +285,13 @@ def generate_knl_tfs(values: pd.Series) -> tfs.TfsDataFrame:
 # Analytical Check ---
 
 def check_corrections_analytically(outputdir: Path, optics: TwissPerBeam, results: CorrectionResults) -> dict[int, pd.DataFrame]:
-    """
+    """ Calculate the :func:`effective detuning <ir_amplitude_detuning.detuning.calculations.calc_effective_detuning>` for each beam and
+    write the results into a `tfs` file.
 
     Args:
-        optics (TwissPerBeam):
-        results (CorrectionResults):
-        outputdir (Path):
+        outputdir (Path): The output directory.
+        optics (TwissPerBeam): The machine optics.
+        results (CorrectionResults): The calculated correction results.
     """
     effective_detuning = calc_effective_detuning(optics, results.series)
 
@@ -264,7 +303,17 @@ def check_corrections_analytically(outputdir: Path, optics: TwissPerBeam, result
 
 
 def detuning_tfs_out_with_and_without_errors(lhc_out: LHCBeam | FakeLHCBeam, id_: str, df: pd.DataFrame):
-    """ """
+    """  Write out the detuning results, given as :class:`DataFrame` into a
+    `tfs` file.
+    If the input `DataFrame` contains :class:`~ir_amplitude_detuning.detuning.MeasureValue` objects,
+    the values and errors are extracted and two files are written:
+    One with only the values and one with the values and errors.
+
+    Args:
+        lhc_out (LHCBeam | FakeLHCBeam): LHCBeam object to find the correct output path.
+        id_ (str): The identifier (e.g. target name) of the calculation.
+        df (pd.DataFrame): The calculated detuning terms.
+    """
     has_errors = False
     df_errors = df.copy()
 
@@ -298,12 +347,26 @@ def check_corrections_ptc(
     tune_y: float = 60.32,  # vertical tune
     ):
     """ Check the corrections via PTC.
+
     This installs decapole corrector magnets and reads the corrections
     from the settings file.
-    If lhcbeams are given, the output paths will be adapted and these used,
-    otherwise new LHCBeams will be set up.
-    If an id_suffix is given (can be empty),
-    nominal and ptc file will be written, if not, only the ptc file is output.
+    If ``lhc_beams`` are given, the output paths will be adapted and these used,
+    otherwise new :class:`~ir_amplitude_detuning.lhc_detuning_corrections.LHCBeam` s
+    will be set up.
+
+    PTC is run for the ``nominal`` machine as well as all ``settings.*`` files
+    found in the output directory.
+    The PTC output ids are parsed from the settings file names.
+
+    Args:
+        outputdir (Path): Output directory.
+        lhc_beams (dict[int, LHCBeam]): Pre-run LHC beams.
+        beams (Sequence[int]): Beams (if ``lhc_beams`` is None).
+        xing (dict[str, dict]): Crossing scheme (if ``lhc_beams`` is `None`).
+        optics (str): Optics (if ``lhc_beams`` is `None`).
+        year (int): Year (if ``lhc_beams`` is `None`).
+        tune_x (float): Horizontal tune (if ``lhc_beams`` is `None`).
+        tune_y (float): Vertical tune (if ``lhc_beams`` is `None`).
     """
     if lhc_beams is None:
         # Setup LHC for both beams ---
