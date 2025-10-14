@@ -389,34 +389,6 @@ class LHCBeam:
                     corrector = corrector_mask.get_corrector(side, ip)
                     self.madx.globals[corrector.circuit] = 0
 
-    def set_mctx_circuits_powering(self, knl_values: dict[str, str | float], id_: str = ''):
-        """ Set the knl_values at the corrector circuits and write them out.
-        Try to also match tune and run twiss and ptc and output data. """
-        self.reinstate_loggers()
-        id_ = id_ if id_ else 'w_ampdet'
-        magnet_l = f"l.{LHCCorrectors.b6.madx_type}"
-        magnet_length = self.madx.globals[magnet_l]
-        df = tfs.TfsDataFrame(index=list(knl_values.keys()), columns=["VALUE", "KNL"], headers={magnet_l: magnet_length})
-
-        madx_command = [f'! Amplitude detuning powering {id_}:', f'! reminder: {magnet_l} = {magnet_length}']
-        for key, knl in knl_values.items():
-            value = knl / magnet_length
-            madx_command.append(f"{key} := {knl} / {magnet_l};  ! {key} = {value};")
-            df.loc[key, "VALUE"] = value
-            df.loc[key, "KNL"] = knl
-            self.madx.globals[key] = value
-
-        self.output_path('settings', id_, suffix=".madx").write_text("\n".join(madx_command))
-        tfs.write(self.output_path('settings', id_), df, save_index="CIRCUIT")
-
-        try:
-            self.match_tune()
-            self.get_twiss(id_, index_regex=LHCCorrectors.pattern)
-        except cpymad.madx.TwissFailed as e:
-            LOG.error("Matching/Twiss failed!")
-            return None
-        else:
-            return self.get_ampdet(id_)
 
     def check_kctx_limits(self):
         """ Check the corrector kctx limits."""
