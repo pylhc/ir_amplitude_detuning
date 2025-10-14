@@ -8,7 +8,9 @@ the measurements performed during the commissioning in 2022.
 This data has been analyzed via the amplitude detuning analysis tool of omc3
 and the resulting detuning values have been entered manually below to be used here.
 
-You can find the data in Table 7.2 of [DillyThesis2024]_ .
+
+You can find the data in https://gitlab.cern.ch/jdilly/lhc_amplitude_detuning_summary/
+and Table 7.2 of [DillyThesis2024]_ .
 Some more information can be found in Chapter 7.4.1 of the same document.
 In particular, Table 7.3 contrains, in the "Commissioning 2022" rows,
 the results of the correction performed here.
@@ -39,10 +41,11 @@ from ir_amplitude_detuning.lhc_detuning_corrections import (
     get_nominal_optics,
 )
 from ir_amplitude_detuning.plotting.correctors import plot_correctors
-from ir_amplitude_detuning.plotting.detuning import MeasurementSetup, plot_measurements
+from ir_amplitude_detuning.plotting.detuning import PlotSetup, plot_measurements
 from ir_amplitude_detuning.plotting.utils import get_color_for_ip
 from ir_amplitude_detuning.simulation.lhc_simulation import LHCCorrectors
 from ir_amplitude_detuning.simulation.results_loader import (
+    DetuningPerBeam,
     get_calculated_detuning_for_field,
     get_detuning_change_ptc,
 )
@@ -59,7 +62,7 @@ if TYPE_CHECKING:
 
 # Define Machine Data
 # -------------------
-class LHCSimulationParameters(Container):
+class LHCSimParams2022(Container):
     beams: tuple[int, int] = 1, 4
     year: int = 2022
     outputdir: Path = Path("2022_commissioning")
@@ -70,16 +73,15 @@ class LHCSimulationParameters(Container):
 
 # Fill in measurement data in 10^3 m^-1
 # dictionary keys represent beam, 2 or 4 will make no difference
-MEAS_FLAT = {
-    1: scaled_detuningmeasurement(X10=(-15.4, 0.9), X01=(33.7, 1), Y01=(-8.4, 0.5)),
-    2: scaled_detuningmeasurement(X10=(-8.7, 0.7), X01=(13, 2), Y01=(10, 0.9)),
-}
-
-MEAS_FULL = {
-    1: scaled_detuningmeasurement(X10=(20, 4), X01=(43, 4), Y01=(-10, 3)),
-    2: scaled_detuningmeasurement(X10=(26, 0.8), X01=(-27, 4), Y01=(18, 7)),
-}
-
+class Meas2022(Container):
+    flat: DetuningPerBeam = {
+        1: scaled_detuningmeasurement(X10=(-15.4, 0.9), X01=(33.7, 1), Y01=(-8.4, 0.5)),
+        2: scaled_detuningmeasurement(X10=(-8.7, 0.7), X01=(13, 2), Y01=(10, 0.9)),
+    }
+    full: DetuningPerBeam = {
+        1: scaled_detuningmeasurement(X10=(20, 4), X01=(43, 4), Y01=(-10, 3)),
+        2: scaled_detuningmeasurement(X10=(26, 0.8), X01=(-27, 4), Y01=(18, 7)),
+    }
 
 # Steps of calculations --------------------------------------------------------
 
@@ -99,7 +101,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
         This is why here it is "flat-full".
     """
     if lhc_beams is None:
-        lhc_beams = LHCSimulationParameters.beams
+        lhc_beams = LHCSimParams2022.beams
 
     return [
         Target(
@@ -107,8 +109,8 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
             data=[
                 TargetData(
                     correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(1, 5)),
-                    detuning=dict_diff(MEAS_FLAT, MEAS_FULL),
-                    optics=get_nominal_optics(lhc_beams, outputdir=LHCSimulationParameters.outputdir),
+                    detuning=dict_diff(Meas2022.flat, Meas2022.full),
+                    optics=get_nominal_optics(lhc_beams, outputdir=LHCSimParams2022.outputdir),
                 ),
             ]
         ),
@@ -121,7 +123,7 @@ def simulation():
     Here:
         IP1 and IP5 crossing active.
     """
-    return create_optics(**LHCSimulationParameters)
+    return create_optics(**LHCSimParams2022)
 
 
 def do_correction(lhc_beams: LHCBeams | None = None):
@@ -131,16 +133,16 @@ def do_correction(lhc_beams: LHCBeams | None = None):
     the individual detuning terms.
     """
     results = calculate_corrections(
-        beams=LHCSimulationParameters.beams,
-        outputdir=LHCSimulationParameters.outputdir,
+        beams=LHCSimParams2022.beams,
+        outputdir=LHCSimParams2022.outputdir,
         targets=get_targets(lhc_beams),
         method=Method.numpy,  # as we do not define any constraints, we can use numpy and get errorbars on the results
 
     )
 
     check_corrections_analytically(
-        outputdir=LHCSimulationParameters.outputdir,
-        optics=get_nominal_optics(lhc_beams or LHCSimulationParameters.beams, outputdir=LHCSimulationParameters.outputdir),
+        outputdir=LHCSimParams2022.outputdir,
+        optics=get_nominal_optics(lhc_beams or LHCSimParams2022.beams, outputdir=LHCSimParams2022.outputdir),
         results=list(results.values())[0],  # single target
     )
 
@@ -149,7 +151,7 @@ def check_correction(lhc_beams: LHCBeams | None = None):
     """ Check the corrections via PTC. """
     check_corrections_ptc(
         lhc_beams=lhc_beams,
-        **LHCSimulationParameters,  # apart form outputdir only used if lhc_beams is None
+        **LHCSimParams2022,  # apart form outputdir only used if lhc_beams is None
     )
 
 
@@ -161,26 +163,26 @@ def plot_detuning_comparison():
     the reached detuning values by the correction."""
     target = get_targets()[0]  # only one target here
     ptc_diff = get_detuning_change_ptc(
-        LHCSimulationParameters.outputdir,
+        LHCSimParams2022.outputdir,
         ids=[target.name],
-        beams=LHCSimulationParameters.beams
+        beams=LHCSimParams2022.beams
     )
     for beam in (1, 2):
         setup = [
-            MeasurementSetup(
+            PlotSetup(
                 label="Flat Orbit",
-                measurement=MEAS_FLAT[beam],
+                measurement=Meas2022.flat[beam],
             ),
-            MeasurementSetup(
+            PlotSetup(
                 label="Full X-ing",
-                measurement=MEAS_FULL[beam],
+                measurement=Meas2022.full[beam],
             ),
-            MeasurementSetup(
+            PlotSetup(
                 label="Delta",
                 measurement=-target.data[0].detuning[beam],
                 simulation=-ptc_diff[target.name][beam],
             ),
-            MeasurementSetup(
+            PlotSetup(
                 label="Expected",
                 measurement=-(target.data[0].detuning[beam] - ptc_diff[target.name][beam]),  # keep order to keep errorbars
             ),
@@ -191,7 +193,7 @@ def plot_detuning_comparison():
             "legend.columnspacing": 1.0,
         }
         fig = plot_measurements(setup, ylim=[-55, 55], average=True, ncol=4, manual_style=style_adaptions)
-        fig.savefig(LHCSimulationParameters.outputdir / f"plot.ampdet_comparison.b{beam}.pdf")
+        fig.savefig(LHCSimParams2022.outputdir / f"plot.ampdet_comparison.b{beam}.pdf")
 
 
 def plot_simulation_comparison():
@@ -204,13 +206,13 @@ def plot_simulation_comparison():
     """
     target = get_targets()[0]  # only one target here
     ptc_diff = get_detuning_change_ptc(
-        LHCSimulationParameters.outputdir,
+        LHCSimParams2022.outputdir,
         ids=[target.name],
-        beams=LHCSimulationParameters.beams
+        beams=LHCSimParams2022.beams
     )
     for beam in (1, 2):
         calculated = get_calculated_detuning_for_field(
-            folder=LHCSimulationParameters.outputdir,
+            folder=LHCSimParams2022.outputdir,
             beam=beam,
             id_=target.name,
             field=FieldComponent.b6,
@@ -218,30 +220,30 @@ def plot_simulation_comparison():
             )
 
         setup = [
-            MeasurementSetup(
+            PlotSetup(
                 label="Target & PTC",
                 measurement=target.data[0].detuning[beam],
                 simulation=ptc_diff[target.name][beam],
                 color='#d62728',  # blue already used for IP15
             ),
-            MeasurementSetup(
+            PlotSetup(
                 label="Target & Calc. IP15",
                 measurement=target.data[0].detuning[beam],
                 simulation=calculated['15'],
             ),
-            MeasurementSetup(
+            PlotSetup(
                 label="Calculated IP15",
                 measurement=calculated['15'],  # plot marker with errors
                 simulation=calculated['15'],   # plot bar
                 color=get_color_for_ip('15'),
             ),
-            MeasurementSetup(
+            PlotSetup(
                 label="Calculated IP1",
                 measurement=calculated['1'],
                 simulation=calculated['1'],
                 color=get_color_for_ip('1'),
             ),
-            MeasurementSetup(
+            PlotSetup(
                 label="Calculated IP5",
                 measurement=calculated['5'],
                 simulation=calculated['5'],
@@ -262,12 +264,12 @@ def plot_simulation_comparison():
             transpose_legend=True,
             is_shift=True,
         )
-        fig.savefig(LHCSimulationParameters.outputdir / f"plot.ampdet_sim_comparison.b{beam}.pdf")
+        fig.savefig(LHCSimParams2022.outputdir / f"plot.ampdet_sim_comparison.b{beam}.pdf")
 
 
 
 def plot_corrector_strengths():
-    outputdir = LHCSimulationParameters.outputdir
+    outputdir = LHCSimParams2022.outputdir
     target = get_targets()[0]  # only one target here
     ips = '15'
     fig = plot_correctors(

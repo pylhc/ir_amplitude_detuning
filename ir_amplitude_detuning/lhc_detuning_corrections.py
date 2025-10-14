@@ -241,7 +241,7 @@ def generate_madx_command(values: pd.Series) -> str:
     length_map = {f"l.{corrector.madx_type}": corrector.length for corrector in correctors if corrector.madx_type is not None}
 
     madx_command = ['! Amplitude detuning powering:'] + [f'! reminder: {l} = {length_map[l]}' for l in length_map]  # noqa: E741
-    for corrector, knl in sorted(values.items()):
+    for corrector, knl in values.items():
         corrector: Corrector
         length_str = corrector.length if corrector.madx_type is None else f"l.{corrector.madx_type}"
         knl_value = getattr(knl, 'value', knl)
@@ -257,7 +257,7 @@ def generate_knl_tfs(values: pd.Series) -> tfs.TfsDataFrame:
         values (pd.Series): The correction values. Assumes the index are
                             :class:`~ir_amplitude_detuning.utilities.classes_accelerator.Corrector` objects.
     """
-    correctors: Correctors = sorted(values.index)
+    correctors: Correctors = values.index
     df = tfs.TfsDataFrame(index=[c.magnet for c in correctors])
 
     for corrector, knl in values.items():

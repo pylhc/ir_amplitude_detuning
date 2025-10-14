@@ -53,22 +53,23 @@ class Corrector:
         if self.field != other.field:
             return self.field < other.field
 
-        pattern = re.compile(r".*(\d+\.[lr]\d)$", re.IGNORECASE)
-        self_loc = pattern.match(self.magnet)
-        other_loc = pattern.match(other.magnet)
-        if self_loc is None or other_loc is None:
+        pattern = re.compile(r".*(\d+)([lr]\d)$", re.IGNORECASE)
+        self_match = pattern.match(self.magnet)
+        other_match = pattern.match(other.magnet)
+        if self_match is None or other_match is None:
             return self.circuit < other.circuit
 
-        self_loc = self_loc.group(0)
-        other_loc = other_loc.group(0)
+        self_ipside = self_match.group(2)
+        other_ipside = other_match.group(2)
 
-        if self_loc != other_loc:
-            return self.circuit[:-3:-1] < other.circuit[:-3:-1]
+        if self_ipside != other_ipside:
+            # Sort by IP then left to right
+            return (self_ipside[1:], self_ipside[0]) < (other_ipside[1:], other_ipside[0])
 
-        if self_loc[0].lower() == "l":
-            return self_loc > other.circuit  # further downstream
-        return self.circuit < other.circuit
-
+        # Correctors are at the same side of the same IP
+        if self_ipside[0].lower() == "l":
+            return self_match.group(1) > self_match.group(1)  # larger = further downstream
+        return self_match.group(1) < self_match.group(1)  # larger = further upstream
 
     def __hash__(self):
         return hash(self.magnet + self.circuit)

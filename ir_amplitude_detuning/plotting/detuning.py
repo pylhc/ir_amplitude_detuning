@@ -36,7 +36,7 @@ LOG = logging.getLogger(__name__)
 
 
 @dataclass
-class MeasurementSetup:
+class PlotSetup:
     """ Container to define different detuning measurements to plot
     with the plot_measurements function.
 
@@ -61,7 +61,7 @@ class MeasurementSetup:
         return pcolors.get_mpl_color(idx)
 
 
-def plot_measurements(measurements: Sequence[MeasurementSetup], **kwargs):
+def plot_measurements(setups: Sequence[PlotSetup], **kwargs):
     """Plot multiple measurements on the same plot.
 
     Args:
@@ -113,9 +113,9 @@ def plot_measurements(measurements: Sequence[MeasurementSetup], **kwargs):
         raise ValueError(f"Unknown keyword arguments: {kwargs.keys()}")
 
     # Prepare Constants ---
-    detuning_terms = get_defined_detuning_terms(measurements, terms)
+    detuning_terms = get_defined_detuning_terms(setups, terms)
     n_components = len(detuning_terms) + bool(average)
-    n_measurements = len(measurements)
+    n_measurements = len(setups)
     measurement_width = 1 / (n_measurements + 1)
     bar_width = measurement_width * 0.15
     rescale_value = 10**-rescale
@@ -128,7 +128,7 @@ def plot_measurements(measurements: Sequence[MeasurementSetup], **kwargs):
     for idx in range(1, n_components):
         ax.axvline(idx, color="grey", lw=1, ls="--", marker="", zorder=-10)  # split components
 
-    for idx_measurement, measurement_setup in enumerate(measurements):
+    for idx_measurement, measurement_setup in enumerate(setups):
         color = measurement_setup.get_color(idx_measurement)
         for idx_component, detuning_component in enumerate(detuning_terms):
             x_pos = idx_component + (idx_measurement + 1) * measurement_width
@@ -182,7 +182,7 @@ def plot_measurements(measurements: Sequence[MeasurementSetup], **kwargs):
     ax.set_xlim([0, n_components])
 
     # Add Legend ---
-    handles, labels = get_handles_labels(measurements)
+    handles, labels = get_handles_labels(setups)
     pannot.make_top_legend(ax, ncol=ncol, frame=False, handles=handles, labels=labels, transposed=transpose_legend)
     return fig
 
@@ -202,16 +202,20 @@ def get_ylabel(rescale: int = 0, delta: bool = False) -> str:
     return f"{delta_str}Q$_{{a,b}}$ [{rescale_str}m$^{{-1}}$]"
 
 
-def get_defined_detuning_terms(measurements: Sequence[MeasurementSetup], terms: Sequence[str]) -> list[str]:
-    """ Get all terms for which at least one measurement has a value.
+def get_defined_detuning_terms(measurements: Sequence[PlotSetup], terms: Sequence[str]) -> list[str]:
+    """ Get all terms for which at least one measurement/simulation has a value.
 
     Args:
         measurements (Sequence[MeasurementSetup]): The measurements to check.
     """
-    return [term for term in terms if any(getattr(m.measurement, term) is not None for m in measurements)]
+    return [
+        term for term in terms
+        if any(getattr(m.measurement, term) is not None for m in measurements)
+        or any(getattr(m.simulation, term) is not None for m in measurements)
+    ]
 
 
-def get_average(measurement_setup: MeasurementSetup, average: bool | str, terms: Sequence[str]) -> tuple[MeasureValue | float, str]:
+def get_average(measurement_setup: PlotSetup, average: bool | str, terms: Sequence[str]) -> tuple[MeasureValue | float, str]:
     """ Calculate the average of the measurements.
 
     Args:
@@ -285,7 +289,7 @@ def plot_value_or_measurement(
     return ax.plot(x, measurement, label=label, color=color, ls="")
 
 
-def get_handles_labels(measurements: Sequence[MeasurementSetup]) -> tuple[list[Line2D], list[str]]:
+def get_handles_labels(measurements: Sequence[PlotSetup]) -> tuple[list[Line2D], list[str]]:
     """ Generate the handles and labels for the legend based on the given measurements.
 
     Args:

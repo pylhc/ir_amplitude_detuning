@@ -47,14 +47,16 @@ class Method(StrEnum):
     Use ``cvxpy`` for the convex :class:`~cvxpy.Problem` solver,
     use the ``numpy`` method to calculate the corrections with the
     :func:`pseudo-inverse <numpy.linalg.pinv>`.
+    ``auto`` selects between the two, depening whether of constraints are given or not.
     """
+    auto: str = "auto"
     cvxpy: str = "cvxpy"
     numpy: str = "numpy"
 
 
 def calculate_correction(
         target: Target,
-        method: Method = Method.cvxpy
+        method: Method = Method.auto
     ) -> pd.Series[float]:
     r""" Calculates the values to power the detuning correctors by solving
     the equation system of the form
@@ -89,7 +91,7 @@ def calculate_correction(
     """
     # Check input ---
 
-    if method not in list(Method):
+    if method not in Method:
         raise ValueError(f"Unknown method: {method}. Use one of: {list(Method)}")
 
     # Build equation system ---
@@ -100,13 +102,14 @@ def calculate_correction(
 
     x = cvx.Variable(len(eqsys.m.columns))
     cost = cvx.sum_squares(eqsys.m.to_numpy() @ x - eqsys.v)  # ||Mx - v||_2
+
+    constraints = None
     if len(eqsys.v_constr):
         # Add constraints
         constr = eqsys.m_constr.to_numpy() @ x <= eqsys.v_constr.to_numpy()
-        prob = cvx.Problem(cvx.Minimize(cost), [constr])
-    else:
-        # No constraints
-        prob = cvx.Problem(cvx.Minimize(cost))
+        constraints = [constr]
+
+    prob = cvx.Problem(cvx.Minimize(cost), constraints)
     prob.solve()
     if prob.status in ["infeasible", "unbounded"]:
         raise ValueError(f"Optimization failed! Reason: {prob.status}.")
@@ -121,7 +124,7 @@ def calculate_correction(
     x_numpy = pd.Series(x_numpy, index=eqsys.m.columns)
     LOG.info(f"Result (with errors) from numpy:\n{x_numpy}")
 
-    if method == Method.cvxpy:
+    if method == Method.cvxpy or (method == Method.auto and constraints is not None):
         return x_cvxpy
     return x_numpy
 
