@@ -12,13 +12,14 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from ir_amplitude_detuning.detuning.terms import DetuningTerm, get_order
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from ir_amplitude_detuning.detuning.measurements import MeasureValue
 
 LOG = logging.getLogger(__name__)
-
 
 
 def print_correction_and_error_as_latex(values: Sequence[MeasureValue], correctors: Sequence[str], length: Sequence[float] | float = 0.615) -> None:
@@ -58,19 +59,19 @@ def print_correction_and_error_as_latex(values: Sequence[MeasureValue], correcto
     )
 
 
-def ylabel_from_detuning_term(detuning_term: str, exponent: float = None) -> str:
+def ylabel_from_detuning_term(detuning_term: DetuningTerm, exponent: float = None) -> str:
     """ Get the latex representation of a detuning term with partial derivatives to be used as y-label of a plot.
 
     Args:
         detuning_term (str): Detuning term, e.g. "X02"
         exponent (float, optional): Exponent of 10 to be included in the latex representation.
     """
-    order = int(detuning_term[1]) + int(detuning_term[2])
+    order = get_order(detuning_term)
     scale = fr" 10^{{{exponent}}} " if exponent else ""
     return fr"${term2dqdj(detuning_term)}\; [{scale}$m$^{{-{order}}}]$"
 
 
-def term2dqdj(term: str) -> str:
+def term2dqdj(term: DetuningTerm) -> str:
     """ Wrapper to get the latex representation of a detuning term as in the shorthand.
 
     Args:
@@ -80,7 +81,7 @@ def term2dqdj(term: str) -> str:
     return dqd2j(tune, action)
 
 
-def term2partial_dqdj(term: str) -> str:
+def term2partial_dqdj(term: DetuningTerm) -> str:
     """ Wrapper to get the latex representation of a detuning term with partial derivatives.
 
     Args:
@@ -90,7 +91,7 @@ def term2partial_dqdj(term: str) -> str:
     return partial_dqd2j(tune, action)
 
 
-def detuning_term_to_planes(term: str) -> tuple[str, str]:
+def detuning_term_to_planes(term: DetuningTerm) -> tuple[str, str]:
     """ Get the tune and action planes given detuning term.
 
     Args:

@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 from omc3.utils.stats import weighted_mean
 
-from ir_amplitude_detuning.utilities.common import StrEnum
+from ir_amplitude_detuning.detuning.terms import FirstOrderTerm, SecondOrderTerm
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
@@ -123,22 +123,6 @@ class MeasureValue:
 
         # make a copy:
         return cls(value.value, value.error)
-
-
-class FirstOrderTerm(StrEnum):
-    X10: str = "X10"  # d Qx / d Jx
-    X01: str = "X01"  # d Qx / d Jy
-    Y10: str = "Y10"  # d Qy / d Jx
-    Y01: str = "Y01"  # d Qy / d Jy
-
-
-class SecondOrderTerm(StrEnum):
-    X20: str = "X20"  # d^2 Qx / (d Jx)^2
-    X11: str = "X11"  # d^2 Qx / (d Jx)(d Jy)
-    X02: str = "X02"  # d^2 Qx / (d Jy)^2
-    Y20: str = "Y20"  # d^2 Qy / (d Jx)^2
-    Y11: str = "Y11"  # d^2 Qy / (d Jx)(d Jy)
-    Y02: str = "Y02"  # d^2 Qy / (d Jy)^2
 
 
 @dataclass(slots=True)
@@ -279,7 +263,7 @@ class Constraints:
     """ Class for holding detuning contraints.
     These are useful when trying to force a detuning term to have a specific sign,
     but not a specific value.
-    Examples of this can be found in Fig. 1 of [DillyControllingLandauDamping2022]_.
+    Examples of this can be found in Fig. (7.1) of [DillyThesis2024]_.
 
     Only set definitions are returned via `__getitem__` or `terms()`,
     yet as they are used to build an equation system with minimization constraints,

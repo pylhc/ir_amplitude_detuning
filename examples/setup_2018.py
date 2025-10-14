@@ -86,7 +86,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
         for the shift in measured detuning from the flat to the full crossing scheme
         (i.e. crossing active in IP1 and IP5) and from flat to the IP5 crossing scheme.
 
-        The defined targets are as in Scenarios D and G in [DillyControllingLandauDamping2022]_.
+        The defined targets are as in Scenarios D and G in Figure 7.1 of [DillyThesis2024]_.
 
     Note:
     The detuning target should be the opposite of the measured detuning,

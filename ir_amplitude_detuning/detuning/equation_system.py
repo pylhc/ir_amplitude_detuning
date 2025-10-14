@@ -18,9 +18,13 @@ import pandas as pd
 from ir_amplitude_detuning.detuning.measurements import (
     Constraints,
     Detuning,
-    FirstOrderTerm,
     MeasureValue,
+)
+from ir_amplitude_detuning.detuning.terms import (
+    DetuningTerm,
+    FirstOrderTerm,
     SecondOrderTerm,
+    get_order,
 )
 from ir_amplitude_detuning.utilities.classes_accelerator import (
     Correctors,
@@ -35,7 +39,6 @@ if TYPE_CHECKING:
 
     from ir_amplitude_detuning.utilities.classes_targets import Target, TargetData
 
-    DetuningTerm: TypeAlias = FirstOrderTerm | SecondOrderTerm
     TwissPerBeam: TypeAlias = dict[int, TfsDataFrame]
     OpticsPerXing: TypeAlias = dict[str, TwissPerBeam]
 
@@ -55,7 +58,7 @@ class DetuningCorrectionEquationSystem:
 
         M_{\beta \text{-coefficients}} \times K_NL = V_\text{Detuning}
 
-    as described in the Chapter "Correction Approach" of [DillyControllingLandauDamping2022]_.
+    as described in the Chapter 7.2.2 of [DillyThesis2024]_.
 
     Attributes:
         m (pd.DataFrame): Coefficient matrix
@@ -178,6 +181,7 @@ def build_detuning_correction_matrix_per_entry(target_data: TargetData) -> Detun
 def calculate_matrix_row(beam: int, twiss: pd.DataFrame, correctors: Correctors, term: DetuningTerm) -> pd.Series:
     """ Get one row of the full matrix for one beam and one detuning term.
     This is a wrapper to select the correct function depending on the order of the term.
+    Feed-down to b4 is calculated as in Eq. (7.2) of [DillyThesis2024]_
 
     Args:
         beam (int): The beam to calculate the row for.
@@ -244,7 +248,8 @@ def calculate_matrix_row(beam: int, twiss: pd.DataFrame, correctors: Correctors,
 
 
 def get_detuning_coeff(term: DetuningTerm, beta: dict[str, float]) -> float:
-    """ Get the coefficient for first and second order amplitude detuning.
+    """ Get the coefficient for first and second order amplitude detuning,
+    Eqs. (7.1) and (7.3) of [DillyThesis2024]_ respectively.
 
     Args:
         term (str): 'X20', 'Y02', 'X11', 'Y20', 'Y11' or 'X02'
@@ -318,12 +323,3 @@ def ips2str(ips: Sequence[Any]) -> str:
     if not ips:
         return ''
     return f".ip{''.join(str(ip) for ip in ips)}"
-
-
-def get_order(term: str) -> int:
-    """ Get the order of the detuning, e.g. from X11 -> order 2, Y10 -> order 1.
-
-    Args:
-        term (str): 'X20', 'Y02', 'X11', 'Y20', 'Y11' or 'X02'
-    """
-    return int(term[1]) + int(term[2])

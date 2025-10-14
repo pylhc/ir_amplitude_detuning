@@ -63,7 +63,8 @@ def calculate_correction(
 
         M_{\beta \text{-coefficients}} \times K_NL = V_\text{Detuning}
 
-    as described in the Chapter "Correction Approach" of [DillyControllingLandauDamping2022]_.
+    the contents of which as described in more detail in the Chapter 7.2.2 of [DillyThesis2024]_ ,
+    in particular Eq. (7.4).
     In addition, :class:`~ir_amplitude_detuning.detuning.measurements.Constraints`
     can be added to the correction equation system,
     which are respected when using the :class:`cvxpy.Problem` solver (method ``cvxpy``).
