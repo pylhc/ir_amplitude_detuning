@@ -1,11 +1,11 @@
 Utilities
 =========
 
-.. automodule:: ir_amplitude_detuning.utilities.classes_accelerator
-
-.. automodule:: ir_amplitude_detuning.utilities.classes_targets
-
 .. automodule:: ir_amplitude_detuning.utilities.common
+
+.. automodule:: ir_amplitude_detuning.utilities.constants
+
+.. automodule:: ir_amplitude_detuning.utilities.correctors
 
 .. automodule:: ir_amplitude_detuning.utilities.latex
 

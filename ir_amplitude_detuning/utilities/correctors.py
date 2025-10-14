@@ -1,9 +1,10 @@
 """
-Classes for Accelerators
-------------------------
+Correctors
+----------
 
-Classes used to hold accelerator specific data to make the
-code more machine independent.
+Utilities for working with Correctors,
+implemented to make the code more machine-independent,
+as you should be able to easily add new corrector definitions for a new machine.
 """
 from __future__ import annotations
 

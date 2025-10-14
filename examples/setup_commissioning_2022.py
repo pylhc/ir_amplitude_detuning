@@ -22,7 +22,14 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ir_amplitude_detuning.detuning.calculations import Method
-from ir_amplitude_detuning.detuning.measurements import FirstOrderTerm, scaled_detuningmeasurement
+from ir_amplitude_detuning.detuning.measurements import scaled_detuningmeasurement
+from ir_amplitude_detuning.detuning.targets import (
+    Target,
+    TargetData,
+)
+from ir_amplitude_detuning.detuning.terms import (
+    FirstOrderTerm,
+)
 from ir_amplitude_detuning.lhc_detuning_corrections import (
     LHCBeams,
     calculate_corrections,
@@ -39,15 +46,11 @@ from ir_amplitude_detuning.simulation.results_loader import (
     get_calculated_detuning_for_field,
     get_detuning_change_ptc,
 )
-from ir_amplitude_detuning.utilities.classes_accelerator import (
+from ir_amplitude_detuning.utilities.common import Container, dict_diff
+from ir_amplitude_detuning.utilities.correctors import (
     FieldComponent,
     fill_corrector_masks,
 )
-from ir_amplitude_detuning.utilities.classes_targets import (
-    Target,
-    TargetData,
-)
-from ir_amplitude_detuning.utilities.common import Container, dict_diff
 from ir_amplitude_detuning.utilities.logging import log_setup
 
 if TYPE_CHECKING:

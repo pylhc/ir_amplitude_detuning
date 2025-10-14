@@ -26,7 +26,7 @@ from ir_amplitude_detuning.detuning.terms import (
     SecondOrderTerm,
     get_order,
 )
-from ir_amplitude_detuning.utilities.classes_accelerator import (
+from ir_amplitude_detuning.utilities.correctors import (
     Correctors,
     FieldComponent,
     get_fields,
@@ -37,7 +37,7 @@ if TYPE_CHECKING:
 
     from tfs import TfsDataFrame
 
-    from ir_amplitude_detuning.utilities.classes_targets import Target, TargetData
+    from ir_amplitude_detuning.detuning.targets import Target, TargetData
 
     TwissPerBeam: TypeAlias = dict[int, TfsDataFrame]
     OpticsPerXing: TypeAlias = dict[str, TwissPerBeam]

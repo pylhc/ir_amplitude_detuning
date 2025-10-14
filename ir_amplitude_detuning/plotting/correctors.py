@@ -11,11 +11,11 @@ import re
 from collections import defaultdict
 from typing import TYPE_CHECKING
 
-from matplotlib.patches import Rectangle
 import numpy as np
 import tfs
 from matplotlib import pyplot as plt
 from matplotlib.lines import Line2D
+from matplotlib.patches import Rectangle
 from omc3.plotting.utils import annotations as pannot
 from omc3.plotting.utils import colors as pcolors
 from omc3.plotting.utils import style as pstyle
@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 
     import pandas as pd
 
-    from ir_amplitude_detuning.utilities.classes_accelerator import FieldComponent
+    from ir_amplitude_detuning.utilities.correctors import FieldComponent
 
 LOG = logging.getLogger(__name__)
 

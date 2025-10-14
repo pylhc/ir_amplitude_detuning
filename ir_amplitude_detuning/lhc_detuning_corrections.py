@@ -38,13 +38,8 @@ from ir_amplitude_detuning.detuning.calculations import (
     calculate_correction,
 )
 from ir_amplitude_detuning.detuning.measurements import MeasureValue
+from ir_amplitude_detuning.detuning.targets import Target
 from ir_amplitude_detuning.simulation.lhc_simulation import FakeLHCBeam, LHCBeam, LHCCorrectors
-from ir_amplitude_detuning.utilities.classes_accelerator import (
-    Corrector,
-    Correctors,
-    get_fields,
-)
-from ir_amplitude_detuning.utilities.classes_targets import Target
 from ir_amplitude_detuning.utilities.constants import (
     AMPDET_CALC_ERR_ID,
     AMPDET_CALC_ID,
@@ -57,6 +52,11 @@ from ir_amplitude_detuning.utilities.constants import (
     NOMINAL_ID,
     SETTINGS_ID,
 )
+from ir_amplitude_detuning.utilities.correctors import (
+    Corrector,
+    Correctors,
+    get_fields,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -65,7 +65,7 @@ if TYPE_CHECKING:
     import pandas as pd
 
     from ir_amplitude_detuning.detuning.equation_system import TwissPerBeam
-    from ir_amplitude_detuning.utilities.classes_targets import Target
+    from ir_amplitude_detuning.detuning.targets import Target
 
 
 LOG = logging.getLogger(__name__)
@@ -100,8 +100,8 @@ def create_optics(
     xing: dict[str, dict] | None = None,  # default set below
     optics: str = "round3030",  # 30cm round optics
     year: int = 2018,  # lhc year
-    tune_x: float = 62.31,  # horizontal tune
-    tune_y: float = 60.32,  # vertical tune
+    tune_x: float = 62.28,  # horizontal tune
+    tune_y: float = 60.31,  # vertical tune
 ) -> LHCBeams:
     """ Run MAD-X to create optics for all crossing-schemes.
 
@@ -343,8 +343,8 @@ def check_corrections_ptc(
     xing: dict[str, dict] | None = None,
     optics: str = "round3030",  # 30cm round optics
     year: int = 2018,  # lhc year
-    tune_x: float = 62.31,  # horizontal tune
-    tune_y: float = 60.32,  # vertical tune
+    tune_x: float = 62.28,  # horizontal tune
+    tune_y: float = 60.31,  # vertical tune
     ):
     """ Check the corrections via PTC.
 

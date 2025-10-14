@@ -10,13 +10,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from ir_amplitude_detuning.utilities import latex
-from ir_amplitude_detuning.utilities.classes_accelerator import FieldComponent
+from ir_amplitude_detuning.utilities.correctors import FieldComponent
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from ir_amplitude_detuning.detuning.measurements import FirstOrderTerm, SecondOrderTerm
-    from ir_amplitude_detuning.utilities.classes_targets import Target, TargetData
+    from ir_amplitude_detuning.detuning.targets import Target, TargetData
 
 
 def get_default_scaling(term: FirstOrderTerm | SecondOrderTerm) -> tuple[int, float]:

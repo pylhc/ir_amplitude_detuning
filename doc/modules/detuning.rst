@@ -7,4 +7,6 @@ Detuning
 
 .. automodule:: ir_amplitude_detuning.detuning.measurements
 
+.. automodule:: ir_amplitude_detuning.detuning.targets
+
 .. automodule:: ir_amplitude_detuning.detuning.terms

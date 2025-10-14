@@ -1,6 +1,6 @@
 """
-Classes for Targets
--------------------
+Correction Targets
+------------------
 
 Classes used to define correction targets.
 Each Target will be used to calcualate the correction,
@@ -29,10 +29,33 @@ if TYPE_CHECKING:
 
     import tfs
 
-    from ir_amplitude_detuning.utilities.classes_accelerator import Correctors
+    from ir_amplitude_detuning.utilities.correctors import Correctors
 
 
 LOG = logging.getLogger(__name__)
+
+
+@dataclass(slots=True)
+class Target:
+    """ Class to hold correction Target information,
+    which can be used to construct a single equation system,
+    calculating a combined correction optimizing for all TargetData definitions.
+
+    Args:
+        name (str): Name of the Target
+        data (Sequence[TargetData]): Data for the Target
+    """
+    name: str
+    data: Sequence[TargetData]
+    correctors: Correctors = field(init=False)  # All correctors for all TargetData
+    ips: tuple[int, ...] = field(init=False)  # All ips for all TargetData
+
+    def __post_init__(self):
+        if "." in self.name:
+            raise NameError("No periods allowed in target name!")
+
+        self.correctors = sorted({c for data in self.data for c in data.correctors})
+        self.ips = tuple({ip for data in self.data for ip in data.ips})
 
 
 class TargetData:
@@ -60,26 +83,3 @@ class TargetData:
 
         self.beams = tuple(self.optics.keys())  # needs to come form optics as beam 2 and beam 4 are important for these!
         self.ips = tuple({c.ip for c in self.correctors if c.ip is not None})
-
-
-@dataclass(slots=True)
-class Target:
-    """ Class to hold correction Target information,
-    which can be used to construct a single equation system,
-    calculating a combined correction optimizing for all TargetData definitions.
-
-    Args:
-        name (str): Name of the Target
-        data (Sequence[TargetData]): Data for the Target
-    """
-    name: str
-    data: Sequence[TargetData]
-    correctors: Correctors = field(init=False)  # All correctors for all TargetData
-    ips: tuple[int, ...] = field(init=False)  # All ips for all TargetData
-
-    def __post_init__(self):
-        if "." in self.name:
-            raise NameError("No periods allowed in target name!")
-
-        self.correctors = sorted({c for data in self.data for c in data.correctors})
-        self.ips = tuple({ip for data in self.data for ip in data.ips})

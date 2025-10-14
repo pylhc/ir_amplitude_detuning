@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
     from pathlib import Path
 
-    from ir_amplitude_detuning.utilities.classes_accelerator import FieldComponent
+    from ir_amplitude_detuning.utilities.correctors import FieldComponent
 
 LOG = logging.getLogger(__name__)
 

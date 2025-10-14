@@ -30,10 +30,10 @@ if TYPE_CHECKING:
     from ir_amplitude_detuning.detuning.equation_system import (
         TwissPerBeam,
     )
-    from ir_amplitude_detuning.utilities.classes_accelerator import (
+    from ir_amplitude_detuning.detuning.targets import Target
+    from ir_amplitude_detuning.utilities.correctors import (
         Correctors,
     )
-    from ir_amplitude_detuning.utilities.classes_targets import Target
 
 
 LOG = logging.getLogger(__name__)
