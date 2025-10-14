@@ -291,5 +291,5 @@ if __name__ == '__main__':
     do_correction(lhc_beams=lhc_beams)
     check_correction(lhc_beams=lhc_beams)
     plot_detuning_comparison()
-    plot_corrector_strengths()
     plot_simulation_comparison()
+    plot_corrector_strengths()

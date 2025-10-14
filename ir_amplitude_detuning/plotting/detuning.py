@@ -68,6 +68,7 @@ def plot_measurements(setups: Sequence[PlotSetup], **kwargs):
         measurements (Sequence[MeasurementSetup]): List of MeasurementSetup objects to plot.
 
     Keyword Args:
+        style (str): The plot style to use.
         manual_style (dict): Dictionary of matplotlib style settings.
         is_shift (bool): Indicate if the given data is a "detuning shift" e.g. difference between two setups.
             This simply adds a "Delta" prefix to the y-axis label, if no label is given.

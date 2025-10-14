@@ -196,7 +196,7 @@ ID_MAP: dict[str, str] = {
     "global": "Global",
     "local_and_global": "Local & Global",
     "local_and_global_constrained": "Local & Global (constrained)"
-},
+}
 
 
 def plot_corrector_strengths():
@@ -208,6 +208,7 @@ def plot_corrector_strengths():
         ids=ID_MAP,
         field=FieldComponent.b6,
         ncol=1,
+        lim=[-5.1, 1.1],
         beam=1,  # does not matter as the same correctors are used for both beams
     )
     fig.savefig(outputdir / "plot.b6_correctors.ip15.pdf")
