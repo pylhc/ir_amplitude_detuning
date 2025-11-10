@@ -11,7 +11,7 @@ import sys
 
 
 def log_setup():
-    """ Set up a basic logger. """
+    """Set up a basic logger."""
     logging.basicConfig(
         stream=sys.stdout,
         level=logging.INFO,

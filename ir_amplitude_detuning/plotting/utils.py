@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 
 def get_default_scaling(term: FirstOrderTerm | SecondOrderTerm) -> tuple[int, float]:
-    """ Get the default scaling factor for a detuning term.
+    """Get the default scaling factor for a detuning term.
 
     Args:
         term (str): Detuning term, e.g. "X02"
@@ -34,7 +34,7 @@ def get_default_scaling(term: FirstOrderTerm | SecondOrderTerm) -> tuple[int, fl
 
 
 def get_color_for_field(field: FieldComponent):
-    """ Get predefined colors for the fields. """
+    """Get predefined colors for the fields."""
     match field:
         case FieldComponent.b5:
             return '#7f7f7f'  # middle gray
@@ -46,7 +46,7 @@ def get_color_for_field(field: FieldComponent):
 
 
 def get_color_for_ip(ip: str):
-    """ Get predefined colors for the IPs. """
+    """Get predefined colors for the IPs."""
     match ip:
         case "15":
             return '#1f77b4'  # muted blue
@@ -58,7 +58,7 @@ def get_color_for_ip(ip: str):
 
 
 def get_full_target_labels(targets: Sequence[Target], suffixes: Sequence[str] | None = None, scale_exponent: float = 3) -> dict[str, str]:
-    """ Get a label that includes all detuning terms so that they can be easily compared.
+    """Get a label that includes all detuning terms so that they can be easily compared.
     To save space only the first target_data is used.
 
     Args:

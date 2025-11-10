@@ -12,6 +12,7 @@ and partially recreated here.
 """
 from __future__ import annotations
 
+from functools import cache
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -88,8 +89,9 @@ class Const2018(Container):
 
 # Steps of calculations --------------------------------------------------------
 
+@cache
 def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
-    """ Define the targets to be used.
+    """Define the targets to be used.
 
     Here:
         Calculate the values for the dodecapole correctors in the LHC to compensate
@@ -152,7 +154,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
     ]
 
 def simulation():
-    """ Create LHC optics with the set crossing scheme.
+    """Create LHC optics with the set crossing scheme.
 
     Here:
         IP1 and IP5 crossing active.
@@ -161,7 +163,7 @@ def simulation():
 
 
 def do_correction(lhc_beams: LHCBeams | None = None):
-    """ Calculate the dodecapole corrections for the LHC for the set targets.
+    """Calculate the dodecapole corrections for the LHC for the set targets.
 
     Also calculates the individual contributions per corrector order and IP to
     the individual detuning terms.
@@ -184,7 +186,7 @@ def do_correction(lhc_beams: LHCBeams | None = None):
 
 
 def check_correction(lhc_beams: LHCBeams | None = None):
-    """ Check the corrections via PTC. (Not used for plotting here). """
+    """Check the corrections via PTC. (Not used for plotting here)."""
     check_corrections_ptc(
         lhc_beams=lhc_beams,
         **LHCSimParams2018,  # apart form outputdir only used if lhc_beams is None
@@ -200,7 +202,7 @@ ID_MAP: dict[str, str] = {
 
 
 def plot_corrector_strengths():
-    """ Plot the corrector strengths for the different targets. """
+    """Plot the corrector strengths for the different targets."""
     outputdir = LHCSimParams2018.outputdir
 
     fig = plot_correctors(
@@ -215,7 +217,7 @@ def plot_corrector_strengths():
 
 
 def plot_target_comparison():
-    """ Plot the target and how close the different simulation results are.
+    """Plot the target and how close the different simulation results are.
     Shows:
         How well the expected detuning from the corrector powering will
         match global detuning as well as the individual contributions from the IPs,

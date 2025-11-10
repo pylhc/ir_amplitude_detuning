@@ -25,14 +25,14 @@ LOG = logging.getLogger(__name__)
 
 @dataclass(slots=True)
 class MeasureValue:
-    """ Class to hold a value with its error and do basic arithmetics.
+    """Class to hold a value with its error and do basic arithmetics.
 
     Args:
         value (float): value of the measurement
         error (float): error of the measurement, treated as standard deviation
     """
-    value: float = 0
-    error: float = 0
+    value: float = 0.0
+    error: float = 0.0
 
     def __add__(self, other: float | MeasureValue):
         if isinstance(other, float):
@@ -82,7 +82,7 @@ class MeasureValue:
 
     @staticmethod
     def rms(measurements: Sequence[MeasureValue]):
-        """ Returns rms of values and errors. """
+        """Returns rms of values and errors."""
         rms_values = np.sqrt(np.mean([m.value**2 for m in measurements]))
         rms_errors = np.sqrt(np.mean([m.error**2 for m in measurements]))
         return MeasureValue(
@@ -92,7 +92,7 @@ class MeasureValue:
 
     @staticmethod
     def weighted_rms(measurements: Sequence[MeasureValue]):
-        """ Returns rms of values and errors. """
+        """Returns rms of values and errors."""
         rms_values = np.sqrt(np.average([m.value**2 for m in measurements], weights=[1/m.error**2 for m in measurements]))
         rms_errors = np.sqrt(np.average([m.error**2 for m in measurements], weights=[1/m.error**2 for m in measurements]))
         return MeasureValue(
@@ -102,18 +102,17 @@ class MeasureValue:
 
     @staticmethod
     def mean(measurements: Sequence[MeasureValue]):
-        """ Returns mean of values and MAE. """
+        """Returns mean of values and MAE."""
         return np.mean(measurements)
 
     @staticmethod
     def weighted_mean(measurements: Sequence[MeasureValue]):
-        """ Returns a mean weighted by the errors and normal mean for errors."""
+        """Returns a mean weighted by the errors."""
         values = np.array([m.value for m in measurements])
         errors = np.array([m.error for m in measurements])
         return MeasureValue(
             value=weighted_mean(data=values, errors=errors),
-            # error=weighted_error(data=values, errors=errors),
-            error=np.mean([m.error for m in measurements]),
+            error=weighted_mean(data=errors, errors=errors),
         )
 
     @classmethod
@@ -127,7 +126,7 @@ class MeasureValue:
 
 @dataclass(slots=True)
 class Detuning:
-    """ Class holding first and second order detuning values.
+    """Class holding first and second order detuning values.
     Only set values are returned via `__getitem__` or `terms()`.
     For convenience, the input values are scaled by the given `scale` parameter."""
     # first order
@@ -150,7 +149,7 @@ class Detuning:
                 self[term] = self[term] * self.scale
 
     def terms(self):
-        """ Return names for all set terms."""
+        """Return names for all set terms."""
         return iter(name for name in self.all_terms() if getattr(self, name) is not None)
 
     def items(self):
@@ -158,7 +157,7 @@ class Detuning:
 
     @staticmethod
     def all_terms(order: int | None = None) -> tuple[str, ...]:
-        """ Return all float-terms.
+        """Return all float-terms.
 
         Args:
             order (int): 1 or 2, for first and second order detuning terms respectively.
@@ -173,7 +172,7 @@ class Detuning:
         return tuple(e for m in mapping.values() for e in m)
 
     def __getitem__(self, item):
-        """ Convenience wrapper to access terms via `[]` .
+        """Convenience wrapper to access terms via `[]` .
         Not set terms will raise a KeyError.
         """
         if item not in self.terms():
@@ -181,7 +180,7 @@ class Detuning:
         return getattr(self, item)
 
     def __setitem__(self, item, value):
-        """ Convenience wrapper to set terms via `[]` . """
+        """Convenience wrapper to set terms via `[]` ."""
         if item not in self.all_terms():
             raise KeyError(f"'{item}' is not in the available terms of a Detuning object.")
         return setattr(self, item, value)
@@ -224,10 +223,51 @@ class Detuning:
                 f"detuning object. Terms ignored."
             )
 
+    def apply_acdipole_correction(self) -> Detuning:
+        """Correct for the influence of the AC-Dipole kick in measurement data.
+
+        See Eqs. (78) - (81) and Eqs. (94) - (99) in [DillyAmplitudeDetuning2023]_
+        and the derivations therein.
+
+        Returns:
+            Detuning: The corrected detuning
+        """
+        copy = self.__class__(**{term: self[term] for term in self.terms()})
+
+        corrections = {
+            2.: [FirstOrderTerm.X10, FirstOrderTerm.Y01, SecondOrderTerm.X11, SecondOrderTerm.Y11],  # Eqs. 78, 81, 95, 98
+            3.: [SecondOrderTerm.X20, SecondOrderTerm.Y02],  #Eqs. 94, 99
+        }
+        for value, terms in corrections.items():
+            for term in terms:
+                if getattr(copy, term):
+                    copy[term] = copy[term] / value
+        return copy
+
+    def merge_first_order_crossterm(self) -> Detuning:
+        """Merge the cross-terms in the first order detuning into a single term X01,
+        to avoid too much weight when fitting.
+
+        Returns:
+            Detuning: The merged detuning
+        """
+        copy = self.__class__(**{term: self[term] for term in self.terms()})
+
+        if not self.Y10:
+            return copy
+
+        if not self.X01:
+            copy.X01 = self.Y10  # put Y10 into X01
+        else:
+            copy.X01 = (self.X01 + self.Y10) * 0.5  # create an average
+
+        copy.Y10 = None
+        return copy
+
 
 @dataclass(slots=True)
 class DetuningMeasurement(Detuning):
-    """ Class holding first and second order detuning measurement values (i.e. with error)."""
+    """Class holding first and second order detuning measurement values (i.e. with error)."""
     # first order
     X10: MeasureValue = None
     X01: MeasureValue = None
@@ -249,18 +289,18 @@ class DetuningMeasurement(Detuning):
         Detuning.__post_init__(self)
 
     def get_detuning(self):
-        """ Returns a Detuning object with the values (no errors) of this measurement. """
+        """Returns a Detuning object with the values (no errors) of this measurement."""
         return Detuning(**{term: self[term].value for term in self.terms()})
 
     @ classmethod
     def from_detuning(cls, detuning):
-        """ Create a DetuningMeasurement from a Detuning object, with zero errors. """
+        """Create a DetuningMeasurement from a Detuning object, with zero errors."""
         return cls(**{term: MeasureValue(detuning[term]) for term in detuning.terms()})
 
 
 @dataclass(slots=True)
 class Constraints:
-    """ Class for holding detuning contraints.
+    """Class for holding detuning contraints.
     These are useful when trying to force a detuning term to have a specific sign,
     but not a specific value.
     Examples of this can be found in Fig. (7.1) of [DillyThesis2024]_.
@@ -294,12 +334,12 @@ class Constraints:
                 raise ValueError(f"Unknown constraint {val}, use either `<=` or `>=`.")
 
     def terms(self) -> Iterator[str]:
-        """ Return names for all set terms as iterable. """
+        """Return names for all set terms as iterable."""
         return iter(name for name in self.all_terms() if getattr(self, name) is not None)
 
     @staticmethod
     def all_terms(order: int | None = None) -> tuple[str, ...]:
-        """ Return all float-terms. """
+        """Return all float-terms."""
         return Detuning.all_terms(order)
 
     def __getitem__(self, item: str) -> str:
@@ -313,7 +353,7 @@ class Constraints:
         return setattr(self, item, value)
 
     def get_leq(self, item: str) -> tuple[int, float]:
-        """ Returns a tuple ``(sign, value)`` such that
+        """Returns a tuple ``(sign, value)`` such that
         the given contraint is converted into a minimization constraint
         of the form ``sign * term <= value``.
 

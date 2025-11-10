@@ -13,7 +13,8 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import tfs
-from matplotlib import pyplot as plt, ticker
+from matplotlib import pyplot as plt
+from matplotlib import ticker
 from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 from omc3.plotting.utils import annotations as pannot
@@ -41,7 +42,7 @@ def plot_correctors(
     corrector_pattern: str = ".*",
     **kwargs
     ):
-    """ Plot the corrector strengths for a given beam and corrector pattern.
+    """Plot the corrector strengths for a given beam and corrector pattern.
 
     Args:
         folder (Path): The folder containing the data.
@@ -147,7 +148,7 @@ def plot_correctors(
 
 
 def get_settings_file(folder: Path, beam: int, id_: str) -> Path:
-    """ Return the settings file for a given beam and id.
+    """Return the settings file for a given beam and id.
 
     Args:
         folder (Path): The folder containing the data.
@@ -164,7 +165,7 @@ def get_settings_file(folder: Path, beam: int, id_: str) -> Path:
 
 
 def get_corrector_strengths(folder: Path, beam: int, id_: str, corrector_pattern: str) -> pd.Series:
-    """ Get the corrector strengths for a given beam, id and corrector pattern.
+    """Get the corrector strengths for a given beam, id and corrector pattern.
 
     Args:
         folder (Path): The folder containing the data.
@@ -188,7 +189,7 @@ def get_corrector_strengths(folder: Path, beam: int, id_: str, corrector_pattern
 
 
 def pair_correctors(correctors: Sequence[str]) -> dict[str, dict[str, str]]:
-    """ Returns a dictionary of ips with a dictionary left and right correctors.
+    """Returns a dictionary of ips with a dictionary left and right correctors.
 
     Args:
         correctors (Sequence[str]): The correctors to pair.
@@ -203,7 +204,7 @@ def pair_correctors(correctors: Sequence[str]) -> dict[str, dict[str, str]]:
 
 
 def get_labels(field: FieldComponent, rescale: int = 0) -> tuple[str, str]:
-    """ Generate the y-axis label for the plot.
+    """Generate the y-axis label for the plot.
 
     Args:
         field (FieldComponent): The field component.

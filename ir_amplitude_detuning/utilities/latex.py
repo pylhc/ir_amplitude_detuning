@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from ir_amplitude_detuning.detuning.terms import DetuningTerm, get_order
+from ir_amplitude_detuning.detuning.terms import DetuningTerm, detuning_term_to_planes, get_order
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -23,7 +23,7 @@ LOG = logging.getLogger(__name__)
 
 
 def print_correction_and_error_as_latex(values: Sequence[MeasureValue], correctors: Sequence[str], length: Sequence[float] | float = 0.615) -> None:
-    """ Print the correction values with errors as latex table snippet.
+    """Print the correction values with errors as latex table snippet.
 
     Args:
         values: List of MeasureValue with the correction values
@@ -40,7 +40,7 @@ def print_correction_and_error_as_latex(values: Sequence[MeasureValue], correcto
     values_scaled = np.array([v * 1e-3 / l for v, l in zip(values, length)])  # convert to KNL [10^3] # noqa: E741
 
     def mv2s(data: MeasureValue) -> str:
-        """ Covert MeasureValue to string with error in paranthesis. """
+        """Covert MeasureValue to string with error in paranthesis."""
         if not hasattr(data, "error"):
             return fr"{data:.3f}"
 
@@ -60,7 +60,7 @@ def print_correction_and_error_as_latex(values: Sequence[MeasureValue], correcto
 
 
 def ylabel_from_detuning_term(detuning_term: DetuningTerm, exponent: float = None) -> str:
-    """ Get the latex representation of a detuning term with partial derivatives to be used as y-label of a plot.
+    """Get the latex representation of a detuning term with partial derivatives to be used as y-label of a plot.
 
     Args:
         detuning_term (str): Detuning term, e.g. "X02"
@@ -72,7 +72,7 @@ def ylabel_from_detuning_term(detuning_term: DetuningTerm, exponent: float = Non
 
 
 def term2dqdj(term: DetuningTerm) -> str:
-    """ Wrapper to get the latex representation of a detuning term as in the shorthand.
+    """Wrapper to get the latex representation of a detuning term as in the shorthand.
 
     Args:
         term (str): Detuning term, e.g. "X02"
@@ -82,7 +82,7 @@ def term2dqdj(term: DetuningTerm) -> str:
 
 
 def term2partial_dqdj(term: DetuningTerm) -> str:
-    """ Wrapper to get the latex representation of a detuning term with partial derivatives.
+    """Wrapper to get the latex representation of a detuning term with partial derivatives.
 
     Args:
         term (str): Detuning term, e.g. "X02"
@@ -91,22 +91,8 @@ def term2partial_dqdj(term: DetuningTerm) -> str:
     return partial_dqd2j(tune, action)
 
 
-def detuning_term_to_planes(term: DetuningTerm) -> tuple[str, str]:
-    """ Get the tune and action planes given detuning term.
-
-    Args:
-        term (str): Detuning term, e.g. "X02"
-
-    Returns:
-        tuple[str, str]: (tune, action), e.g. ("x", "yy")
-    """
-    tune = term[0].lower()
-    action = "x" * int(term[1]) + "y" * int(term[2])
-    return tune, action
-
-
 def partial_dqd2j(tune: str, action: str) -> str:
-    r""" Latex representation of detuning term.
+    r"""Latex representation of detuning term.
     Examples:
         partial_dqdj("x", "yy") -> "\partial^{2}_{y}Q_{x}".
         partial_dqdj("x", "xy") -> "\partial_{x}\partial_{y}Q_{x}".
@@ -135,7 +121,7 @@ def partial_dqd2j(tune: str, action: str) -> str:
 
 
 def dqd2j(tune: str, action: str) -> str:
-    """ Latex representation of detuning term
+    """Latex representation of detuning term
     (in the shorthand version, used in my thesis/paper, jdilly).
 
     Examples:
@@ -152,7 +138,7 @@ def dqd2j(tune: str, action: str) -> str:
 
 
 def exp_m(e_power: int, m_power: int) -> str:
-    """ Latex representation of unit 10^power m^inv.
+    """Latex representation of unit 10^power m^inv.
     Example: em(3, -1) -> "\\cdot 10^{3}\\;$m$^{-1}".
 
     Args:
@@ -165,7 +151,7 @@ def exp_m(e_power: int, m_power: int) -> str:
 
 
 def unit_exp_m(e_power: int, m_power: int) -> str:
-    """ Latex representation of unit 10^power m^inv.
+    """Latex representation of unit 10^power m^inv.
     Example: unit(3, -1) -> "\\; [10^{3}\\;$m$^{-1}]".
 
     Args:

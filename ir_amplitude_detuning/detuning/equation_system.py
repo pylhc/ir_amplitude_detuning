@@ -51,7 +51,7 @@ ROW_ID: str = "b{beam}{ip}.{term}"
 
 @dataclass(slots=True)
 class DetuningCorrectionEquationSystem:
-    r""" Class to hold the equation system for detuning correction.
+    r"""Class to hold the equation system for detuning correction.
     The equation system is of the form
 
     .. math::
@@ -84,31 +84,31 @@ class DetuningCorrectionEquationSystem:
         )
 
     def append_series_to_matrix(self, series: pd.Series) -> None:
-        """ Append a series as a new row to the m matrix. """
+        """Append a series as a new row to the m matrix."""
         self.m = pd.concat([self.m, series.to_frame().T], axis=0)
 
     def append_series_to_constraints_matrix(self, series: pd.Series) -> None:
-        """ Append a series as a new row to the m_constr matrix. """
+        """Append a series as a new row to the m_constr matrix."""
         self.m_constr = pd.concat([self.m_constr, series.to_frame().T], axis=0)
 
     def set_value(self, name: str, value: float | MeasureValue) -> None:
-        """ Set a value in the values and measurement values (with error if there). """
+        """Set a value in the values and measurement values (with error if there)."""
         self.v.loc[name] = getattr(value, "value", value)
         self.v_meas.loc[name] = MeasureValue.from_value(value)
 
     def set_constraint(self, name: str, value: float) -> None:
-        """ Set a value in the constraint values. """
+        """Set a value in the constraint values."""
         self.v_constr.loc[name] = value
 
     def append_all(self, other: DetuningCorrectionEquationSystem) -> None:
-        """ Append all matrices and vectors from another equation system. """
+        """Append all matrices and vectors from another equation system."""
         for field in fields(self):
             attr = field.name
             new_value = pd.concat([getattr(self, attr), getattr(other, attr)], axis=0)
             setattr(self, attr, new_value)
 
     def fillna(self) -> None:
-        """ Fill the NaN in the matrices with zeros. """
+        """Fill the NaN in the matrices with zeros."""
         self.m = self.m.fillna(0.)
         self.m_constr = self.m_constr.fillna(0.)
 
@@ -116,7 +116,7 @@ class DetuningCorrectionEquationSystem:
 def build_detuning_correction_matrix(
     target: Target,
     ) -> DetuningCorrectionEquationSystem:
-    """ Build the full linear equation system of the form M * circuits = detuning.
+    """Build the full linear equation system of the form M * circuits = detuning.
     In its current form, this builds for decapole (_b5) and dodecapole (_b6) circuits for the ips
     given in the detuning_data (which are the targets).
     Filtering needs to be done afterwards.
@@ -140,7 +140,7 @@ def build_detuning_correction_matrix(
 
 
 def build_detuning_correction_matrix_per_entry(target_data: TargetData) -> DetuningCorrectionEquationSystem:
-    """ Build a part of the full linear equation system of the form M * circuits = detuning,
+    """Build a part of the full linear equation system of the form M * circuits = detuning,
     for the given TargetData.
 
     Its building the equation system row-by-row, first for each detuning term, then for each constraint.
@@ -179,7 +179,7 @@ def build_detuning_correction_matrix_per_entry(target_data: TargetData) -> Detun
 
 
 def calculate_matrix_row(beam: int, twiss: pd.DataFrame, correctors: Correctors, term: DetuningTerm) -> pd.Series:
-    """ Get one row of the full matrix for one beam and one detuning term.
+    """Get one row of the full matrix for one beam and one detuning term.
     This is a wrapper to select the correct function depending on the order of the term.
     Feed-down to b4 is calculated as in Eq. (7.2) of [DillyThesis2024]_
 
@@ -248,7 +248,7 @@ def calculate_matrix_row(beam: int, twiss: pd.DataFrame, correctors: Correctors,
 
 
 def get_detuning_coeff(term: DetuningTerm, beta: dict[str, float]) -> float:
-    """ Get the coefficient for first and second order amplitude detuning,
+    """Get the coefficient for first and second order amplitude detuning,
     Eqs. (7.1) and (7.3) of [DillyThesis2024]_ respectively.
 
     Args:
@@ -287,7 +287,7 @@ def get_detuning_coeff(term: DetuningTerm, beta: dict[str, float]) -> float:
 
 
 def magnet_symmetry_sign(beam: int) -> int:
-    """ Sign to be used for magnets that are anti-symmetric under beam direction
+    """Sign to be used for magnets that are anti-symmetric under beam direction
     change, e.g. K4(L) and K6(L) in beam 2 and beam 4 will have opposite sign.
 
     Args:
@@ -300,7 +300,7 @@ def magnet_symmetry_sign(beam: int) -> int:
 
 
 def beam_direction(beam: int) -> int:
-    """ Get the direction of the beam.
+    """Get the direction of the beam.
 
     Args:
         beam (int): Beam number
@@ -312,7 +312,7 @@ def beam_direction(beam: int) -> int:
 
 
 def ips2str(ips: Sequence[Any]) -> str:
-    """ Convert a sequence of IPs into a string.
+    """Convert a sequence of IPs into a string.
 
     Args:
         Sequence (Any): Sequence of IPs

@@ -49,7 +49,7 @@ PATHS = {
 
 
 def pathstr(key: str, *args: str) -> str:
-    """ Wrapper to get the path (as string! Because MADX wants strings)
+    """Wrapper to get the path (as string! Because MADX wants strings)
     with the base from the dict ``PATHS``.
 
     Args:
@@ -63,7 +63,7 @@ def pathstr(key: str, *args: str) -> str:
 
 
 def get_optics_path(year: int, name: str | Path):
-    """ Get optics by name, i.e. a collection of optics path-strings to the optics files.
+    """Get optics by name, i.e. a collection of optics path-strings to the optics files.
 
      Args:
          year (int): Year of the optics
@@ -90,7 +90,7 @@ def get_optics_path(year: int, name: str | Path):
 
 
 def get_wise_path(seed: int):
-    """ Get the wise errordefinition file by seed-number.
+    """Get the wise errordefinition file by seed-number.
 
     Args:
         seed (int): Seed for the error realization.
@@ -102,7 +102,7 @@ def get_wise_path(seed: int):
 
 
 def drop_allzero_columns(df: TfsDataFrame) -> TfsDataFrame:
-    """ Drop columns that contain only zeros, to save harddrive space.
+    """Drop columns that contain only zeros, to save harddrive space.
 
     Args:
         df (TfsDataFrame): DataFrame with all data
@@ -113,10 +113,8 @@ def drop_allzero_columns(df: TfsDataFrame) -> TfsDataFrame:
     return df.loc[:, (df != 0).any(axis="index")]
 
 
-
-
 class LHCCorrectors:
-    """ Container for the corrector definitions used in the LHC.
+    """Container for the corrector definitions used in the LHC.
 
         These correctors are installed into the MCTX and powered via kcdx3 and kctx3 circuits.
         The length is set to 0.615 m, which is the length of the MCTs.
@@ -141,8 +139,8 @@ class LHCCorrectors:
 
 @dataclass()
 class LHCBeam:
-    """ Object containing all the information about the machine setup and
-    performing the MAD-X commands to run the simulation. """
+    """Object containing all the information about the machine setup and
+    performing the MAD-X commands to run the simulation."""
     beam: int
     outputdir: Path
     xing: dict
@@ -166,7 +164,7 @@ class LHCBeam:
     ERROR_COLUMNS = ["NAME", "DX", "DY"] + get_k_strings()
 
     def __post_init__(self):
-        """ Setup the MADX, output dirs and logging as well as additional instance parameters. """
+        """Setup the MADX, output dirs and logging as well as additional instance parameters."""
         self.outputdir.mkdir(exist_ok=True, parents=True)
         self.madx = Madx(**cpymad_logging_setup(level=LOG_LEVEL,  # sets also standard loggers
                                                 command_log=self.outputdir/'madx_commands.log',
@@ -179,7 +177,7 @@ class LHCBeam:
 
     # Output Helper ---
     def output_path(self, type_: str, output_id: str, dir_: Path | None = None, suffix: str = ".tfs") -> Path:
-        """ Returns the output path for standardized tfs names in the default output directory.
+        """Returns the output path for standardized tfs names in the default output directory.
 
         Args:
             type_ (str): Type of the output file (e.g. 'twiss', 'errors', 'ampdet')
@@ -195,7 +193,7 @@ class LHCBeam:
         return dir_ / f'{type_}.lhc.b{self.beam:d}.{output_id}{suffix}'
 
     def get_twiss(self, output_id=None, index_regex=r"BPM|M|IP", **kwargs) -> TfsDataFrame:
-        """ Uses the ``twiss`` command to get the current optics in the machine
+        """Uses the ``twiss`` command to get the current optics in the machine
         as TfsDataFrame.
 
         Args:
@@ -215,7 +213,7 @@ class LHCBeam:
         return df_twiss
 
     def get_last_twiss(self, index_regex=r"BPM|M|IP") -> TfsDataFrame:
-        """ Returns the twiss table of the last calculated twiss.
+        """Returns the twiss table of the last calculated twiss.
 
         Args:
             index_regex (str): Filter DataFrame index (NAME) by this pattern.
@@ -226,7 +224,7 @@ class LHCBeam:
         return get_tfs(self.madx.table.twiss, columns=self.TWISS_COLUMNS, index_regex=index_regex)
 
     def get_ampdet(self, output_id: str) -> TfsDataFrame:
-        """ Write out current amplitude detuning via PTC.
+        """Write out current amplitude detuning via PTC.
 
         Args:
             output_id (str): ID to use in the output (see ``output_path``).
@@ -242,7 +240,7 @@ class LHCBeam:
         return amplitude_detuning_ptc(self.madx, ampdet=2, chroma=4, file=file)
 
     def write_tfs(self, df: TfsDataFrame, type_: str, output_id: str):
-        """ Write the given TfsDataFrame with the standardized name (see ``output_path``)
+        """Write the given TfsDataFrame with the standardized name (see ``output_path``)
         and the index ``NAME``.
 
         Args:
@@ -254,11 +252,11 @@ class LHCBeam:
 
     # Wrapper ---
     def log_orbit(self):
-        """ Log the current orbit. """
+        """Log the current orbit."""
         log_orbit(self.madx, accel=self.ACCEL, year=self.year)
 
     def closest_tune_approach(self, df: TfsDataFrame | None = None):
-        """ Calculate and print out the closest tune approach from the twiss
+        """Calculate and print out the closest tune approach from the twiss
         DataFrame given. If no frame is given, it gets the current twiss.
 
         Args:
@@ -270,33 +268,33 @@ class LHCBeam:
         closest_tune_approach(df_coupling, qx=self.tune_x, qy=self.tune_y)
 
     def correct_coupling(self):
-        """ Correct the current coupling in the machine. """
+        """Correct the current coupling in the machine."""
         correct_coupling(self.madx,
                          accel=self.ACCEL, sequence=self.seq_name,
                          qx=self.tune_x, qy=self.tune_y,
                          dqx=self.chroma, dqy=self.chroma)
 
     def match_tune(self):
-        """ Match the machine to the preconfigured tunes. """
+        """Match the machine to the preconfigured tunes."""
         match_tune(self.madx,
                    accel=self.ACCEL, sequence=self.seq_name,
                    qx=self.tune_x, qy=self.tune_y,
                    dqx=self.chroma, dqy=self.chroma)
 
     def reinstate_loggers(self):
-        """ Set the saved logger handlers to the current logger. """
+        """Set the saved logger handlers to the current logger."""
         for name, handlers in self.logger.items():
             logging.getLogger(name).handlers = handlers
 
     def get_other_beam(self):
-        """ Return the respective other beam number. """
+        """Return the respective other beam number."""
         return 1 if self.beam == 4 else 4
 
     # Main ---
 
     def setup_machine(self):
-        """ Nominal machine setup function.
-        Initialized the beam and applies optics, crossing. """
+        """Nominal machine setup function.
+        Initialized the beam and applies optics, crossing."""
         self.reinstate_loggers()
         madx = self.madx  # shorthand
         mvars = madx.globals  # shorthand
@@ -345,7 +343,7 @@ class LHCBeam:
         madx.use(sequence=self.seq_name)
 
     def save_nominal(self, id_="nominal"):
-        """ Save nominal machine into Dataclass slots and (if `id_` is not None) output to tfs. """
+        """Save nominal machine into Dataclass slots and (if `id_` is not None) output to tfs."""
         self.reinstate_loggers()
 
         # Save Nominal
@@ -361,7 +359,7 @@ class LHCBeam:
             self.write_tfs(self.df_twiss_nominal_ir, 'twiss', ir_id)
 
     def install_circuits_into_mctx(self):
-        """ Installs kcdx and (and reinstalls kctx) into the Dodecapole Correctors.
+        """Installs kcdx and (and reinstalls kctx) into the Dodecapole Correctors.
 
         This allows for decapole and dodecapole correction with the MCTX magnets for test purposes.
         """
@@ -382,7 +380,7 @@ class LHCBeam:
                 self.madx.globals[corrector_b6.circuit] = 0
 
     def reset_detuning_circuits(self):
-        """ Reset all kcdx and kctx circuits (to zero). """
+        """Reset all kcdx and kctx circuits (to zero)."""
         for ip in (1, 5):
             for side in "LR":
                 for corrector_mask in (LHCCorrectors.b5, LHCCorrectors.b6):
@@ -391,7 +389,7 @@ class LHCBeam:
 
 
     def check_kctx_limits(self):
-        """ Check the corrector kctx limits."""
+        """Check the corrector kctx limits."""
         self.reinstate_loggers()
         magnet_type = LHCCorrectors.b6.madx_type
         checks = LimitChecks(
@@ -408,7 +406,7 @@ class LHCBeam:
 
 @dataclass()
 class FakeLHCBeam:
-    """ Mock of LHCBeam to use in calculations without the functions noticing.
+    """Mock of LHCBeam to use in calculations without the functions noticing.
     Used in the main-functions to load tfs-files without running MAD-X again.
     """
     beam: int

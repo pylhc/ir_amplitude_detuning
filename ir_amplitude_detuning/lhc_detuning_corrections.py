@@ -77,7 +77,7 @@ LHCBeamsPerXing: TypeAlias = dict[str, LHCBeams]
 
 @dataclass(slots=True)
 class CorrectionResults:
-    """ Class to store the results of a correction calculation.
+    """Class to store the results of a correction calculation.
 
     Attributes:
         name (str): The name of the correction target.
@@ -103,7 +103,7 @@ def create_optics(
     tune_x: float = 62.28,  # horizontal tune
     tune_y: float = 60.31,  # vertical tune
 ) -> LHCBeams:
-    """ Run MAD-X to create optics for all crossing-schemes.
+    """Run MAD-X to create optics for all crossing-schemes.
 
     The optics are saved in subfolders of the output directory.
 
@@ -150,7 +150,7 @@ def calculate_corrections(
     targets: Sequence[Target],
     method: Method = Method.cvxpy
     ) -> dict[str, CorrectionResults]:
-    """ Calculate corrections based on targets and given correctors.
+    """Calculate corrections based on targets and given correctors.
 
     Args:
         beams (Sequence[int]): The beam numbers to calculate corrections for.
@@ -195,7 +195,7 @@ def calculate_corrections(
 
 
 def get_nominal_optics(beams: LHCBeams | Sequence[int], outputdir: Path | None = None, label: str = '') -> TwissPerBeam:
-    """ Return previously generated nominal machine optics as a dictionary of TfsDataFrames per Beam, either directly from the
+    """Return previously generated nominal machine optics as a dictionary of TfsDataFrames per Beam, either directly from the
     LHCBeams objects (if given) or reading from the labeled sub-folder in the output-path.
 
     Args:
@@ -217,7 +217,7 @@ def get_nominal_optics(beams: LHCBeams | Sequence[int], outputdir: Path | None =
 
 
 def get_label_outputdir(outputdir: Path, label: str, beam: int) -> Path:
-    """ Get the outputdir sub-dir for a given label and beam.
+    """Get the outputdir sub-dir for a given label and beam.
 
     Args:
         outputdir (Path): The output directory.
@@ -232,7 +232,7 @@ def get_label_outputdir(outputdir: Path, label: str, beam: int) -> Path:
 # Correction Output Functions --------------------------------------------------
 
 def generate_madx_command(values: pd.Series) -> str:
-    """ Generate a MAD-X command to set the corrector values.
+    """Generate a MAD-X command to set the corrector values.
 
     Args:
         values (pd.Series): The correction values. Assumes the index are the Corrector objects.
@@ -251,7 +251,7 @@ def generate_madx_command(values: pd.Series) -> str:
 
 
 def generate_knl_tfs(values: pd.Series) -> tfs.TfsDataFrame:
-    """ Generate a TFS dataframe with the corrector values.
+    """Generate a TFS dataframe with the corrector values.
 
     Args:
         values (pd.Series): The correction values. Assumes the index are
@@ -285,7 +285,7 @@ def generate_knl_tfs(values: pd.Series) -> tfs.TfsDataFrame:
 # Analytical Check ---
 
 def check_corrections_analytically(outputdir: Path, optics: TwissPerBeam, results: CorrectionResults) -> dict[int, pd.DataFrame]:
-    """ Calculate the :func:`effective detuning <ir_amplitude_detuning.detuning.calculations.calc_effective_detuning>` for each beam and
+    """Calculate the :func:`effective detuning <ir_amplitude_detuning.detuning.calculations.calc_effective_detuning>` for each beam and
     write the results into a `tfs` file.
 
     Args:
@@ -303,7 +303,7 @@ def check_corrections_analytically(outputdir: Path, optics: TwissPerBeam, result
 
 
 def detuning_tfs_out_with_and_without_errors(lhc_out: LHCBeam | FakeLHCBeam, id_: str, df: pd.DataFrame):
-    """  Write out the detuning results, given as :class:`DataFrame` into a
+    """ Write out the detuning results, given as :class:`DataFrame` into a
     `tfs` file.
     If the input `DataFrame` contains :class:`~ir_amplitude_detuning.detuning.MeasureValue` objects,
     the values and errors are extracted and two files are written:
@@ -346,7 +346,7 @@ def check_corrections_ptc(
     tune_x: float = 62.28,  # horizontal tune
     tune_y: float = 60.31,  # vertical tune
     ):
-    """ Check the corrections via PTC.
+    """Check the corrections via PTC.
 
     This installs decapole corrector magnets and reads the corrections
     from the settings file.

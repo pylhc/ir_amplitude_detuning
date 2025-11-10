@@ -38,9 +38,23 @@ DetuningTerm: TypeAlias = FirstOrderTerm | SecondOrderTerm
 
 
 def get_order(term: DetuningTerm) -> int:
-    """ Get the order of the detuning, e.g. from X11 -> order 2, Y10 -> order 1.
+    """Get the order of the detuning, e.g. from X11 -> order 2, Y10 -> order 1.
 
     Args:
         term (str): Detuning Term, e.g. "X11"
     """
     return int(term[1]) + int(term[2])
+
+
+def detuning_term_to_planes(term: DetuningTerm) -> tuple[str, str]:
+    """Get the tune and action planes given detuning term.
+
+    Args:
+        term (str): Detuning term, e.g. "X02"
+
+    Returns:
+        tuple[str, str]: (tune, action), e.g. ("x", "yy")
+    """
+    tune = term[0].lower()
+    action = "x" * int(term[1]) + "y" * int(term[2])
+    return tune, action

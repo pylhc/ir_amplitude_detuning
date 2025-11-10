@@ -101,8 +101,8 @@ def get_simulation_path() -> Tuple[Path, str]:
 
 
 def merge_summary_data(summary_df):
-    """ Merge the data together based on names.
-    This is highly specific to the current results folder. """
+    """Merge the data together based on names.
+    This is highly specific to the current results folder."""
     summary_merged_df = tfs.TfsDataFrame(columns=summary_df.columns)
     for name in summary_df.index:
         if "_H_" in name:
@@ -150,7 +150,7 @@ def err_column_name(tune, action):
 
 
 def do_full_detuning_analysis(output_dir: Path):
-    """ Load results data from analysed output folders (i.e. the kick-files and bbq_tfs)
+    """Load results data from analysed output folders (i.e. the kick-files and bbq_tfs)
     and collect result in a single dataframe."""
     output_dir.mkdir(exist_ok=True, parents=True)
     all_results_paths = get_all_results_dirs()
@@ -159,7 +159,7 @@ def do_full_detuning_analysis(output_dir: Path):
     for analysis in all_results_paths:
         beam = get_beam_from_name(analysis.name)
         kick_plane = get_kick_plane_from_name(analysis.name)
-        # kick_df = read_timed_dataframe(analysis / get_kick_out_name())
+        kick_df = read_timed_dataframe(analysis / get_kick_out_name())
         kick_df, _ = get_kick_and_bbq_df(kick=analysis, bbq_in=analysis / "bbq_ampdet.tfs",
                                          beam=beam,
                                          filter_opt=OutlierFilterOpt(window=100, limit=0.),
@@ -173,7 +173,7 @@ def do_full_detuning_analysis(output_dir: Path):
 
 
 def get_summary_row(kick_df, name):
-    """ Turn relevant (order > 1, corrected terms) header items into Series. """
+    """Turn relevant (order > 1, corrected terms) header items into Series."""
     return pd.DataFrame(
         {coeff: kick_df.headers[coeff]
          for coeff in kick_df.headers.keys()
@@ -203,7 +203,7 @@ def get_diff(meas_a, meas_b):
 
 # Fill in measurement data in 10^3 m^-1:
 def get_measured_detuning_values(output_dir: Path, prefix: str = ""):
-    """ Get the detuning values from summary file (see redo_all_from_scratch.py). """
+    """Get the detuning values from summary file (see redo_all_from_scratch.py)."""
     data = {}
     df = tfs.read(output_dir / get_summary_name(prefix), index="Result")
     for meas, label in DATA_LABELS.items():
@@ -310,7 +310,7 @@ def do_all_plots_and_subtractions(output_dir: Path):
 
 
 def check_second_order_detuning(analysis: Path, simulation: Path, sim_id: str):
-    """ Remove second order detuning influence from kick data as well
+    """Remove second order detuning influence from kick data as well
     as perform second order fit on the kick data.
 
     Args:
@@ -349,7 +349,7 @@ def check_second_order_detuning(analysis: Path, simulation: Path, sim_id: str):
 
 
 def plot_measurement_fit_with_second_order(output: Path, kick_df, kick_df_subtracted, kick_df_so, kick_plane):
-    """ Plot all three fits into one single plot. """
+    """Plot all three fits into one single plot."""
     output.parent.mkdir(parents=True, exist_ok=True)
     opt = DotDict(
         plane=kick_plane,
@@ -387,7 +387,7 @@ def plot_measurement_fit_with_second_order(output: Path, kick_df, kick_df_subtra
 
 
 def get_corrected_detuning_ptc(folder: Path, beam: int, id_: str, columns: Sequence[str], main_xing: str = None) -> pd.Series:
-    """ Get the detuning terms from the PTC difference between id_ and nominal.
+    """Get the detuning terms from the PTC difference between id_ and nominal.
     If the state of the machine at "id_" is with errors,
     this returns the detuning as INTROCUDED by the errors.
     On the other hand, if this is a machine with corrections, this is
@@ -406,9 +406,9 @@ def get_corrected_detuning_ptc(folder: Path, beam: int, id_: str, columns: Seque
 
 
 def subtract_detuning(kick_df: tfs.TfsDataFrame, detuning_terms: pd.Series):
-    """ Subtract the detuning as given in the detuning terms from the measurement data in kick_df.
+    """Subtract the detuning as given in the detuning terms from the measurement data in kick_df.
     The detuning terms are all assumed to be the "free" tune derivatives.
-    AC-Dipole and taylor coefficients are calculated for these. """
+    AC-Dipole and taylor coefficients are calculated for these."""
     kick_df = tfs.TfsDataFrame(kick_df.to_dict())
 
     col_jx = get_action_col("X")
@@ -435,8 +435,8 @@ def subtract_detuning(kick_df: tfs.TfsDataFrame, detuning_terms: pd.Series):
 
 
 def calculate_detuning(terms: pd.Series, action: Tuple[float, float], plane: str, acd: bool = True):
-    """ Calculate the total change in tune on the measurement, based on the given 'detuning' term,
-    i.e. the derivative of the tune with action. """
+    """Calculate the total change in tune on the measurement, based on the given 'detuning' term,
+    i.e. the derivative of the tune with action."""
     detuning = 0
     for term in terms.index:
         if term[0] not in plane:
@@ -480,7 +480,7 @@ def latex_column(tune, action):
 
 
 def print_measurements_latex_table(output_data: Path, prefix: str = ""):
-    """ Print the measurement fit results as a latex table.
+    """Print the measurement fit results as a latex table.
     The prefix indicates if this should print the default ones (empty)
     the ones with second order subtracted ("sub_") or the ones
     that include second order in the fit ("so_")
@@ -526,10 +526,10 @@ def print_measurements_latex_table(output_data: Path, prefix: str = ""):
 
 
 def print_measurements_latex_table_diff(output_dir: Path, prefix: str = "sub_"):
-    """ Print the latex table for the detuning measurements again,
+    """Print the latex table for the detuning measurements again,
     this time only for the subtracted or second order one,
     with additional columns indicating
-    the difference to the "normal" analysis. """
+    the difference to the "normal" analysis."""
     df_default = tfs.read(output_dir / get_summary_name(prefix=""), index="Result")
     df = tfs.read(output_dir / get_summary_name(prefix=prefix), index="Result")
 
@@ -580,7 +580,7 @@ def print_measurements_latex_table_diff(output_dir: Path, prefix: str = "sub_"):
 
 
 def print_corrections_latex_table(output_dir: Path, prefix: str = ""):
-    """ Print the corrections in latex format to be put in a table. """
+    """Print the corrections in latex format to be put in a table."""
     id_ = f"{SIMULATION_ID}_b6"
     beam = 1
     corrections = tfs.read(output_dir / f"b{beam}" / f"settings.lhc.b{beam}.{prefix}{id_}.tfs", index="NAME")

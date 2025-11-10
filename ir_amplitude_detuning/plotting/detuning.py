@@ -37,7 +37,7 @@ LOG = logging.getLogger(__name__)
 
 @dataclass
 class PlotSetup:
-    """ Container to define different detuning measurements to plot
+    """Container to define different detuning measurements to plot
     with the plot_measurements function.
 
     Args:
@@ -191,7 +191,7 @@ def plot_measurements(setups: Sequence[PlotSetup], **kwargs):
 # Helper Functions -------------------------------------------------------------
 
 def get_ylabel(rescale: int = 0, delta: bool = False) -> str:
-    """ Generate a y-axis label for the plot.
+    """Generate a y-axis label for the plot.
 
     Args:
         rescale (int, optional): The rescaling factor for the y-axis.
@@ -204,7 +204,7 @@ def get_ylabel(rescale: int = 0, delta: bool = False) -> str:
 
 
 def get_defined_detuning_terms(measurements: Sequence[PlotSetup], terms: Sequence[str]) -> list[str]:
-    """ Get all terms for which at least one measurement/simulation has a value.
+    """Get all terms for which at least one measurement/simulation has a value.
 
     Args:
         measurements (Sequence[MeasurementSetup]): The measurements to check.
@@ -217,7 +217,7 @@ def get_defined_detuning_terms(measurements: Sequence[PlotSetup], terms: Sequenc
 
 
 def get_average(measurement_setup: PlotSetup, average: bool | str, terms: Sequence[str]) -> tuple[MeasureValue | float, str]:
-    """ Calculate the average of the measurements.
+    """Calculate the average of the measurements.
 
     Args:
         measurement_setup (MeasurementSetup): The measurements to average.
@@ -267,7 +267,7 @@ def plot_value_or_measurement(
     label: str = None,
     color: str = None,
     ) -> Line2D | ErrorbarContainer:
-    """ Plots an errorbar if the given measurement has an error,
+    """Plots an errorbar if the given measurement has an error,
     otherwise a simple point.
 
     Args:
@@ -291,7 +291,7 @@ def plot_value_or_measurement(
 
 
 def get_handles_labels(measurements: Sequence[PlotSetup]) -> tuple[list[Line2D], list[str]]:
-    """ Generate the handles and labels for the legend based on the given measurements.
+    """Generate the handles and labels for the legend based on the given measurements.
 
     Args:
         measurements (Sequence[MeasurementSetup]): The measurements to plot.

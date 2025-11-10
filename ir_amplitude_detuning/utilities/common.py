@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 class StrEnum(str, Enum):
-    """ Enum with string representation.
+    """Enum with string representation.
 
     Note: Can be removed in Python 3.11 as it is implemented there as `enum.StrEnum`.
     """
@@ -28,7 +28,7 @@ class StrEnum(str, Enum):
 
 
 class ContainerMeta(type):
-    """ MetaClass to store data in class attributes.
+    """MetaClass to store data in class attributes.
     Minimal implementation to make this usable as a 'Mapping', i.e. dict-like.
     """
     def __getitem__(cls, key):
@@ -46,7 +46,7 @@ class ContainerMeta(type):
 
 
 class Container(metaclass=ContainerMeta):
-    """ Convenience wrapper to inherit directly, instead of using a metaclass. """
+    """Convenience wrapper to inherit directly, instead of using a metaclass."""
     ...
 
 
@@ -75,7 +75,7 @@ class BeamDict(dict):
 # Looping Related Utilities -----------------------------------------------------
 
 def to_loop(iterable: Iterable[Any]) -> list[Iterable[int]]:
-    """ Get a list to loop over.
+    """Get a list to loop over.
 
     If there is only one entry, the return list will only have this entry wrapped in a list.
     If there are multiple entry, the first element will be a list of all entries combined,
@@ -108,19 +108,19 @@ class Subtractable(Protocol):
 
 
 def dict_sum(a: dict[Any, Addable], b: dict[Any, Addable]) -> dict[Any, Addable]:
-    """ Add the values of two dicts for each entry in a.
+    """Add the values of two dicts for each entry in a.
     Assumes all keys in a are present in b.
     """
     return {key: a[key] + b[key] for key in a}
 
 
 def dict_diff(a: dict[Any, Subtractable], b: dict[Any, Subtractable]) -> dict[Any, Subtractable]:
-    """ Subtract the values of meas_b from meas_a for each entry in the dicts.
+    """Subtract the values of meas_b from meas_a for each entry in the dicts.
     Assumes all keys in a are present in b.
     """
     return {key: a[key] - b[key] for key in a}
 
 
 def get_dict_detuning(meas: dict[Any, DetuningMeasurement]) -> dict[Any, Detuning]:
-    """ Get detuning values (i.e. without errors) from the measurement data for each of the items in meas."""
+    """Get detuning values (i.e. without errors) from the measurement data for each of the items in meas."""
     return {key: meas[key].get_detuning() for key in meas}

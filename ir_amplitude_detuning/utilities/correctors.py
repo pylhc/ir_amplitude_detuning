@@ -20,7 +20,7 @@ LOG = logging.getLogger(__name__)
 
 
 class FieldComponent(StrEnum):
-    """ Fields for which detuning calculations are implemented. """
+    """Fields for which detuning calculations are implemented."""
     b4: str = "b4"
     b5: str = "b5"
     b6: str = "b6"
@@ -28,7 +28,7 @@ class FieldComponent(StrEnum):
 
 @dataclass(slots=True)
 class Corrector:
-    """ Class to hold corrector information.
+    """Class to hold corrector information.
 
     Args:
         field: magnetic field component shorthand (e.g. 'b5' or 'b6')
@@ -50,6 +50,10 @@ class Corrector:
             raise ValueError(f"Field must be one of {list(FieldComponent)}, got {self.field}.")
 
     def __lt__(self, other: Corrector) -> bool:
+        """Less-than operator for sorting correctors.
+        Sorting is done by field, then by IP side (L before R), then by IP number (lower before higher),
+        then by position along the beamline (upstream before downstream).
+        """
         if self.field != other.field:
             return self.field < other.field
 
@@ -80,7 +84,7 @@ class Corrector:
 
 @dataclass(slots=True)
 class CorrectorMask:
-    """ Class to hold corrector templates to be filled in with IP and side.
+    """Class to hold corrector templates to be filled in with IP and side.
 
     Args:
         field: magnetic field component shorthand (e.g. 'b5' or 'b6')
@@ -110,7 +114,7 @@ Correctors: TypeAlias = Sequence[Corrector]
 
 
 def get_fields(correctors: Correctors) -> list[FieldComponent]:
-    """ Get all field components available for correction by the correctors.
+    """Get all field components available for correction by the correctors.
 
     Args:
         correctors (Correctors): list of correctors
@@ -122,7 +126,7 @@ def get_fields(correctors: Correctors) -> list[FieldComponent]:
 
 
 def assert_corrector_fields(correctors: Correctors):
-    """ Assert the correctors have been defined with the correct fields.
+    """Assert the correctors have been defined with the correct fields.
 
     Args:
         correctors (Correctors): list of correctors
@@ -136,7 +140,7 @@ def assert_corrector_fields(correctors: Correctors):
 
 
 def fill_corrector_masks(corrector_masks: Sequence[CorrectorMask | Corrector], ips: Sequence[int], sides: Sequence[str] = "LR") -> Correctors:
-    """ Fill the corrector masks with the ips and sides.
+    """Fill the corrector masks with the ips and sides.
 
     Args:
         corrector_masks (Sequence[CorrectorMask | Corrector]): list of corrector masks or correctors.

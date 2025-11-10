@@ -36,7 +36,7 @@ DetuningPerBeam = dict[int, Detuning]
 
 
 def load_simulation_output_tfs(folder: Path, type_: str, beam: int, id_: str) -> tfs.TfsDataFrame:
-    """ Load simluation output in tfs form.
+    """Load simluation output in tfs form.
     Assumes the simulation writes in the following pattern:
     {type}.{anything}.b{beam}.{id}.tfs
 
@@ -55,7 +55,7 @@ def load_simulation_output_tfs(folder: Path, type_: str, beam: int, id_: str) ->
 
 
 def get_detuning_from_ptc_output(df: pd.DataFrame,  terms: Sequence[str] = Detuning.all_terms()) -> Detuning:
-    """ Convert PTC output to a Series.
+    """Convert PTC output to a Series.
 
     Args:
         df (DataFrame): DataFrame as given by PTC.
@@ -74,7 +74,7 @@ def get_detuning_from_ptc_output(df: pd.DataFrame,  terms: Sequence[str] = Detun
 
 
 def load_ptc_detuning(folder: Path, beam: int, id_: str) -> Detuning:
-    """ Load detuning data from PTC output for the given beam and target.
+    """Load detuning data from PTC output for the given beam and target.
 
     Args:
         folder (Path): The folder containing the data.
@@ -86,7 +86,7 @@ def load_ptc_detuning(folder: Path, beam: int, id_: str) -> Detuning:
 
 
 def convert_dataframe_to_dict(df: pd.DataFrame) -> dict[str, Detuning | DetuningMeasurement]:
-    """ Convert a dataframe containing detuning-term columns into a dictionary of Detuning objects,
+    """Convert a dataframe containing detuning-term columns into a dictionary of Detuning objects,
     sorted by the index of the dataframe.
 
     Args:
@@ -116,7 +116,7 @@ def get_calculated_detuning_for_ip(
     ip: str,
     errors: bool = False
     ) -> dict[str, Detuning]:
-    """ Load and sort the detuning data for a given IP.
+    """Load and sort the detuning data for a given IP.
 
     Args:
         folder (Path): The folder containing the data.
@@ -146,7 +146,7 @@ def get_calculated_detuning_for_field(
     field: Iterable[FieldComponent] | FieldComponent | str,
     errors: bool = False,
     ) -> dict[str, Detuning]:
-    """ Load and sort the detuning data for a given set of fields.
+    """Load and sort the detuning data for a given set of fields.
 
     Args:
         folder (Path): The folder containing the data.
@@ -179,7 +179,7 @@ def get_detuning_change_ptc(
     ids: Iterable[str],
     beams: Iterable[int],
     ):
-    """ Load the detuning data from PTC simulations for the given set of ids (target names)
+    """Load the detuning data from PTC simulations for the given set of ids (target names)
     and return their change with respect to the nominal values.
 
     Args:

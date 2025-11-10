@@ -17,3 +17,5 @@ AMPDET_CALC_ID: str = "ampdet_calc"
 AMPDET_CALC_ERR_ID: str = "ampdet_calc_err"
 SETTINGS_ID: str = "settings"
 NOMINAL_ID: str = "nominal"
+
+AMDET_MEASUREMENT_SUMMARY_ID: str = "ampdet_summary"

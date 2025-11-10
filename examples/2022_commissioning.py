@@ -71,8 +71,7 @@ class LHCSimParams2022(Container):
     tune_y: float = 60.31  # vertical tune
 
 
-# Fill in measurement data in 10^3 m^-1
-# dictionary keys represent beam, 2 or 4 will make no difference
+# Measurement data in 10^3 m^-1; keys represent beam, 2 or 4 will make no difference
 class Meas2022(Container):
     flat: DetuningPerBeam = {
         1: scaled_detuningmeasurement(X10=(-15.4, 0.9), X01=(33.7, 1), Y01=(-8.4, 0.5)),
@@ -86,7 +85,7 @@ class Meas2022(Container):
 # Steps of calculations --------------------------------------------------------
 
 def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
-    """ Define the targets to be used.
+    """Define the targets to be used.
 
     Here:
         Calculate the values for the dodecapole correctors in the LHC to compensate
@@ -118,7 +117,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
 
 
 def simulation():
-    """ Create LHC optics with the set crossing scheme.
+    """Create LHC optics with the set crossing scheme.
 
     Here:
         IP1 and IP5 crossing active.
@@ -127,7 +126,7 @@ def simulation():
 
 
 def do_correction(lhc_beams: LHCBeams | None = None):
-    """ Calculate the dodecapole corrections for the LHC for the set targets.
+    """Calculate the dodecapole corrections for the LHC for the set targets.
 
     Also calculates the individual contributions per corrector order and IP to
     the individual detuning terms.
@@ -148,7 +147,7 @@ def do_correction(lhc_beams: LHCBeams | None = None):
 
 
 def check_correction(lhc_beams: LHCBeams | None = None):
-    """ Check the corrections via PTC. """
+    """Check the corrections via PTC."""
     check_corrections_ptc(
         lhc_beams=lhc_beams,
         **LHCSimParams2022,  # apart form outputdir only used if lhc_beams is None
@@ -158,7 +157,7 @@ def check_correction(lhc_beams: LHCBeams | None = None):
 # Plotting ---------------------------------------------------------------------
 
 def plot_detuning_comparison():
-    """ Plot the measured detuning values.
+    """Plot the measured detuning values.
     As well as the target (i.e. the detuning that should be compensated) and
     the reached detuning values by the correction."""
     target = get_targets()[0]  # only one target here
@@ -197,7 +196,7 @@ def plot_detuning_comparison():
 
 
 def plot_simulation_comparison():
-    """ Plot the target and how close the different simulation results are.
+    """Plot the target and how close the different simulation results are.
     Shows:
     - Target vs. PTC
     - Target vs. calculated contributions from IP1 & IP5

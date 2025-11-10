@@ -37,7 +37,7 @@ LOG = logging.getLogger(__name__)
 
 @dataclass(slots=True)
 class Target:
-    """ Class to hold correction Target information,
+    """Class to hold correction Target information,
     which can be used to construct a single equation system,
     calculating a combined correction optimizing for all TargetData definitions.
 
@@ -59,7 +59,7 @@ class Target:
 
 
 class TargetData:
-    """ Class to hold the detunig data of a Target.
+    """Class to hold the detunig data of a Target.
 
     The TargetData is used to build multiple lines in an equation system,
     for each beam and each detuning/constraint component.

@@ -43,7 +43,7 @@ IP: str = "IP"
 
 
 class Method(StrEnum):
-    """ Methods to calculate the detuning corrections.
+    """Methods to calculate the detuning corrections.
     Use ``cvxpy`` for the convex :class:`~cvxpy.Problem` solver,
     use the ``numpy`` method to calculate the corrections with the
     :func:`pseudo-inverse <numpy.linalg.pinv>`.
@@ -58,7 +58,7 @@ def calculate_correction(
         target: Target,
         method: Method = Method.auto
     ) -> pd.Series[float]:
-    r""" Calculates the values to power the detuning correctors by solving
+    r"""Calculates the values to power the detuning correctors by solving
     the equation system of the form
 
     .. math::
@@ -130,7 +130,7 @@ def calculate_correction(
 
 
 def calc_effective_detuning(optics: TwissPerBeam, values: pd.Series) -> dict[int, pd.DataFrame]:
-    """ Build a dataframe that calculates the detuning based on the given optics and corrector values
+    """Build a dataframe that calculates the detuning based on the given optics and corrector values
     individually for the given IPs and corrector fields.
 
     The detuning is "effective" as it is calculated from the pre-simulated optics.
