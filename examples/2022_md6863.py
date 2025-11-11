@@ -41,16 +41,15 @@ the results of the corrections performed here.
 
 The resulting detuning values are depicted in Figures 7.5, 7.7 and 7.10.
 """
-# data labels as used in the detuning summary
+
+from __future__ import annotations
+
 import logging
 import re
-from collections.abc import Sequence
 from dataclasses import dataclass, fields
 from functools import cache
 from pathlib import Path
 from typing import TYPE_CHECKING
-
-import pandas as pd
 
 from ir_amplitude_detuning.detuning.calculations import Method
 from ir_amplitude_detuning.detuning.measurements import DetuningMeasurement
@@ -68,7 +67,10 @@ from ir_amplitude_detuning.plotting.correctors import plot_correctors
 from ir_amplitude_detuning.plotting.detuning import PlotSetup, plot_measurements
 from ir_amplitude_detuning.plotting.utils import OtherColors, get_color_for_field, get_color_for_ip
 from ir_amplitude_detuning.simulation.lhc_simulation import LHCCorrectors
-from ir_amplitude_detuning.simulation.results_loader import DetuningPerBeam, get_calculated_detuning_for_field
+from ir_amplitude_detuning.simulation.results_loader import (
+    DetuningPerBeam,
+    get_calculated_detuning_for_field,
+)
 from ir_amplitude_detuning.utilities.common import BeamDict, Container, StrEnum
 from ir_amplitude_detuning.utilities.correctors import FieldComponent, fill_corrector_masks
 from ir_amplitude_detuning.utilities.logging import log_setup
@@ -77,6 +79,12 @@ from ir_amplitude_detuning.utilities.measurement_analysis import (
     create_summary,
     get_detuning_from_series,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    import pandas as pd
+
 
 LOG = logging.getLogger(__name__)
 
@@ -88,6 +96,7 @@ class Labels(StrEnum):
     ip5p: str = "ip5p"
     ip5m: str = "ip5m"
     corrected: str = "corrected"
+
 
 @dataclass
 class DetuningData:
@@ -587,6 +596,7 @@ def plot_target_comparison():
                     average=True,
                 )
                 fig.savefig(LHCSimParams2022.outputdir / f"plot.ampdet_compensation_and_measured_corrected.{target.name}.b{beam}.pdf")
+
 
 # Run --------------------------------------------------------------------------
 

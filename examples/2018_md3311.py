@@ -1,6 +1,6 @@
 """
-Setup 2018 Data
----------------
+Setup 2018 MD3311
+-----------------
 
 Example for a filled template based on the 2018 measurements from commissioning
 and MD3311.
