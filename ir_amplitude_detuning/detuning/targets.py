@@ -48,14 +48,17 @@ class Target:
     name: str
     data: Sequence[TargetData]
     correctors: Correctors = field(init=False)  # All correctors for all TargetData
-    ips: tuple[int, ...] = field(init=False)  # All ips for all TargetData
 
     def __post_init__(self):
         if "." in self.name:
             raise NameError("No periods allowed in target name!")
 
         self.correctors = sorted({c for data in self.data for c in data.correctors})
-        self.ips = tuple({ip for data in self.data for ip in data.ips})
+
+        # check that all TargetData have unique labels
+        labels = {data.label for data in self.data}
+        if len(labels) != len(self.data):
+            raise ValueError(f"All TargetData in Target '{self.name}' must have unique labels, got {labels}.")
 
 
 class TargetData:
@@ -69,17 +72,21 @@ class TargetData:
         detuning (dict[int, Detuning]): Dictionary defining the detuning for each beam.
         optics (dict[int, tfs.TfsDataFrame]): Dictionary defining the optics for each beam.
         constraints (dict[int, Constraints] | None): Dictionary defining the constraints for each beam.
+        label (str | None): Optional label for the TargetData, e.g. to identify different machine configurations.
+                            This is used internally to label different equation system rows,
+                            so should be unique per Target.
     """
     def __init__(self,
         correctors: Correctors,
         optics: dict[int, tfs.TfsDataFrame],
         detuning: dict[int, Detuning],
-        constraints: dict[int, Constraints] | None = None
+        constraints: dict[int, Constraints] | None = None,
+        label: str | None = None,
         ):
+        self.label = label or str(hash(self))
         self.correctors = sorted(correctors)
         self.optics = optics
         self.detuning: BeamDict = BeamDict.from_dict(detuning, default=Detuning)
         self.constraints: BeamDict = BeamDict.from_dict(constraints or {}, default=Constraints)
 
-        self.beams = tuple(self.optics.keys())  # needs to come form optics as beam 2 and beam 4 are important for these!
-        self.ips = tuple({c.ip for c in self.correctors if c.ip is not None})
+        self.beams = tuple(self.optics.keys())  # needs to come from optics as beam 2 and beam 4 are important for these!

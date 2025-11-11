@@ -74,7 +74,6 @@ LHCBeams: TypeAlias = dict[int, LHCBeam]
 LHCBeamsPerXing: TypeAlias = dict[str, LHCBeams]
 
 
-
 @dataclass(slots=True)
 class CorrectionResults:
     """Class to store the results of a correction calculation.
@@ -165,7 +164,6 @@ def calculate_corrections(
 
     for target in targets:
         LOG.info(f"Calculating detuning for \n{str(target)}")
-
 
         # Calculate correction ---
         try:

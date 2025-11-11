@@ -46,7 +46,7 @@ if TYPE_CHECKING:
 LOG = logging.getLogger(__name__)
 
 BETA: str = "BET"
-ROW_ID: str = "b{beam}{ip}.{term}"
+ROW_ID: str = "b{beam}.{label}.{term}"
 
 
 @dataclass(slots=True)
@@ -153,7 +153,6 @@ def build_detuning_correction_matrix_per_entry(target_data: TargetData) -> Detun
         DetuningCorrectionEquationSystem: The equation system as object defined above,
         but containing only the rows for the given target_data.
     """
-    ips_str = ips2str(target_data.ips)
     correctors = target_data.correctors
     eqsys = DetuningCorrectionEquationSystem.create_empty(columns=correctors)
 
@@ -162,7 +161,7 @@ def build_detuning_correction_matrix_per_entry(target_data: TargetData) -> Detun
         detuning_data: Detuning = target_data.detuning[beam]
         for term in detuning_data.terms():
             m_row = calculate_matrix_row(beam, twiss, correctors, term)
-            m_row.name = ROW_ID.format(beam=beam, ip=ips_str, term=term)
+            m_row.name = ROW_ID.format(beam=beam, label=target_data.label, term=term)
 
             eqsys.append_series_to_matrix(m_row)
             eqsys.set_value(m_row.name, detuning_data[term])
@@ -170,7 +169,7 @@ def build_detuning_correction_matrix_per_entry(target_data: TargetData) -> Detun
         constraints: Constraints = target_data.constraints[beam]
         for term in constraints.terms():
             m_row = calculate_matrix_row(beam, twiss, correctors, term)
-            m_row.name = ROW_ID.format(beam=beam, ip=ips_str, term=term)
+            m_row.name = ROW_ID.format(beam=beam, label=target_data.label, term=term)
 
             sign, constraint_val = constraints.get_leq(term)
             eqsys.append_series_to_constraints_matrix(sign*m_row)
@@ -309,17 +308,3 @@ def beam_direction(beam: int) -> int:
         int: 1 or -1
     """
     return -1 if beam == 2 else 1
-
-
-def ips2str(ips: Sequence[Any]) -> str:
-    """Convert a sequence of IPs into a string.
-
-    Args:
-        Sequence (Any): Sequence of IPs
-
-    Returns:
-        str: String of concatenated IPs
-    """
-    if not ips:
-        return ''
-    return f".ip{''.join(str(ip) for ip in ips)}"

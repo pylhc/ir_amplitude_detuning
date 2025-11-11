@@ -292,6 +292,7 @@ def get_targets(lhc_beams_per_setup: dict[Labels, LHCBeams] | None = None) -> Se
 
     # Compensate the global contribution
     target_global = TargetData(
+        label=Labels.full,
         correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(1, 5)),
         detuning=meas2022.flat - meas2022.full,
         optics=get_nominal_optics(
@@ -303,6 +304,7 @@ def get_targets(lhc_beams_per_setup: dict[Labels, LHCBeams] | None = None) -> Se
 
     # Compensate the IP5 contribution at positive crossing
     target_ip5p = TargetData(
+        label=Labels.ip5p,
         correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(5, )),
         detuning=meas2022.flat - meas2022.ip5p,
         optics=get_nominal_optics(
@@ -314,6 +316,7 @@ def get_targets(lhc_beams_per_setup: dict[Labels, LHCBeams] | None = None) -> Se
 
     # Compensate the IP5 contribution at negative crossing
     target_ip5m = TargetData(
+        label=Labels.ip5m,
         correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(5, )),
         detuning=meas2022.flat - meas2022.ip5m,
         optics=get_nominal_optics(
@@ -603,9 +606,9 @@ def plot_target_comparison():
 if __name__ == '__main__':
     log_setup()
     lhc_beams = None  # in case you want to skip the simulation
-    lhc_beams = simulation()
-    do_correction(lhc_beams=lhc_beams)
-    check_correction(lhc_beams_per_setup=lhc_beams)
+    # lhc_beams = simulation()
+    do_correction(lhc_beams_per_setup=lhc_beams)
+    # check_correction(lhc_beams_per_setup=lhc_beams)
     plot_corrector_strengths()
     plot_target_comparison()
     plot_measurement_comparison()
