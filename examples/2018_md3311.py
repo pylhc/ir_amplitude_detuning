@@ -12,7 +12,6 @@ and partially recreated here.
 """
 from __future__ import annotations
 
-from functools import cache
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -42,7 +41,7 @@ from ir_amplitude_detuning.simulation.results_loader import (
     DetuningPerBeam,
     get_calculated_detuning_for_field,
 )
-from ir_amplitude_detuning.utilities.common import Container, dict_diff, dict_sum
+from ir_amplitude_detuning.utilities.common import BeamDict, Container
 from ir_amplitude_detuning.utilities.correctors import (
     FieldComponent,
     fill_corrector_masks,
@@ -53,9 +52,8 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
-# Define Machine Data
-# -------------------
 class LHCSimParams2018(Container):
+    """LHC simulation parameters for 2018 MD3311."""
     beams: tuple[int, int] = 1, 4
     year: int = 2018
     outputdir: Path = Path("2018_md3311")
@@ -64,32 +62,35 @@ class LHCSimParams2018(Container):
     tune_y: float = 60.31  # vertical tune
 
 
-# Fill in measurement data in 10^3 m^-1
-# dictionary keys represent beam, 2 or 4 will make no difference
 class Meas2018(Container):
-    flat: DetuningPerBeam = {
+    """Measured detuning values for different crossing schemes in 10^3 m^-1.
+    Note: Keys are beam numbers, 2 and 4 can be used interchangeably (but consistently) here.
+    """
+    flat: DetuningPerBeam = BeamDict({
         1: scaled_detuningmeasurement(X10=(0.8, 0.5), Y01=(-3, 1)),
         2: scaled_detuningmeasurement(X10=(-7.5, 0.5), Y01=(6, 1)),
-    }
-    full: DetuningPerBeam = {
+    })
+    full: DetuningPerBeam = BeamDict({
         1: scaled_detuningmeasurement(X10=(34, 1), Y01=(-38, 1)),
         2: scaled_detuningmeasurement(X10=(-3, 1), Y01=(13, 3)),
-    }
-    ip5: DetuningPerBeam = {
+    })
+    ip5: DetuningPerBeam = BeamDict({
         1: scaled_detuningmeasurement(X10=(56, 6), Y01=(3, 2)),
         2: scaled_detuningmeasurement(X10=(1.5, 0.5), Y01=(12, 1)),
-    }
-    ip1: DetuningPerBeam = None  # IP1 was not measured
+    })
+    ip1: DetuningPerBeam = None  # IP1 was not measured, calculated below
 
 # IP1 was not measured, but we can infer from the difference to the IP5 contribution (for plotting)
-Meas2018.ip1 = dict_sum(dict_diff(Meas2018.full, Meas2018.ip5), Meas2018.flat)
+Meas2018.ip1 = Meas2018.full - Meas2018.ip5 + Meas2018.flat
+
 
 class Const2018(Container):
-    negative_crossterm: dict[int, Constraints] = {b: Constraints(X01="<=0") for b in (1, 2)}
+    """Constraints to be used in the calculations."""
+    negative_crossterm: BeamDict[int, Constraints] = BeamDict({b: Constraints(X01="<=0") for b in (1, 2)})
 
-# Steps of calculations --------------------------------------------------------
 
-@cache
+# Steps of correction calculation ------------------------------------------------------------------
+
 def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
     """Define the targets to be used.
 
@@ -116,7 +117,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
     # decapole correctors in IP1 and IP5.
     target_global = TargetData(
         correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(1, 5)),
-        detuning=dict_diff(Meas2018.flat, Meas2018.full),
+        detuning=Meas2018.flat - Meas2018.full,
         optics=optics,
     )
 
@@ -125,7 +126,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
     # decapole correctors in IP1 and IP5 a.
     target_global_constrained = TargetData(
         correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(1, 5)),
-        detuning=dict_diff(Meas2018.flat, Meas2018.full),
+        detuning=Meas2018.flat - Meas2018.full,
         constraints=Const2018.negative_crossterm,
         optics=optics,
     )
@@ -134,7 +135,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
     # decapole correctors in IP5 only.
     target_ip5 = TargetData(
         correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(5, )),
-        detuning=dict_diff(Meas2018.flat, Meas2018.ip5),
+        detuning=Meas2018.flat - Meas2018.ip5,
         optics=optics,  # can use same optics, as the xing in IP5 is the same
     )
 
@@ -171,13 +172,13 @@ def do_correction(lhc_beams: LHCBeams | None = None):
     results = calculate_corrections(
         beams=LHCSimParams2018.beams,
         outputdir=LHCSimParams2018.outputdir,
-        targets=get_targets(lhc_beams),
+        targets=get_targets(lhc_beams),  # calculate corrections for these targets
         method=Method.auto,  # some have constraints, some not. Let the solver decide.
     )
 
     optics = get_nominal_optics(lhc_beams or LHCSimParams2018.beams, outputdir=LHCSimParams2018.outputdir)
 
-    for values in results.values():
+    for values in results.values():  # per target
         check_corrections_analytically(
             outputdir=LHCSimParams2018.outputdir,
             optics=optics,
@@ -216,8 +217,10 @@ def plot_corrector_strengths():
     fig.savefig(outputdir / "plot.b6_correctors.ip15.pdf")
 
 
-def plot_target_comparison():
-    """Plot the target and how close the different simulation results are.
+def plot_detunig_compensation():
+    """Plot the detuning to be compensated (inverse of target) and
+    how close the different simulation results get.
+
     Shows:
         How well the expected detuning from the corrector powering will
         match global detuning as well as the individual contributions from the IPs,
@@ -242,9 +245,9 @@ def plot_target_comparison():
 
     targets = get_targets()
 
-    global_detuning = dict_diff(Meas2018.flat, Meas2018.full)
-    ip5_detuning = dict_diff(Meas2018.flat, Meas2018.ip5)
-    ip1_detuning = dict_diff(Meas2018.flat, Meas2018.ip1)
+    global_detuning = Meas2018.full - Meas2018.flat
+    ip5_detuning = Meas2018.ip5 - Meas2018.flat
+    ip1_detuning = Meas2018.ip1 - Meas2018.flat
 
     for beam in (1, 2):
         calculated = {
@@ -264,19 +267,19 @@ def plot_target_comparison():
                 PlotSetup(
                     label="Global",
                     measurement=global_detuning[beam],
-                    simulation=simulation['15'],
+                    simulation=-simulation['15'],
                     color=get_color_for_ip('15'),
                 ),
                 PlotSetup(
                     label="IP5",
                     measurement=ip5_detuning[beam],
-                    simulation=simulation['5'],
+                    simulation=-simulation['5'],
                     color=get_color_for_ip('5'),
                 ),
                 PlotSetup(
                     label="IP1",
                     measurement=ip1_detuning[beam],
-                    simulation=simulation['1'],
+                    simulation=-simulation['1'],
                     color=get_color_for_ip('1'),
                 ),
             ]
@@ -288,7 +291,7 @@ def plot_target_comparison():
                 terms=[FirstOrderTerm.X10, FirstOrderTerm.X01, FirstOrderTerm.Y01],
                 is_shift=True,
             )
-            fig.savefig(LHCSimParams2018.outputdir / f"plot.ampdet_sim_comparison.{target.name}.b{beam}.pdf")
+            fig.savefig(LHCSimParams2018.outputdir / f"plot.ampdet_compensation.{target.name}.b{beam}.pdf")
 
 # Run --------------------------------------------------------------------------
 
@@ -299,4 +302,4 @@ if __name__ == '__main__':
     do_correction(lhc_beams=lhc_beams)
     check_correction(lhc_beams=lhc_beams)
     plot_corrector_strengths()
-    plot_target_comparison()
+    plot_detunig_compensation()

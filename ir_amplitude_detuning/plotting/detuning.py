@@ -79,6 +79,7 @@ def plot_measurements(setups: Sequence[PlotSetup], **kwargs):
         ncol (int): Number of columns in the plot.
         transpose_legend (bool): Transpose the legend order.
         terms (Sequence[str]): Terms to plot.
+        measured_only (bool): Only plot terms for which at least one measurement has a value.
         average (bool | str): Add an average values to the plot,
             Can be "rms", "weighted_rms", "mean", "weighted_mean".
             The default for `True` is "weighted_rms".
@@ -108,13 +109,17 @@ def plot_measurements(setups: Sequence[PlotSetup], **kwargs):
     ncol: int = kwargs.pop('ncol', 3)
     transpose_legend: bool = kwargs.pop('transpose_legend', False)
     terms: Sequence[str] = kwargs.pop('terms', Detuning.all_terms())
+    measured_only: Sequence[str] = kwargs.pop('measured_only', False)
     average: str | bool = kwargs.pop('average', False)
 
     if kwargs:
         raise ValueError(f"Unknown keyword arguments: {kwargs.keys()}")
 
     # Prepare Constants ---
-    detuning_terms = get_defined_detuning_terms(setups, terms)
+    detuning_terms = terms
+    if measured_only:
+        detuning_terms = get_measured_detuning_terms(setups, terms)
+
     n_components = len(detuning_terms) + bool(average)
     n_measurements = len(setups)
     measurement_width = 1 / (n_measurements + 1)
@@ -203,16 +208,16 @@ def get_ylabel(rescale: int = 0, delta: bool = False) -> str:
     return f"{delta_str}Q$_{{a,b}}$ [{rescale_str}m$^{{-1}}$]"
 
 
-def get_defined_detuning_terms(measurements: Sequence[PlotSetup], terms: Sequence[str]) -> list[str]:
-    """Get all terms for which at least one measurement/simulation has a value.
+def get_measured_detuning_terms(measurements: Sequence[PlotSetup], terms: Sequence[str]) -> list[str]:
+    """Get all terms for which at least one measurement has a value.
 
     Args:
-        measurements (Sequence[MeasurementSetup]): The measurements to check.
+        measurements (Sequence[MeasurementSetup]): The setups to check.
     """
     return [
-        term for term in terms
+        term
+        for term in terms
         if any(getattr(m.measurement, term) is not None for m in measurements)
-        or any(getattr(m.simulation, term) is not None for m in measurements)
     ]
 
 

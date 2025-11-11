@@ -51,6 +51,9 @@ class Container(metaclass=ContainerMeta):
 
 
 class BeamDict(dict):
+    """Dictionary with beam number as keys, where beam 2 and 4 are interchangeable.
+    Also implements basic arithmetic operations, to be applied to all beams.
+    """
     __default_when_missing__: callable | None = None
 
     def __missing__(self, key):
@@ -67,9 +70,42 @@ class BeamDict(dict):
 
     @classmethod
     def from_dict(cls, d: dict[int, Any], default: callable = None):
+        """Create a BeamDict from a regular dict, setting a default factory for missing keys."""
         obj = cls(d)
         obj.__default_when_missing__ = default
         return obj
+
+    def __add__(self, other: BeamDict) -> BeamDict:
+        """Add two BeamDicts together, adding the values for each beam."""
+        result = BeamDict()
+        for beam in self.keys():
+            result[beam] = self[beam] + other[beam]
+        return result
+
+    def __sub__(self, other: BeamDict) -> BeamDict:
+        """Subtract two BeamDicts, subtracting the values for each beam."""
+        result = BeamDict()
+        for beam in self.keys():
+            result[beam] = self[beam] - other[beam]
+        return result
+
+    def __truediv__(self, scalar: float) -> BeamDict:
+        """Divide all values in the BeamDict by a scalar."""
+        result = BeamDict()
+        for beam in self.keys():
+            result[beam] = self[beam] / scalar
+        return result
+
+    def __mul__(self, scalar: float) -> BeamDict:
+        """Multiply all values in the BeamDict by a scalar."""
+        result = BeamDict()
+        for beam in self.keys():
+            result[beam] = self[beam] * scalar
+        return result
+
+    def __rmul__(self, scalar: float) -> BeamDict:
+        """Multiply all values in the BeamDict by a scalar."""
+        return self.__mul__(scalar)
 
 
 # Looping Related Utilities -----------------------------------------------------
@@ -93,34 +129,3 @@ def to_loop(iterable: Iterable[Any]) -> list[Iterable[int]]:
         return combined
 
     return combined + [[entry] for entry in iterable]
-
-
-# Loop over dicts ---
-
-class Addable(Protocol):
-    def __add__(self, other):
-        ...
-
-
-class Subtractable(Protocol):
-    def __sub__(self, other):
-        ...
-
-
-def dict_sum(a: dict[Any, Addable], b: dict[Any, Addable]) -> dict[Any, Addable]:
-    """Add the values of two dicts for each entry in a.
-    Assumes all keys in a are present in b.
-    """
-    return {key: a[key] + b[key] for key in a}
-
-
-def dict_diff(a: dict[Any, Subtractable], b: dict[Any, Subtractable]) -> dict[Any, Subtractable]:
-    """Subtract the values of meas_b from meas_a for each entry in the dicts.
-    Assumes all keys in a are present in b.
-    """
-    return {key: a[key] - b[key] for key in a}
-
-
-def get_dict_detuning(meas: dict[Any, DetuningMeasurement]) -> dict[Any, Detuning]:
-    """Get detuning values (i.e. without errors) from the measurement data for each of the items in meas."""
-    return {key: meas[key].get_detuning() for key in meas}

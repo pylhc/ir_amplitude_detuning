@@ -57,6 +57,12 @@ def get_color_for_ip(ip: str):
     raise NotImplementedError(f"IP must be one of ['15', '1', '5'], got {ip}.")
 
 
+class OtherColors:
+    """Other predefined colors."""
+    estimated = '#ff7f0e'  # safety orange
+    flat = '#17becf'  # blue-teal
+
+
 def get_full_target_labels(targets: Sequence[Target], suffixes: Sequence[str] | None = None, scale_exponent: float = 3) -> dict[str, str]:
     """Get a label that includes all detuning terms so that they can be easily compared.
     To save space only the first target_data is used.

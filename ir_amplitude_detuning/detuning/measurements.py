@@ -292,7 +292,7 @@ class DetuningMeasurement(Detuning):
         """Returns a Detuning object with the values (no errors) of this measurement."""
         return Detuning(**{term: self[term].value for term in self.terms()})
 
-    @ classmethod
+    @classmethod
     def from_detuning(cls, detuning):
         """Create a DetuningMeasurement from a Detuning object, with zero errors."""
         return cls(**{term: MeasureValue(detuning[term]) for term in detuning.terms()})

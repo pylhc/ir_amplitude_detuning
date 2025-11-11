@@ -14,7 +14,7 @@ import tfs
 
 from ir_amplitude_detuning.detuning.calculations import FIELDS, IP
 from ir_amplitude_detuning.detuning.measurements import Detuning, DetuningMeasurement, MeasureValue
-from ir_amplitude_detuning.utilities.common import BeamDict, dict_diff
+from ir_amplitude_detuning.utilities.common import BeamDict
 from ir_amplitude_detuning.utilities.constants import (
     AMPDET_CALC_ERR_ID,
     AMPDET_CALC_ID,
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 LOG = logging.getLogger(__name__)
 
 
-DetuningPerBeam = dict[int, Detuning]
+DetuningPerBeam = BeamDict[int, Detuning]
 
 
 def load_simulation_output_tfs(folder: Path, type_: str, beam: int, id_: str) -> tfs.TfsDataFrame:
@@ -188,8 +188,8 @@ def get_detuning_change_ptc(
         beams (int): The beam numbers.
 
     """
-    ptc_data = {id_: {beam: load_ptc_detuning(folder, beam, id_) for beam in beams} for id_ in ids}
-    nominal_data = {beam: load_ptc_detuning(folder, beam, NOMINAL_ID) for beam in beams}
+    ptc_data = {id_: BeamDict({beam: load_ptc_detuning(folder, beam, id_) for beam in beams}) for id_ in ids}
+    nominal_data = BeamDict({beam: load_ptc_detuning(folder, beam, NOMINAL_ID) for beam in beams})
     for id_ in ids:
-        ptc_data[id_] = BeamDict.from_dict(dict_diff(ptc_data[id_], nominal_data))
+        ptc_data[id_] = ptc_data[id_] - nominal_data
     return ptc_data

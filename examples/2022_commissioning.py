@@ -42,14 +42,14 @@ from ir_amplitude_detuning.lhc_detuning_corrections import (
 )
 from ir_amplitude_detuning.plotting.correctors import plot_correctors
 from ir_amplitude_detuning.plotting.detuning import PlotSetup, plot_measurements
-from ir_amplitude_detuning.plotting.utils import get_color_for_ip
+from ir_amplitude_detuning.plotting.utils import OtherColors, get_color_for_ip
 from ir_amplitude_detuning.simulation.lhc_simulation import LHCCorrectors
 from ir_amplitude_detuning.simulation.results_loader import (
     DetuningPerBeam,
     get_calculated_detuning_for_field,
     get_detuning_change_ptc,
 )
-from ir_amplitude_detuning.utilities.common import Container, dict_diff
+from ir_amplitude_detuning.utilities.common import BeamDict, Container
 from ir_amplitude_detuning.utilities.correctors import (
     FieldComponent,
     fill_corrector_masks,
@@ -73,14 +73,14 @@ class LHCSimParams2022(Container):
 
 # Measurement data in 10^3 m^-1; keys represent beam, 2 or 4 will make no difference
 class Meas2022(Container):
-    flat: DetuningPerBeam = {
+    flat: DetuningPerBeam = BeamDict({
         1: scaled_detuningmeasurement(X10=(-15.4, 0.9), X01=(33.7, 1), Y01=(-8.4, 0.5)),
         2: scaled_detuningmeasurement(X10=(-8.7, 0.7), X01=(13, 2), Y01=(10, 0.9)),
-    }
-    full: DetuningPerBeam = {
+    })
+    full: DetuningPerBeam = BeamDict({
         1: scaled_detuningmeasurement(X10=(20, 4), X01=(43, 4), Y01=(-10, 3)),
         2: scaled_detuningmeasurement(X10=(26, 0.8), X01=(-27, 4), Y01=(18, 7)),
-    }
+    })
 
 # Steps of calculations --------------------------------------------------------
 
@@ -108,7 +108,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
             data=[
                 TargetData(
                     correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(1, 5)),
-                    detuning=dict_diff(Meas2022.flat, Meas2022.full),
+                    detuning=Meas2022.flat - Meas2022.full,
                     optics=get_nominal_optics(lhc_beams, outputdir=LHCSimParams2022.outputdir),
                 ),
             ]
@@ -159,7 +159,8 @@ def check_correction(lhc_beams: LHCBeams | None = None):
 def plot_detuning_comparison():
     """Plot the measured detuning values.
     As well as the target (i.e. the detuning that should be compensated) and
-    the reached detuning values by the correction."""
+    the reached detuning values by the correction.
+    """
     target = get_targets()[0]  # only one target here
     ptc_diff = get_detuning_change_ptc(
         LHCSimParams2022.outputdir,
@@ -169,20 +170,22 @@ def plot_detuning_comparison():
     for beam in (1, 2):
         setup = [
             PlotSetup(
-                label="Flat Orbit",
+                label="flat orbit",
                 measurement=Meas2022.flat[beam],
+                color=OtherColors.flat,
             ),
             PlotSetup(
-                label="Full X-ing",
+                label="full X-ing",
                 measurement=Meas2022.full[beam],
+                color=get_color_for_ip('15'),
             ),
             PlotSetup(
-                label="Delta",
+                label="delta",
                 measurement=-target.data[0].detuning[beam],
                 simulation=-ptc_diff[target.name][beam],
             ),
             PlotSetup(
-                label="Expected",
+                label="expected",
                 measurement=-(target.data[0].detuning[beam] - ptc_diff[target.name][beam]),  # keep order to keep errorbars
             ),
         ]
@@ -191,12 +194,24 @@ def plot_detuning_comparison():
             "legend.handletextpad": 0.4,
             "legend.columnspacing": 1.0,
         }
-        fig = plot_measurements(setup, ylim=[-55, 55], average=True, ncol=4, manual_style=style_adaptions)
+        fig = plot_measurements(
+            setup,
+            ylim=[-55, 55],
+            average=True,
+            ncol=4,
+            manual_style=style_adaptions,
+            terms=[FirstOrderTerm.X10, FirstOrderTerm.X01, FirstOrderTerm.Y01],
+        )
         fig.savefig(LHCSimParams2022.outputdir / f"plot.ampdet_comparison.b{beam}.pdf")
 
 
 def plot_simulation_comparison():
-    """Plot the target and how close the different simulation results are.
+    """Plot the target detuning and how close the different simulation results are.
+
+    Note, that we here show the actual target.
+    In the other examples we usually plot the detuning change from flat to full crossing,
+    i.e. the inverse of the target here.
+
     Shows:
     - Target vs. PTC
     - Target vs. calculated contributions from IP1 & IP5

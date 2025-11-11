@@ -11,11 +11,11 @@ This class can be useful for a lot of different studies, by extending
 it with extra functionality.
 """
 import logging
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import ClassVar
 
-import cpymad.madx
 import tfs
 from cpymad.madx import Madx
 from cpymad_lhc.corrector_limits import LimitChecks
@@ -101,16 +101,17 @@ def get_wise_path(seed: int):
     return pathstr('wise', f"WISE.errordef.{seed:04d}.tfs")
 
 
-def drop_allzero_columns(df: TfsDataFrame) -> TfsDataFrame:
+def drop_allzero_columns(df: TfsDataFrame, keep: Sequence = ()) -> TfsDataFrame:
     """Drop columns that contain only zeros, to save harddrive space.
 
     Args:
         df (TfsDataFrame): DataFrame with all data
+        keep (Sequence): Columns to keep even if all zero.
 
     Returns:
         TfsDataFrame: DataFrame with only non-zero columns.
     """
-    return df.loc[:, (df != 0).any(axis="index")]
+    return df.loc[:, (df != 0).any(axis="index") | df.columns.isin(keep)]
 
 
 class LHCCorrectors:
@@ -248,7 +249,12 @@ class LHCBeam:
             type_ (str): Type of the output file (see ``output_path``)
             output_id (str): Name of the output (see ``output_path``)
         """
-        tfs.write(self.output_path(type_, output_id), drop_allzero_columns(df), save_index="NAME")
+        important_columns = ("X", "Y", "BETX", "BETY")  # keep even if all-zero
+        tfs.write(
+            self.output_path(type_, output_id),
+            drop_allzero_columns(df, keep=important_columns),
+            save_index="NAME"
+        )
 
     # Wrapper ---
     def log_orbit(self):
@@ -338,7 +344,7 @@ class LHCBeam:
                   kbunch=1, ex=self.emittance, ey=self.emittance)
 
         # Setup Orbit
-        orbit_vars = orbit_setup(madx, accel='lhc', year=self.year, **self.xing)
+        orbit_setup(madx, accel='lhc', year=self.year, **self.xing)
 
         madx.use(sequence=self.seq_name)
 
