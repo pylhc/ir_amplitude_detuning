@@ -4,15 +4,14 @@ Common Utilities
 
 This module contains common utilities for use in other modules.
 """
+
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Protocol
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
-
-    from ir_amplitude_detuning.detuning.measurements import Detuning, DetuningMeasurement
 
 
 class StrEnum(str, Enum):
