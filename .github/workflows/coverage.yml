@@ -1,15 +1,15 @@
-# Runs all tests and pushes coverage report to codeclimate
+# Runs all tests and creates a coverage report
 name: Coverage
 
 on:  # Runs on all push events to master branch and any push related to a pull request
   push:
     branches:
       - master
-  pull_request:  # so that codeclimate gets coverage and reports on the diff
+  pull_request:  # Check requried coverage before able to merge
 
 jobs:
   coverage:
       uses: pylhc/.github/.github/workflows/coverage.yml@master
       with:
-        src-dir: pylhc_submitter
+        src-dir: ir_amplitude_detuning
       secrets: inherit
