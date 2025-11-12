@@ -333,7 +333,7 @@ def _check_correction_output(output_dir: Path, compare_dir: Path):
         # Check files present ---
         for prefix in ("settings", "ampdet_calc", "ampdet_calc_err"):
             for beam in (1, 4):
-                assert_exists_and_not_empty(output_dir / "{prefix}.lhc.b{beam}.{target_id}.tfs")
+                assert_exists_and_not_empty(output_dir / f"{prefix}.lhc.b{beam}.{target_id}.tfs")
 
     # Compare Beams Settings ---
     b1_files = list(output_dir.glob("settings.lhc.b1*"))
