@@ -61,7 +61,7 @@ test = [
   "pytest >= 7.0",
   "pytest-cov >= 2.9",
   "pytest-timeout >= 1.4",
-  "pytest-dependencies",
+  "pytest-dependency >= 0.6.0",
 ]
 doc = [
   "sphinx >= 7.0",
