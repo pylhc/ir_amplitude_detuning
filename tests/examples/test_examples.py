@@ -19,7 +19,7 @@ from pandas.testing import assert_frame_equal
 
 from ir_amplitude_detuning.utilities.constants import NAME
 from tests.conftest import assert_exists_and_not_empty, clone_acc_models
-from ir_amplitude_detuning.simulation.lhc_simulation import PATHS, ACC_MODELS
+from ir_amplitude_detuning.simulation.lhc_simulation import PATHS
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -60,9 +60,8 @@ def prepare_models(tmp_path_factory: pytest.TempPathFactory):
     # UGLY :(
     PATHS.update({
         "optics2018": temp_path_2018,
-        ACC_MODELS: temp_path_2022,
+        "optics_repo": temp_path_2022.parent,
     })
-
 
 
 
