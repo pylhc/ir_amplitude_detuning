@@ -82,7 +82,7 @@ A lot of details about the individual steps can be found in the examples.
 ### 2022 Commissioning Example
 
 An example for the 2022 commissioning measurements can be found in
-[`examples/2022_commissioning.py`](https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/commissioning_2022.py).
+[`examples/commissioning_2022.py`](https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/commissioning_2022.py).
 This example is the most basic one and implements only a single `Target`:
 
 - Target 1: Correcting the detuning change between full crossing scheme enabled and flat orbit (a single `TargetData`).
@@ -90,7 +90,7 @@ This example is the most basic one and implements only a single `Target`:
 ### 2018 MD3311 Example
 
 A slightly more complex example for the 2018 MD3311 measurements can be found in
-[`examples/2018_md3311.py`](https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/md3311_2018.py).
+[`examples/md3311.py`](https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/md3311.py).
 Here, three different TArgets are defined:
 
 - Target 1: Correcting the detuning change between full crossing scheme enabled and flat orbit.
@@ -99,7 +99,7 @@ Here, three different TArgets are defined:
 
 ### 2022 MD6863 Example
 
-In the example [`examples/2022_md6863.py`](https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/md6863_2022.py),
+In the example [`examples/md6863.py`](https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/md6863.py),
 the measurements from MD6863 in 2022 are directly loaded from the analysed detuning output files from `omc3`,
 which makes already the first step more complex in code and requires a well defined naming scheme for the files.
 
