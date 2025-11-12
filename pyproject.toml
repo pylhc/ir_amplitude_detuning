@@ -1,0 +1,151 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "ir_amplitude_detuning/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "/.github",
+  "/doc",
+  "/tests",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["ir_dodecapole_correction"]
+
+[project]
+name = "ir_dodecapole_correction"
+readme = "README.md"
+description = "An accelerator physics tools package for the OMC team at CERN."
+authors = [
+    {name = "OMC Team", email = "pylhc@github.com"},  # see zenodo file / commits for details
+]
+license = "MIT"
+dynamic = ["version"]
+requires-python = ">=3.10"
+
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+
+dependencies = [
+  "numpy >= 1.24",
+  "cvxpy >= 1.5",
+  "omc3 >= 0.24",
+  "pandas >= 2.1",
+  "tfs-pandas >= 3.8",
+  "matplotlib >= 3.8",
+  "optics-functions >= 0.1",
+  "cpymad >= 1.17.0",
+  "cpymad_lhc >= 0.2.1",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest >= 7.0",
+  "pytest-cov >= 2.9",
+  "pytest-timeout >= 1.4",
+  "pytest-dependencies",
+]
+doc = [
+  "sphinx >= 7.0",
+  "sphinx_rtd_theme >= 2.0",
+  "sphinx_copybutton >= 0.4",
+  "sphinx-prompt >= 1.7",
+  "sphinx_codeautolink >= 0.14",
+]
+
+all = [
+  "ir_dodecapole_correction[test]",
+  "ir_dodecapole_correction[doc]",
+]
+
+[project.urls]
+homepage = "https://github.com/pylhc/ir_dodecapole_correction"
+repository = "https://github.com/pylhc/ir_dodecapole_correction"
+documentation = "https://pylhc.github.io/ir_dodecapole_correction/"
+changelog = "https://github.com/pylhc/ir_dodecapole_correction/blob/master/CHANGELOG.md"
+
+
+# ----- Testing ----- #
+
+[tool.pytest.ini_options]
+markers = [
+    "example: run the examples",
+]
+addopts = [
+    "--import-mode=importlib",
+]
+# Helpful for pytest-debugging (leave commented out on commit):
+# log_cli = true
+# log_cli_level = "DEBUG"
+# log_format = "%(levelname)7s | %(message)s | %(name)s"
+
+# ----- Dev Tools Configuration ----- #
+
+[tool.ruff]
+exclude = [
+  ".eggs",
+  ".git",
+  ".mypy_cache",
+  ".venv",
+  "_build",
+  "build",
+  "dist",
+]
+
+# Assume Python 3.10+
+target-version = "py310"
+
+line-length = 100
+indent-width = 4
+
+[tool.ruff.lint]
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+ignore = [
+  "E501",  # line too long
+  "FBT001",  # boolean-type-hint-positional-argument
+  "FBT002",  # boolean-default-value-positional-argument
+  "PT019",  # pytest-fixture-param-without-value (but suggested solution fails)
+]
+extend-select = [
+    "F",        # Pyflakes rules
+    "W",        # PyCodeStyle warnings
+    "E",        # PyCodeStyle errors
+    "I",        # Sort imports properly
+    "A",        # Detect shadowed builtins
+    "N",        # enforce naming conventions, e.g. ClassName vs function_name
+    "UP",       # Warn if certain things can change due to newer Python versions
+    "C4",       # Catch incorrect use of comprehensions, dict, list, etc
+    "FA",       # Enforce from __future__ import annotations
+    "FBT",      # detect boolean traps
+    "ISC",      # Good use of string concatenation
+    "BLE",      # disallow catch-all exceptions
+    "ICN",      # Use common import conventions
+    "RET",      # Good return practices
+    "SIM",      # Common simplification rules
+    "TID",      # Some good import practices
+    "TC",       # Enforce importing certain types in a TYPE_CHECKING block
+    "PTH",      # Use pathlib instead of os.path
+    # "NPY",      # Some numpy-specific things
+]
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
