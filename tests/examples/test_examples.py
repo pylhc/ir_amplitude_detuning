@@ -17,9 +17,9 @@ import pytest
 import tfs
 from pandas.testing import assert_frame_equal
 
+from ir_amplitude_detuning.simulation.lhc_simulation import PATHS
 from ir_amplitude_detuning.utilities.constants import NAME
 from tests.conftest import assert_exists_and_not_empty, clone_acc_models
-from ir_amplitude_detuning.simulation.lhc_simulation import PATHS
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -321,7 +321,7 @@ def _clear_correction_output(output_dir: Path):
 def _check_correction_output(output_dir: Path, compare_dir: Path):
     """Check that correction output files are created."""
     target_ids = _get_target_ids(compare_dir)
-    assert target_ids == 3, "No settings found to compare test run to."  # test sanity check
+    assert len(target_ids) == 3, "No settings found to compare test run to."  # test sanity check
 
     for target_id in target_ids:
         # Compare Expected Settings ---
