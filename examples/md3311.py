@@ -1,8 +1,8 @@
 """
-Setup 2018 MD3311
------------------
+Setup MD3311 (2018)
+-------------------
 
-`Source on github <https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/2018_md3311.py>`_.
+`Source on github <https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/md3311.py>`_.
 
 Example for a filled template based on the 2018 measurements from commissioning
 and MD3311.
@@ -54,17 +54,17 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
-class LHCSimParams2018(Container):
+class LHCSimParams(Container):
     """LHC simulation parameters for 2018 MD3311."""
     beams: tuple[int, int] = 1, 4
     year: int = 2018
-    outputdir: Path = Path("2018_md3311")
+    outputdir: Path = Path("md3311")
     xing: dict[str, str | float] = {'scheme': 'top'}  # scheme: crossing scheme of top-energy collisions
     tune_x: float = 62.28  # horizontal tune
     tune_y: float = 60.31  # vertical tune
 
 
-class Meas2018(Container):
+class MeasuredDetuning(Container):
     """Measured detuning values for different crossing schemes in 10^3 m^-1.
     Note: Keys are beam numbers, 2 and 4 can be used interchangeably (but consistently) here.
     """
@@ -83,7 +83,7 @@ class Meas2018(Container):
     ip1: DetuningPerBeam = None  # IP1 was not measured, calculated below
 
 # IP1 was not measured, but we can infer from the difference to the IP5 contribution (for plotting)
-Meas2018.ip1 = Meas2018.full - Meas2018.ip5 + Meas2018.flat
+MeasuredDetuning.ip1 = MeasuredDetuning.full - MeasuredDetuning.ip5 + MeasuredDetuning.flat
 
 
 class Const2018(Container):
@@ -111,16 +111,16 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
         This is why here it is "flat-full".
     """
     if lhc_beams is None:
-        lhc_beams = LHCSimParams2018.beams
+        lhc_beams = LHCSimParams.beams
 
-    optics = get_nominal_optics(lhc_beams, outputdir=LHCSimParams2018.outputdir)
+    optics = get_nominal_optics(lhc_beams, outputdir=LHCSimParams.outputdir)
 
 
     # Compensate the global contribution to X10 and Y01 using the
     # decapole correctors in IP1 and IP5.
     target_global = TargetData(
         correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(1, 5)),
-        detuning=Meas2018.flat - Meas2018.full,
+        detuning=MeasuredDetuning.flat - MeasuredDetuning.full,
         optics=optics,
     )
 
@@ -129,7 +129,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
     # decapole correctors in IP1 and IP5 a.
     target_global_constrained = TargetData(
         correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(1, 5)),
-        detuning=Meas2018.flat - Meas2018.full,
+        detuning=MeasuredDetuning.flat - MeasuredDetuning.full,
         constraints=Const2018.negative_crossterm,
         optics=optics,
     )
@@ -138,7 +138,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
     # decapole correctors in IP5 only.
     target_ip5 = TargetData(
         correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(5, )),
-        detuning=Meas2018.flat - Meas2018.ip5,
+        detuning=MeasuredDetuning.flat - MeasuredDetuning.ip5,
         optics=optics,  # can use same optics, as the xing in IP5 is the same
     )
 
@@ -163,7 +163,7 @@ def simulation():
     Here:
         IP1 and IP5 crossing active.
     """
-    return create_optics(**LHCSimParams2018)
+    return create_optics(**LHCSimParams)
 
 
 def do_correction(lhc_beams: LHCBeams | None = None):
@@ -173,17 +173,17 @@ def do_correction(lhc_beams: LHCBeams | None = None):
     the individual detuning terms.
     """
     results = calculate_corrections(
-        beams=LHCSimParams2018.beams,
-        outputdir=LHCSimParams2018.outputdir,
+        beams=LHCSimParams.beams,
+        outputdir=LHCSimParams.outputdir,
         targets=get_targets(lhc_beams),  # calculate corrections for these targets
         method=Method.auto,  # some have constraints, some not. Let the solver decide.
     )
 
-    optics = get_nominal_optics(lhc_beams or LHCSimParams2018.beams, outputdir=LHCSimParams2018.outputdir)
+    optics = get_nominal_optics(lhc_beams or LHCSimParams.beams, outputdir=LHCSimParams.outputdir)
 
     for values in results.values():  # per target
         check_corrections_analytically(
-            outputdir=LHCSimParams2018.outputdir,
+            outputdir=LHCSimParams.outputdir,
             optics=optics,
             results=values,
         )
@@ -193,7 +193,7 @@ def check_correction(lhc_beams: LHCBeams | None = None):
     """Check the corrections via PTC. (Not used for plotting here)."""
     check_corrections_ptc(
         lhc_beams=lhc_beams,
-        **LHCSimParams2018,  # apart form outputdir only used if lhc_beams is None
+        **LHCSimParams,  # apart form outputdir only used if lhc_beams is None
     )
 
 # Plotting ---------------------------------------------------------------------
@@ -207,7 +207,7 @@ ID_MAP: dict[str, str] = {
 
 def plot_corrector_strengths():
     """Plot the corrector strengths for the different targets."""
-    outputdir = LHCSimParams2018.outputdir
+    outputdir = LHCSimParams.outputdir
 
     fig = plot_correctors(
         outputdir,
@@ -248,14 +248,14 @@ def plot_detunig_compensation():
 
     targets = get_targets()
 
-    global_detuning = Meas2018.full - Meas2018.flat
-    ip5_detuning = Meas2018.ip5 - Meas2018.flat
-    ip1_detuning = Meas2018.ip1 - Meas2018.flat
+    global_detuning = MeasuredDetuning.full - MeasuredDetuning.flat
+    ip5_detuning = MeasuredDetuning.ip5 - MeasuredDetuning.flat
+    ip1_detuning = MeasuredDetuning.ip1 - MeasuredDetuning.flat
 
     for beam in (1, 2):
         calculated = {
             target.name: get_calculated_detuning_for_field(
-                folder=LHCSimParams2018.outputdir,
+                folder=LHCSimParams.outputdir,
                 beam=beam,
                 id_=target.name,
                 field=FieldComponent.b6,
@@ -294,7 +294,7 @@ def plot_detunig_compensation():
                 terms=[FirstOrderTerm.X10, FirstOrderTerm.X01, FirstOrderTerm.Y01],
                 is_shift=True,
             )
-            fig.savefig(LHCSimParams2018.outputdir / f"plot.ampdet_compensation.{target.name}.b{beam}.pdf")
+            fig.savefig(LHCSimParams.outputdir / f"plot.ampdet_compensation.{target.name}.b{beam}.pdf")
 
 # Run --------------------------------------------------------------------------
 

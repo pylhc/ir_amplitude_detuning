@@ -52,6 +52,8 @@ dependencies = [
   "tfs-pandas >= 3.8",
   "matplotlib >= 3.8",
   "optics-functions >= 0.1",
+  "cpymad >= 1.17.0",
+  "cpymad_lhc >= 0.2.1",
 ]
 
 [project.optional-dependencies]
@@ -59,6 +61,7 @@ test = [
   "pytest >= 7.0",
   "pytest-cov >= 2.9",
   "pytest-timeout >= 1.4",
+  "pytest-dependencies",
 ]
 doc = [
   "sphinx >= 7.0",
@@ -79,40 +82,12 @@ repository = "https://github.com/pylhc/ir_dodecapole_correction"
 documentation = "https://pylhc.github.io/ir_dodecapole_correction/"
 changelog = "https://github.com/pylhc/ir_dodecapole_correction/blob/master/CHANGELOG.md"
 
-# ----- Some uv Specifics ----- #
-
-# Our CIs use uv and we need to let it know where to find the AccPy stuff
-# See doc on indices at https://docs.astral.sh/uv/concepts/indexes/
-
-[tool.uv]
-allow-insecure-host = ["acc-py-repo.cern.ch"]  # AccPy uses http and we need to allow that
-
-[tool.uv.pip]
-compile-bytecode = true
-
-# Specify these packages are to be found at the AccPy index
-[tool.uv.sources]
-pytimber = { index = "accpy" }
-pylogbook = { index = "accpy" }
-
-# And we define the specifics for the AccPy index
-[[tool.uv.index]]
-name = "accpy"
-url = "http://acc-py-repo.cern.ch/repository/vr-py-releases/simple"
-default = true  # default = lowest priority -> try if packages not found in other indexes
-
-# Since we make AccPy default index, we need to also provide the PyPI index or
-# it would be ignored (https://docs.astral.sh/uv/concepts/indexes/#defining-an-index)
-[[tool.uv.index]]
-bname = "pypi"
-url = "https://pypi.org/simple"
 
 # ----- Testing ----- #
 
 [tool.pytest.ini_options]
 markers = [
-    "basic: basic tests run for every commit",
-    "extended: test run on PRs",
+    "example: run the examples",
 ]
 addopts = [
     "--import-mode=importlib",

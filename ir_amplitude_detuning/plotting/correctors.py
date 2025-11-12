@@ -53,7 +53,7 @@ def plot_correctors(
         corrector_pattern (str, optional): The corrector pattern to match,
                                  in case you don't want all correctors to be plotted.
 
-    Keyword Args (optional):
+    Keyword Args:
         style (str): The plot style to use.
         manual_style (dict): Dictionary of matplotlib style settings.
         lim (float): The y-axis limit.

@@ -2,7 +2,7 @@
 Setup for MD6863 (2022)
 -----------------------
 
-`Source on github <https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/2022_md6863.py>`_.
+`Source on github <https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/md6863.py>`_.
 
 In this example, the dodecapole corrections are calculated based on
 the measurements performed during MD6863 in 2022.
@@ -102,7 +102,7 @@ class Labels(StrEnum):
 
 
 @dataclass
-class DetuningData:
+class MeasuredDetuning:
     """Dataclass to hold the detuning data per scheme/configuration."""
     flat: DetuningPerBeam | None = None
     full: DetuningPerBeam | None = None
@@ -124,11 +124,11 @@ class XingSchemes(Container):
     ip5m: dict[str, float] = {'scheme': 'flat', 'on_x5_h': -160}
 
 
-class LHCSimParams2022(Container):
+class LHCSimParams(Container):
     """LHC simulation parameters for 2022 MD6863."""
     beams: tuple[int, int] = 1, 4
     year: int = 2022
-    outputdir: Path = Path("2022_md6863")
+    outputdir: Path = Path("md6863")
     tune_x: float = 62.28  # horizontal tune
     tune_y: float = 60.31  # vertical tune
 
@@ -152,7 +152,7 @@ class MeasurementConfig:
         return hash((self.beam, self.xing, self.kick_plane, self.b6corr))
 
 
-def format_detuning_per_scheme(detuning: DetuningData):
+def format_detuning_per_scheme(detuning: MeasuredDetuning):
     """Format the detuning data for printing.
 
     Args:
@@ -224,7 +224,7 @@ def extract_data_for_both_planes_and_beams(summary: pd.DataFrame, xing: str, b6c
     return beams
 
 
-def convert_summary_to_detuning(summary: pd.DataFrame) -> DetuningData:
+def convert_summary_to_detuning(summary: pd.DataFrame) -> MeasuredDetuning:
     """Convert the summary DataFrame to a dictionary of detuning data.
 
     Args:
@@ -235,7 +235,7 @@ def convert_summary_to_detuning(summary: pd.DataFrame) -> DetuningData:
     """
     summary.index = [get_config_from_name(name) for name in summary.index]
 
-    detuning = DetuningData()
+    detuning = MeasuredDetuning()
     for xing in XingSchemes:
         detuning[xing] = extract_data_for_both_planes_and_beams(summary, xing=xing, b6corr=False)
     detuning["corrected"] = extract_data_for_both_planes_and_beams(summary, xing="full", b6corr=True)
@@ -244,7 +244,7 @@ def convert_summary_to_detuning(summary: pd.DataFrame) -> DetuningData:
 
 
 @cache
-def get_detuning_data(redo_analysis: bool = False) -> DetuningData:
+def get_detuning_data(redo_analysis: bool = False) -> MeasuredDetuning:
     """Extract the detuning measurement values from the analysed data in the `md6863_data` folder.
 
     The values are automatically corrected for the influence of forced oscillations (see [DillyAmplitudeDetuning2023]_).
@@ -290,7 +290,7 @@ def get_targets(lhc_beams_per_setup: dict[Labels, LHCBeams] | None = None) -> Se
         This is why here it is "flat-xing".
     """
     if lhc_beams_per_setup is None:
-        lhc_beams_per_setup = dict.fromkeys(Labels, LHCSimParams2022.beams)
+        lhc_beams_per_setup = dict.fromkeys(Labels, LHCSimParams.beams)
 
     meas2022 = get_detuning_data()
 
@@ -301,7 +301,7 @@ def get_targets(lhc_beams_per_setup: dict[Labels, LHCBeams] | None = None) -> Se
         detuning=meas2022.flat - meas2022.full,
         optics=get_nominal_optics(
             lhc_beams_per_setup[Labels.full],
-            outputdir=LHCSimParams2022.outputdir,
+            outputdir=LHCSimParams.outputdir,
             label=Labels.full
         ),
     )
@@ -313,7 +313,7 @@ def get_targets(lhc_beams_per_setup: dict[Labels, LHCBeams] | None = None) -> Se
         detuning=meas2022.flat - meas2022.ip5p,
         optics=get_nominal_optics(
             lhc_beams_per_setup[Labels.ip5p],
-            outputdir=LHCSimParams2022.outputdir,
+            outputdir=LHCSimParams.outputdir,
             label=Labels.ip5p
         ),
     )
@@ -325,7 +325,7 @@ def get_targets(lhc_beams_per_setup: dict[Labels, LHCBeams] | None = None) -> Se
         detuning=meas2022.flat - meas2022.ip5m,
         optics=get_nominal_optics(
             lhc_beams_per_setup[Labels.ip5m],
-            outputdir=LHCSimParams2022.outputdir,
+            outputdir=LHCSimParams.outputdir,
             label=Labels.ip5m
         ),
     )
@@ -356,7 +356,7 @@ def simulation() -> dict[str, LHCBeams]:
     optics = {}
     for scheme in XingSchemes:
         optics[scheme]  = create_optics(
-            **LHCSimParams2022,
+            **LHCSimParams,
             xing=XingSchemes[scheme],
             output_id=scheme
         )
@@ -370,22 +370,22 @@ def do_correction(lhc_beams_per_setup: dict[Labels, LHCBeams] | None = None):
     the individual detuning terms.
     """
     results = calculate_corrections(
-        beams=LHCSimParams2022.beams,
-        outputdir=LHCSimParams2022.outputdir,
+        beams=LHCSimParams.beams,
+        outputdir=LHCSimParams.outputdir,
         targets=get_targets(lhc_beams_per_setup),  # calculate corrections for these targets
         method=Method.numpy,  # No constraints, so calculate with errors
     )
 
     # Get full-crossing nominal optics for analytical checks
     optics = get_nominal_optics(
-        lhc_beams_per_setup or LHCSimParams2022.beams,
-        outputdir=LHCSimParams2022.outputdir,
+        lhc_beams_per_setup or LHCSimParams.beams,
+        outputdir=LHCSimParams.outputdir,
         label=Labels.full
     )
 
     for values in results.values():  # per target
         check_corrections_analytically(
-            outputdir=LHCSimParams2022.outputdir,
+            outputdir=LHCSimParams.outputdir,
             optics=optics,
             results=values,
         )
@@ -395,7 +395,7 @@ def check_correction(lhc_beams_per_setup: dict[Labels, LHCBeams] | None = None):
     """Check the corrections via PTC. (Not used for plotting here)."""
     check_corrections_ptc(
         lhc_beams=lhc_beams_per_setup[Labels.full] if lhc_beams_per_setup is not None else None,
-        **LHCSimParams2022,  # apart form outputdir only used if lhc_beams is None
+        **LHCSimParams,  # apart form outputdir only used if lhc_beams is None
     )
 
 
@@ -411,7 +411,7 @@ def plot_corrector_strengths():
     """Plot the corrector strengths for the different targets.
     These are similar to the green and red values in Fig. 7.12 of [DillyThesis2024]_ .
     """
-    outputdir = LHCSimParams2022.outputdir
+    outputdir = LHCSimParams.outputdir
 
     fig = plot_correctors(
         outputdir,
@@ -470,7 +470,8 @@ def plot_measurement_comparison():
             terms=[FirstOrderTerm.X10, FirstOrderTerm.X01, FirstOrderTerm.Y01],
             average=True,
         )
-        fig.savefig(LHCSimParams2022.outputdir / f"plot.ampdet_measured.all.b{beam}.pdf")
+        fig.savefig(LHCSimParams.outputdir / f"plot.ampdet_measured.all.b{beam}.pdf")
+
 
 def plot_target_comparison():
     """Plot the detuning to be compensated (inverse of target) and
@@ -524,7 +525,7 @@ def plot_target_comparison():
     for beam in (1, 2):
         for target in targets:
             simulation = get_calculated_detuning_for_field(
-                folder=LHCSimParams2022.outputdir,
+                folder=LHCSimParams.outputdir,
                 beam=beam,
                 id_=target.name,
                 field=FieldComponent.b6,
@@ -575,7 +576,7 @@ def plot_target_comparison():
                 is_shift=True,
                 average=True,
             )
-            fig.savefig(LHCSimParams2022.outputdir / f"plot.ampdet_compensation.{target.name}.b{beam}.pdf")
+            fig.savefig(LHCSimParams.outputdir / f"plot.ampdet_compensation.{target.name}.b{beam}.pdf")
 
             if target.name == "global":
                 # for global target we have a measurement to compare to (Fig. 7.5 in [DillyThesis2024]_) ---
@@ -606,7 +607,7 @@ def plot_target_comparison():
                     is_shift=True,
                     average=True,
                 )
-                fig.savefig(LHCSimParams2022.outputdir / f"plot.ampdet_compensation_and_measured_corrected.{target.name}.b{beam}.pdf")
+                fig.savefig(LHCSimParams.outputdir / f"plot.ampdet_compensation_and_measured_corrected.{target.name}.b{beam}.pdf")
 
 
 # Run --------------------------------------------------------------------------
@@ -614,9 +615,9 @@ def plot_target_comparison():
 if __name__ == '__main__':
     log_setup()
     lhc_beams = None  # in case you want to skip the simulation
-    # lhc_beams = simulation()
+    lhc_beams = simulation()
     do_correction(lhc_beams_per_setup=lhc_beams)
-    # check_correction(lhc_beams_per_setup=lhc_beams)
+    check_correction(lhc_beams_per_setup=lhc_beams)
     plot_corrector_strengths()
     plot_target_comparison()
     plot_measurement_comparison()

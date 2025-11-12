@@ -2,7 +2,7 @@
 Setup Commissioning 2022
 ------------------------
 
-`Source on github  <https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/2022_commissioning.py>`_.
+`Source on github  <https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/commissioning_2022.py>`_.
 
 In this example, the dodecapole corrections are calculated based on
 the measurements performed during the commissioning in 2022.
@@ -64,17 +64,17 @@ if TYPE_CHECKING:
 
 # Define Machine Data
 # -------------------
-class LHCSimParams2022(Container):
+class LHCSimParams(Container):
     beams: tuple[int, int] = 1, 4
     year: int = 2022
-    outputdir: Path = Path("2022_commissioning")
+    outputdir: Path = Path("commissioning_2022")
     xing: dict[str, str | float] = {'scheme': 'flat', 'on_x1_v': -150, 'on_x5_h': 150}  # scheme: all off ("flat") apart from IP1 and IP5
     tune_x: float = 62.28  # horizontal tune
     tune_y: float = 60.31  # vertical tune
 
 
 # Measurement data in 10^3 m^-1; keys represent beam, 2 or 4 will make no difference
-class Meas2022(Container):
+class MeasuredDetuning(Container):
     flat: DetuningPerBeam = BeamDict({
         1: scaled_detuningmeasurement(X10=(-15.4, 0.9), X01=(33.7, 1), Y01=(-8.4, 0.5)),
         2: scaled_detuningmeasurement(X10=(-8.7, 0.7), X01=(13, 2), Y01=(10, 0.9)),
@@ -103,7 +103,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
         This is why here it is "flat-full".
     """
     if lhc_beams is None:
-        lhc_beams = LHCSimParams2022.beams
+        lhc_beams = LHCSimParams.beams
 
     return [
         Target(
@@ -111,8 +111,8 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
             data=[
                 TargetData(
                     correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(1, 5)),
-                    detuning=Meas2022.flat - Meas2022.full,
-                    optics=get_nominal_optics(lhc_beams, outputdir=LHCSimParams2022.outputdir),
+                    detuning=MeasuredDetuning.flat - MeasuredDetuning.full,
+                    optics=get_nominal_optics(lhc_beams, outputdir=LHCSimParams.outputdir),
                 ),
             ]
         ),
@@ -125,7 +125,7 @@ def simulation():
     Here:
         IP1 and IP5 crossing active.
     """
-    return create_optics(**LHCSimParams2022)
+    return create_optics(**LHCSimParams)
 
 
 def do_correction(lhc_beams: LHCBeams | None = None):
@@ -135,16 +135,16 @@ def do_correction(lhc_beams: LHCBeams | None = None):
     the individual detuning terms.
     """
     results = calculate_corrections(
-        beams=LHCSimParams2022.beams,
-        outputdir=LHCSimParams2022.outputdir,
+        beams=LHCSimParams.beams,
+        outputdir=LHCSimParams.outputdir,
         targets=get_targets(lhc_beams),
         method=Method.numpy,  # as we do not define any constraints, we can use numpy and get errorbars on the results
 
     )
 
     check_corrections_analytically(
-        outputdir=LHCSimParams2022.outputdir,
-        optics=get_nominal_optics(lhc_beams or LHCSimParams2022.beams, outputdir=LHCSimParams2022.outputdir),
+        outputdir=LHCSimParams.outputdir,
+        optics=get_nominal_optics(lhc_beams or LHCSimParams.beams, outputdir=LHCSimParams.outputdir),
         results=list(results.values())[0],  # single target
     )
 
@@ -153,7 +153,7 @@ def check_correction(lhc_beams: LHCBeams | None = None):
     """Check the corrections via PTC."""
     check_corrections_ptc(
         lhc_beams=lhc_beams,
-        **LHCSimParams2022,  # apart form outputdir only used if lhc_beams is None
+        **LHCSimParams,  # apart form outputdir only used if lhc_beams is None
     )
 
 
@@ -166,20 +166,20 @@ def plot_detuning_comparison():
     """
     target = get_targets()[0]  # only one target here
     ptc_diff = get_detuning_change_ptc(
-        LHCSimParams2022.outputdir,
+        LHCSimParams.outputdir,
         ids=[target.name],
-        beams=LHCSimParams2022.beams
+        beams=LHCSimParams.beams
     )
     for beam in (1, 2):
         setup = [
             PlotSetup(
                 label="flat orbit",
-                measurement=Meas2022.flat[beam],
+                measurement=MeasuredDetuning.flat[beam],
                 color=OtherColors.flat,
             ),
             PlotSetup(
                 label="full X-ing",
-                measurement=Meas2022.full[beam],
+                measurement=MeasuredDetuning.full[beam],
                 color=get_color_for_ip('15'),
             ),
             PlotSetup(
@@ -205,7 +205,7 @@ def plot_detuning_comparison():
             manual_style=style_adaptions,
             terms=[FirstOrderTerm.X10, FirstOrderTerm.X01, FirstOrderTerm.Y01],
         )
-        fig.savefig(LHCSimParams2022.outputdir / f"plot.ampdet_comparison.b{beam}.pdf")
+        fig.savefig(LHCSimParams.outputdir / f"plot.ampdet_comparison.b{beam}.pdf")
 
 
 def plot_simulation_comparison():
@@ -225,13 +225,13 @@ def plot_simulation_comparison():
     """
     target = get_targets()[0]  # only one target here
     ptc_diff = get_detuning_change_ptc(
-        LHCSimParams2022.outputdir,
+        LHCSimParams.outputdir,
         ids=[target.name],
-        beams=LHCSimParams2022.beams
+        beams=LHCSimParams.beams
     )
     for beam in (1, 2):
         calculated = get_calculated_detuning_for_field(
-            folder=LHCSimParams2022.outputdir,
+            folder=LHCSimParams.outputdir,
             beam=beam,
             id_=target.name,
             field=FieldComponent.b6,
@@ -283,13 +283,13 @@ def plot_simulation_comparison():
             transpose_legend=True,
             is_shift=True,
         )
-        fig.savefig(LHCSimParams2022.outputdir / f"plot.ampdet_sim_comparison.b{beam}.pdf")
+        fig.savefig(LHCSimParams.outputdir / f"plot.ampdet_sim_comparison.b{beam}.pdf")
 
 
 
 def plot_corrector_strengths():
     """Plot the corrector strengths."""
-    outputdir = LHCSimParams2022.outputdir
+    outputdir = LHCSimParams.outputdir
     target = get_targets()[0]  # only one target here
     ips = '15'
     fig = plot_correctors(
