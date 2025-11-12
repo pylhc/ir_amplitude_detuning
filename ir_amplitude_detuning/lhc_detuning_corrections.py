@@ -39,7 +39,13 @@ from ir_amplitude_detuning.detuning.calculations import (
 )
 from ir_amplitude_detuning.detuning.measurements import MeasureValue
 from ir_amplitude_detuning.detuning.targets import Target
-from ir_amplitude_detuning.simulation.lhc_simulation import FakeLHCBeam, LHCBeam, LHCCorrectors
+from ir_amplitude_detuning.simulation.lhc_simulation import (
+    ACC_MODELS,
+    FakeLHCBeam,
+    LHCBeam,
+    LHCCorrectors,
+    pathstr,
+)
 from ir_amplitude_detuning.utilities.constants import (
     AMPDET_CALC_ERR_ID,
     AMPDET_CALC_ID,
@@ -68,10 +74,18 @@ if TYPE_CHECKING:
     from ir_amplitude_detuning.detuning.targets import Target
 
 
-LOG = logging.getLogger(__name__)
-
 LHCBeams: TypeAlias = dict[int, LHCBeam]
 LHCBeamsPerXing: TypeAlias = dict[str, LHCBeams]
+
+
+LOG = logging.getLogger(__name__)
+
+
+def get_optics(year: int) -> str:
+    return {
+        2018: pathstr("optics2018", "PROTON", "opticsfile.22_ctpps2"),
+        2022: pathstr(ACC_MODELS, "strengths", "ATS_Nominal", "2022", "squeeze", "ats_30cm.madx")
+    }[year]
 
 
 @dataclass(slots=True)
@@ -97,7 +111,7 @@ def create_optics(
     outputdir: Path,
     output_id: str = '',
     xing: dict[str, dict] | None = None,  # default set below
-    optics: str = "round3030",  # 30cm round optics
+    optics: str | Path | None = None,  # defaults to 30cm round optics
     year: int = 2018,  # lhc year
     tune_x: float = 62.28,  # horizontal tune
     tune_y: float = 60.31,  # vertical tune
@@ -120,10 +134,6 @@ def create_optics(
     Returns:
         LHCBeams: The LHC beams, i.e. a dictionary of LHCBeam objects.
     """
-    # set mutable defaults ----
-    if xing is None:
-        xing = {'scheme': 'top'}  # use top-energy crossing scheme
-
     # Setup LHC for both beams -------------------------------------------------
     lhc_beams = {}
     for beam in beams:
@@ -131,8 +141,8 @@ def create_optics(
         lhc_beam = LHCBeam(
             beam=beam,
             outputdir=output_subdir,
-            xing=xing,
-            optics=optics,
+            xing=xing or {'scheme': 'top'},  # use top-energy crossing scheme
+            optics=optics or get_optics(year),
             year=year,
             tune_x=tune_x,
             tune_y=tune_y,
@@ -339,7 +349,7 @@ def check_corrections_ptc(
     # Below only needed if lhc_beams is None ---
     beams: Sequence[int] | None = None,
     xing: dict[str, dict] | None = None,
-    optics: str = "round3030",  # 30cm round optics
+    optics: Path | None = None,  # defaults to 30cm round optics
     year: int = 2018,  # lhc year
     tune_x: float = 62.28,  # horizontal tune
     tune_y: float = 60.31,  # vertical tune
@@ -361,7 +371,7 @@ def check_corrections_ptc(
         lhc_beams (dict[int, LHCBeam]): Pre-run LHC beams.
         beams (Sequence[int]): Beams (if ``lhc_beams`` is None).
         xing (dict[str, dict]): Crossing scheme (if ``lhc_beams`` is `None`).
-        optics (str): Optics (if ``lhc_beams`` is `None`).
+        optics (Path): Path to the optics file (if ``lhc_beams`` is `None`).
         year (int): Year (if ``lhc_beams`` is `None`).
         tune_x (float): Horizontal tune (if ``lhc_beams`` is `None`).
         tune_y (float): Vertical tune (if ``lhc_beams`` is `None`).
@@ -371,15 +381,13 @@ def check_corrections_ptc(
         lhc_beams = {}
         if beams is None:
             raise ValueError("Either lhc_beams or beams must be given.")
-        if xing is None:
-            xing = {'scheme': 'top'}
 
         for beam in beams:
             lhc_beam = LHCBeam(
                 beam=beam,
                 outputdir=get_label_outputdir(outputdir, 'tmp_ptc', beam),
-                xing=xing,
-                optics=optics,
+                xing=xing or {'scheme': 'top'},
+                optics=optics or get_optics(year),
                 year=year,
                 tune_x=tune_x,
                 tune_y=tune_y,

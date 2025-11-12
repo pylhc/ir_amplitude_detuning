@@ -62,6 +62,7 @@ test = [
   "pytest-cov >= 2.9",
   "pytest-timeout >= 1.4",
   "pytest-dependency >= 0.6.0",
+  "gitpython >= 3.1",  # imported as 'git', used for acc-models fixture
 ]
 doc = [
   "sphinx >= 7.0",

@@ -37,11 +37,9 @@ from ir_amplitude_detuning.utilities.correctors import CorrectorMask, FieldCompo
 LOG = logging.getLogger(__name__)  # setup in main()
 LOG_LEVEL = logging.DEBUG
 
-ACC_MODELS = "acc-models-lhc"
+ACC_MODELS: str = "acc-models-lhc"
 
-PATHS = {
-    "db5": Path("/afs/cern.ch/eng/lhc/optics/V6.503"),
-    "optics2016": Path("/afs/cern.ch/eng/lhc/optics/runII/2016"),
+PATHS: dict[str, Path] = {
     "optics2018": Path("/afs/cern.ch/eng/lhc/optics/runII/2018"),
     "optics_repo": Path("/afs/cern.ch/eng/acc-models/lhc"),
     ACC_MODELS: Path(ACC_MODELS),
@@ -60,45 +58,6 @@ def pathstr(key: str, *args: str) -> str:
         str: Full path with the base from  given ``key``.
     """
     return str(PATHS[key].joinpath(*args))
-
-
-def get_optics_path(year: int, name: str | Path):
-    """Get optics by name, i.e. a collection of optics path-strings to the optics files.
-
-     Args:
-         year (int): Year of the optics
-         name (str, Path): Name for the optics or a path to the optics file.
-
-    Returns:
-        str: Path to the optics file.
-     """
-    if isinstance(name, Path):
-        return str(name)
-
-    # Predefined optics paths ---
-    optics_map = {
-        2018: {
-            'inj': pathstr("optics2018", "PROTON", "opticsfile.1"),
-            'flat6015': pathstr("optics2018", 'MDflatoptics2018', 'opticsfile_flattele60cm.21'),
-            'round3030': pathstr("optics2018", "PROTON", "opticsfile.22_ctpps2"),
-        },
-        2022: {
-            'round3030': pathstr(ACC_MODELS, "strengths", "ATS_Nominal", "2022", "squeeze", "ats_30cm.madx")
-        }
-    }
-    return optics_map[year][name]
-
-
-def get_wise_path(seed: int):
-    """Get the wise errordefinition file by seed-number.
-
-    Args:
-        seed (int): Seed for the error realization.
-
-    Returns:
-        str: Path to the wise errortable file.
-    """
-    return pathstr('wise', f"WISE.errordef.{seed:04d}.tfs")
 
 
 def drop_allzero_columns(df: TfsDataFrame, keep: Sequence = ()) -> TfsDataFrame:
@@ -145,9 +104,8 @@ class LHCBeam:
     beam: int
     outputdir: Path
     xing: dict
-    optics: str
+    optics: str | Path | None
     year: int = 2018
-    thin: bool = False
     tune_x: float = 62.28
     tune_y: float = 60.31
     chroma: float = 3
@@ -175,6 +133,15 @@ class LHCBeam:
 
         # Define Sequence to use
         self.seq_name, self.seq_file, self.bv_flag = get_lhc_sequence_filename_and_bv(self.beam, accel="lhc" if self.year < 2020 else "hllhc")  # `hllhc` just for naming of the sequence file, i.e. without _as_built
+
+        self.path_to_use = "optics2018"
+        if self.year > 2019:  # after 2019, use acc-models
+            self.path_to_use = ACC_MODELS
+
+            acc_models_path = PATHS[ACC_MODELS]
+            if acc_models_path.exists():
+                acc_models_path.unlink()
+            acc_models_path.symlink_to(pathstr("optics_repo", str(self.year)))
 
     # Output Helper ---
     def output_path(self, type_: str, output_id: str, dir_: Path | None = None, suffix: str = ".tfs") -> Path:
@@ -303,30 +270,13 @@ class LHCBeam:
         Initialized the beam and applies optics, crossing."""
         self.reinstate_loggers()
         madx = self.madx  # shorthand
-        mvars = madx.globals  # shorthand
 
         # Load Macros
-        madx.call(pathstr("optics2018", "toolkit", "macro.madx"))
+        madx.call(pathstr(self.path_to_use, "toolkit", "macro.madx"))
 
         # Lattice Setup ---------------------------------------
         # Load Sequence
-        if self.year > 2019:  # after 2019, use acc-models
-            acc_models_path = PATHS[ACC_MODELS]
-            if acc_models_path.exists():
-                acc_models_path.unlink()
-            acc_models_path.symlink_to(pathstr("optics_repo", str(self.year)))
-            madx.call(pathstr(ACC_MODELS, self.seq_file))
-        else:
-            madx.call(pathstr("optics2018", self.seq_file))
-
-        # Slice Sequence
-        if self.thin:
-            mvars.slicefactor = 4
-            madx.beam()
-            madx.call(pathstr("optics2018", "toolkit", "myslice.madx"))
-            madx.beam()
-            madx.use(sequence=self.seq_name)
-            madx.makethin(sequence=self.seq_name, style="teapot", makedipedge=True)
+        madx.call(pathstr(self.path_to_use, self.seq_file))
 
         # Cycling w.r.t. to IP3 (mandatory to find closed orbit in collision in the presence of errors)
         madx.seqedit(sequence=self.seq_name)
@@ -335,10 +285,7 @@ class LHCBeam:
         madx.endedit()
 
         # Define Optics and make beam
-        madx.call(get_optics_path(self.year, self.optics))
-        if self.optics == 'inj':
-            mvars.NRJ = 450.000  # not defined in injection optics.1 but in the others
-
+        madx.call(str(self.optics))
         madx.beam(sequence=self.seq_name, bv=self.bv_flag,
                   energy="NRJ", particle="proton", npart=self.n_particles,
                   kbunch=1, ex=self.emittance, ey=self.emittance)

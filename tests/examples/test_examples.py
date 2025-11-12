@@ -8,6 +8,7 @@ the expected corretor settings.
 
 from __future__ import annotations
 
+import shutil
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -17,13 +18,15 @@ import tfs
 from pandas.testing import assert_frame_equal
 
 from ir_amplitude_detuning.utilities.constants import NAME
-from tests.conftest import assert_exists_and_not_empty
+from tests.conftest import assert_exists_and_not_empty, clone_acc_models
+from ir_amplitude_detuning.simulation.lhc_simulation import PATHS, ACC_MODELS
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
 EXAMPLES_TEST_DIR = Path(__file__).parent
 INPUTS_DIR = EXAMPLES_TEST_DIR / "inputs"
+SIMULATION_DATA_DIR = EXAMPLES_TEST_DIR / "simulation2018"
 EXAMPLES_DIR = EXAMPLES_TEST_DIR.parents[1] / "examples"
 
 if str(EXAMPLES_DIR.parent) not in sys.path:
@@ -32,24 +35,55 @@ if str(EXAMPLES_DIR.parent) not in sys.path:
 from examples import md3311, md6863, commissioning_2022  # noqa
 
 
+# Fixtures to prepare Models ---------------------------------------------------
+
+@pytest.fixture(scope="module", autouse=True)
+def prepare_models(tmp_path_factory: pytest.TempPathFactory):
+    # 2018
+    temp_path_2018 = tmp_path_factory.mktemp("acc-models-lhc-2018")
+    for seq_file in SIMULATION_DATA_DIR.glob("*.seq"):
+        shutil.copy(src=seq_file, dst=temp_path_2018/seq_file.name)
+
+    macro = SIMULATION_DATA_DIR / "macro.madx"
+    toolkit_dir = temp_path_2018 / "toolkit"
+    toolkit_dir.mkdir(exist_ok=True)
+    shutil.copy(src=macro, dst=toolkit_dir / macro.name)
+
+    optics = SIMULATION_DATA_DIR / "opticsfile.22_ctpps2"
+    optics_dir = temp_path_2018 / "PROTON"
+    optics_dir.mkdir(exist_ok=True)
+    shutil.copy(src=optics, dst=optics_dir / optics.name)
+
+    # 2022
+    temp_path_2022 = clone_acc_models(tmp_path_factory, accel="lhc", year=2022)
+
+    # UGLY :(
+    PATHS.update({
+        "optics2018": temp_path_2018,
+        ACC_MODELS: temp_path_2022,
+    })
+
+
+
+
 # Fixtures to prepare Outputdir ------------------------------------------------
 
 @pytest.fixture(scope="class")
-def example_md3311(tmp_path_factory) -> Path:
+def example_md3311(tmp_path_factory: pytest.TempPathFactory) -> Path:
     temp_path = tmp_path_factory.mktemp("md3311")
     md3311.LHCSimParams.outputdir = temp_path
     return temp_path
 
 
 @pytest.fixture(scope="class")
-def example_commissioning_2022(tmp_path_factory) -> Path:
+def example_commissioning_2022(tmp_path_factory: pytest.TempPathFactory) -> Path:
     temp_path = tmp_path_factory.mktemp("2022_commissioning")
     commissioning_2022.LHCSimParams.outputdir = temp_path
     return temp_path
 
 
 @pytest.fixture(scope="class")
-def example_md6863(tmp_path_factory) -> Path:
+def example_md6863(tmp_path_factory: pytest.TempPathFactory) -> Path:
     temp_path = tmp_path_factory.mktemp("2022_md6863")
     md6863.LHCSimParams.outputdir = temp_path
     return temp_path
