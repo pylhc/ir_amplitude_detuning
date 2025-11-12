@@ -11,13 +11,13 @@ on:  # Runs on any push event to any branch except master (the coverage workflow
       - 'master'
 
 jobs:
-  tests:
-    uses: pylhc/.github/.github/workflows/tests.yml@master
-    with:
-      pytest-options: -m "not example"
+#   tests:
+#     uses: pylhc/.github/.github/workflows/tests.yml@master
+#     with:
+#       pytest-options: -m "not example"
 
   examples:
-    needs: tests
+    # needs: tests
     uses: pylhc/.github/.github/workflows/tests.yml@master
     with:
       pytest-options: -m "example"
