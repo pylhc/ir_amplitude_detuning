@@ -2,6 +2,8 @@
 Setup Commissioning 2022
 ------------------------
 
+`Source on github  <https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/2022_commissioning.py>`_.
+
 In this example, the dodecapole corrections are calculated based on
 the measurements performed during the commissioning in 2022.
 
@@ -88,6 +90,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
     """Define the targets to be used.
 
     Here:
+
         Calculate the values for the dodecapole correctors in the LHC to compensate
         for the shift in measured detuning from the flat to the full crossing scheme
         (i.e. crossing active in IP1 and IP5).
@@ -213,10 +216,12 @@ def plot_simulation_comparison():
     i.e. the inverse of the target here.
 
     Shows:
+
     - Target vs. PTC
     - Target vs. calculated contributions from IP1 & IP5
     - PTC vs. calculated contributions from IP1 & IP5
     - Calculated contributions from IP1 & IP5 vs. IP1
+
     """
     target = get_targets()[0]  # only one target here
     ptc_diff = get_detuning_change_ptc(
@@ -283,6 +288,7 @@ def plot_simulation_comparison():
 
 
 def plot_corrector_strengths():
+    """Plot the corrector strengths."""
     outputdir = LHCSimParams2022.outputdir
     target = get_targets()[0]  # only one target here
     ips = '15'

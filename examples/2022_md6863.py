@@ -2,6 +2,8 @@
 Setup for MD6863 (2022)
 -----------------------
 
+`Source on github <https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/2022_md6863.py>`_.
+
 In this example, the dodecapole corrections are calculated based on
 the measurements performed during MD6863 in 2022.
 
@@ -25,6 +27,7 @@ The naming scheme is as follows:
 ``b$BEAM_1_$XING1_5_$XING5_ampdet_$PLANE_b6_$CORR``
 
 Where:
+
 - ``$BEAM`` is the beam number
 - ``$XING1`` and ``$XING5`` are the IP1 and IP5 crossing schemes, respectively, in signed-integer murad or 'off' for flat
 - ``$PLANE`` is the plane of the kick, either 'H' or 'V' or 'X' or 'Y'
@@ -273,6 +276,7 @@ def get_targets(lhc_beams_per_setup: dict[Labels, LHCBeams] | None = None) -> Se
     """Define the targets to be used.
 
     Here:
+
         Calculate the values for the dodecapole correctors in the LHC to compensate
         for the shift in measured detuning from the flat to the full crossing scheme
         (i.e. crossing active in IP1 and IP5) and from flat to the IP5 crossing schemes.
@@ -281,9 +285,9 @@ def get_targets(lhc_beams_per_setup: dict[Labels, LHCBeams] | None = None) -> Se
         named there "w/o IP5" (here: "global") and "w/ IP5" (here: "local_and_global").
 
     Note:
-    The detuning target should be the opposite of the measured detuning,
-    such that the calculated correction compensates the measured detuning.
-    This is why here it is "flat-xing".
+        The detuning target should be the opposite of the measured detuning,
+        such that the calculated correction compensates the measured detuning.
+        This is why here it is "flat-xing".
     """
     if lhc_beams_per_setup is None:
         lhc_beams_per_setup = dict.fromkeys(Labels, LHCSimParams2022.beams)
@@ -342,10 +346,12 @@ def simulation() -> dict[str, LHCBeams]:
     """Create LHC all optics with their respective crossing schemes.
 
     Here:
+
          - Flat orbit.
          - IP1 and IP5 crossing active.
          - IP5 positive crossing only (IP1 flat).
          - IP5 negative crossing only (IP1 flat).
+
     """
     optics = {}
     for scheme in XingSchemes:
@@ -471,6 +477,7 @@ def plot_target_comparison():
     how close the different simulation results get.
 
     As we have two targets here, multiple plots are created:
+
      - Comparison with measured detuning values (Fig. 7.5 in [DillyThesis2024]_):
        During MD only the "global" target correction could be applied,
        as this correction was calculated while the IP5 measurements were still ongoing.
@@ -486,13 +493,14 @@ def plot_target_comparison():
         We always show the detuning difference from flat to the respective crossing scheme,
         i.e. the expected detuning coming from the crossing scheme change.
 
-        AmpDet from IP5+ = Ampdet at IP5 positive crossing - AmpDet at flat
-        AmpDet from Full = AmpDet at full crossing - AmpDet at flat = AmpDet from IP1 + AmpDet from IP5
-        AmpDet from IP1 = AmpDet from Full - AmpDet from IP5
-        AmpDet from IP5 dodecapoles =
-            0.5 * (AmpDet from IP5+ + AmpDet from IP5-) =
-            0.5 * (AmpDet at IP5+ + AmpDet at IP5- - 2 * AmpDet at flat)
-            (See Eqs. 7.6 - 7.8 in [DillyThesis2024]_)
+        - AmpDet from IP5+ = Ampdet at IP5 positive crossing - AmpDet at flat
+        - AmpDet from Full = AmpDet at full crossing - AmpDet at flat = AmpDet from IP1 + AmpDet from IP5
+        - AmpDet from IP1 = AmpDet from Full - AmpDet from IP5
+        - AmpDet from IP5 dodecapoles =
+
+           | 0.5 * (AmpDet from IP5+ + AmpDet from IP5-) =
+           | - 0.5 * (AmpDet at IP5+ + AmpDet at IP5- - 2 * AmpDet at flat)
+           | (See Eqs. 7.6 - 7.8 in [DillyThesis2024]_)
     """
     style_adaptions = {
         "figure.figsize": [6.0, 4.0],

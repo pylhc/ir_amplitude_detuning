@@ -2,6 +2,8 @@
 Setup 2018 MD3311
 -----------------
 
+`Source on github <https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/2018_md3311.py>`_.
+
 Example for a filled template based on the 2018 measurements from commissioning
 and MD3311.
 
@@ -95,6 +97,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
     """Define the targets to be used.
 
     Here:
+
         Calculate the values for the dodecapole correctors in the LHC to compensate
         for the shift in measured detuning from the flat to the full crossing scheme
         (i.e. crossing active in IP1 and IP5) and from flat to the IP5 crossing scheme.
@@ -103,9 +106,9 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
         in Figure 7.1 of [DillyThesis2024]_ .
 
     Note:
-    The detuning target should be the opposite of the measured detuning,
-    such that the calculated correction compensates the measured detuning.
-    This is why here it is "flat-full".
+        The detuning target should be the opposite of the measured detuning,
+        such that the calculated correction compensates the measured detuning.
+        This is why here it is "flat-full".
     """
     if lhc_beams is None:
         lhc_beams = LHCSimParams2018.beams
@@ -221,22 +224,22 @@ def plot_detunig_compensation():
     """Plot the detuning to be compensated (inverse of target) and
     how close the different simulation results get.
 
-    Shows:
-        How well the expected detuning from the corrector powering will
-        match global detuning as well as the individual contributions from the IPs,
-        for each target individually:
+    This plot shows how well the expected detuning from the corrector powering will
+    match global detuning as well as the individual contributions from the IPs,
+    for each target individually.
 
-        You can see from the plots, that for the first target the global contribution
-        is well matched, yet the individual IPs overshoot (but conpensate each other).
+    You can see from the plots, that for the first target the global contribution
+    is well matched, yet the individual IPs overshoot (but conpensate each other).
 
-        When trying to match the IPs we loose some global accuracy and get also a
-        small amount of positive crossterm.
+    When trying to match the IPs we loose some global accuracy and get also a
+    small amount of positive crossterm.
 
-        Constraining the crossterm to be negative, does not seem to be possible
-        and hence the correction tries to keep it at zero, by compensating
-        the contributions from IP1 and IP5 exactly.
-        This comes at the cost of even worse accuracy for the other terms,
-        globally and per IP.
+    Constraining the crossterm to be negative, does not seem to be possible
+    and hence the correction tries to keep it at zero, by compensating
+    the contributions from IP1 and IP5 exactly.
+    This comes at the cost of even worse accuracy for the other terms,
+    globally and per IP.
+
     """
     style_adaptions = {
         "figure.figsize": [6.0, 4.0],
