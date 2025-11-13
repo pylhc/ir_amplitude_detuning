@@ -377,8 +377,12 @@ def do_correction(lhc_beams_per_setup: dict[Labels, LHCBeams] | None = None):
     )
 
     # Get full-crossing nominal optics for analytical checks
+    lhc_beams_full_xing = None
+    if lhc_beams_per_setup is not None:
+        lhc_beams_full_xing = lhc_beams_per_setup[Labels.full]
+
     optics = get_nominal_optics(
-        lhc_beams_per_setup or LHCSimParams.beams,
+        lhc_beams_full_xing or LHCSimParams.beams,
         outputdir=LHCSimParams.outputdir,
         label=Labels.full
     )

@@ -271,12 +271,18 @@ class LHCBeam:
         self.reinstate_loggers()
         madx = self.madx  # shorthand
 
+        # suppress output from reading files
+        madx.option(echo=False)
+
         # Load Macros
         madx.call(pathstr(self.path_to_use, "toolkit", "macro.madx"))
 
         # Lattice Setup ---------------------------------------
         # Load Sequence
         madx.call(pathstr(self.path_to_use, self.seq_file))
+
+        # re-enable output
+        madx.option(echo=True)
 
         # Cycling w.r.t. to IP3 (mandatory to find closed orbit in collision in the presence of errors)
         madx.seqedit(sequence=self.seq_name)

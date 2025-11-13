@@ -114,6 +114,18 @@ Target 2 allows to better differenciate between the decapole and dodecapole cont
 
 In the respective output directory and its sub-directories, the following files can be found.
 
+The **sub-directories** are the output directories of the individual **machine-setup simulations per beam**.
+They contain the beam in their name (e.g. `b1`) and if multiple machine setups are required, they are additionally prefixed with label.
+In these sub-directories the following files can be found:
+
+- ampdet.lhc.b#.nominal.tfs: Output of PTC containing the amplitude detuning data.
+- twiss.lhc.b#.nominal.tfs: Output of the `twiss` command, containing the optics.
+- twiss.lhc.b#.optics_ir.tfs: Output of the `twiss` command, containing only the IR optics (not used, only for user convenience).
+- full_output.log: Logging output. In the log of the last run beam, also the logging from the intermediate python can be found.
+- madx_commads.log: Mad-X commands used in this run.
+
+In the **main output directory** the results of the **actual correction calculation, their efficiency checks and plotting** can be found.
+These usually rely on multiple of the optics, i.e. the output of the `twiss` command, from the simulations above, in particular for both beams.
 Files of the same type are identifyable by their _output_id_,
 which is either the name given to the `Target`s or `nominal` for the machine without any targets applied.
 
@@ -122,18 +134,9 @@ which is either the name given to the `Target`s or `nominal` for the machine wit
 - settings.lhc.b#._output_id_.tfs: Table containing the corrector settings to match the amplitude detuning for the given target,
   as well as additional information if applicable, such as error-bar, KN and KNL value, length of the magnet, magnet name and circuit name.
 - settings.lhc.b#._output_id_.madx: A madx command, assigning the calculated corrector values to the circuits.
-- twiss.lhc.b#._output_id_.tfs: Output of the `TWISS` command, containing the optics (after applying the found correction or `nominal`).
+- twiss.lhc.b#._output_id_.tfs: Output of the `twiss` command, containing the optics (after applying the found correction or `nominal`).
 - plot.*.pdf: Different plots comparing the detuning before and after correction, as well as the calculated detuning from the applied corrector settings.
 
-The sub-directories are the output directories of the individual machine-setup simulations per beam.
-They contain the beam in their name (e.g. `b1`) and if multiple machine setups are required, they are additionally labeled.
-In these sub-directories the following files can be found:
-
-- ampdet.lhc.b#.nominal.tfs: Output of PTC containing the amplitude detuning data.
-- twiss.lhc.b#.nominal.tfs: Output of the `TWISS` command, containing the optics.
-- twiss.lhc.b#.optics_ir.tfs: Output of the `TWISS` command, containing only the IR optics (not used, only for user convenience).
-- full_output.log: Logging output. In the log of the last run beam, also the logging from the intermediate python can be found.
-- madx_commads.log: Mad-X commands used in this run.
 
 ## Different Machines and Codes
 

@@ -303,11 +303,13 @@ class TestExamplesMD6863:
 
 # Helper functions for the tests -------------------------------------------------------------------
 
-def _get_target_ids(output_dir: Path) -> set[str]:
+def _get_target_ids(folder: Path) -> set[str]:
     target_ids = set()
-    for settings_file in output_dir.glob("settings.lhc.b1.*.tfs"):
+    for settings_file in folder.glob("settings.lhc.b1.*.tfs"):
         parts = settings_file.stem.split(".")
         target_ids.add(parts[3])
+
+    assert len(target_ids) > 0, f"No target ids found in {folder}."  # sanity check
     return target_ids
 
 
@@ -320,10 +322,7 @@ def _clear_correction_output(output_dir: Path):
 
 def _check_correction_output(output_dir: Path, compare_dir: Path):
     """Check that correction output files are created."""
-    target_ids = _get_target_ids(compare_dir)
-    assert len(target_ids) > 0, "No settings found to compare test run to."  # test sanity check
-
-    for target_id in target_ids:
+    for target_id in _get_target_ids(compare_dir):
         # Compare Expected Settings ---
         filename = f"settings.lhc.b1.{target_id}.tfs"
         df_new = tfs.read(output_dir / filename, index=NAME)
@@ -369,15 +368,11 @@ def _check_simulation_output(output_dir: Path, suffixes: Iterable[str] = ('',)):
 
 def _check_correction_ptc_check_output(output_dir: Path, compare_dir: Path, from_files: bool = False):
     """Check that correction output files are created."""
-    target_ids = _get_target_ids(compare_dir)
-    assert target_ids > 0, "No settings found to compare test run to."  # test sanity check
-
-    # Check files present ---
-    for target_id in target_ids:
+    for target_id in _get_target_ids(compare_dir):
         for beam in (1, 4):
             assert_exists_and_not_empty(output_dir / f"ampdet.lhc.b{beam}.{target_id}.tfs")
 
-    if from_files:
+    if from_files:  # i.e. the ptc check had to run the machine setup as well -> creates tmp_ dirs
         for beam in (1, 4):
             tmp_ptc_dir = output_dir / f"tmp_ptc_b{beam}"
             assert tmp_ptc_dir.is_dir()
