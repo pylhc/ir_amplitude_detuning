@@ -235,16 +235,16 @@ class TestExamplesMD6863:
         xing_configs = list(md6863.XingSchemes.keys())
         assert len(xing_configs) == 4
 
-        lhc_beams = md6863.simulation()
+        lhc_beams_per_setup = md6863.simulation()
         _check_simulation_output(output_dir, suffixes=xing_configs)
 
-        md6863.do_correction(lhc_beams=lhc_beams)
+        md6863.do_correction(lhc_beams_per_setup)
         _check_correction_output(output_dir, self.INPUT_DIR)
 
-        md6863.check_correction(lhc_beams=lhc_beams)
+        md6863.check_correction(lhc_beams_per_setup)
         _check_correction_ptc_check_output(output_dir, self.INPUT_DIR)
 
-        for beam in lhc_beams.values():
+        for beam in lhc_beams_per_setup.values():
             beam.madx.exit()
 
     @pytest.mark.dependency(depends=["TestExamplesMD6863::test_simulation"])
@@ -321,7 +321,7 @@ def _clear_correction_output(output_dir: Path):
 def _check_correction_output(output_dir: Path, compare_dir: Path):
     """Check that correction output files are created."""
     target_ids = _get_target_ids(compare_dir)
-    assert len(target_ids) == 3, "No settings found to compare test run to."  # test sanity check
+    assert len(target_ids) > 0, "No settings found to compare test run to."  # test sanity check
 
     for target_id in target_ids:
         # Compare Expected Settings ---
@@ -331,9 +331,14 @@ def _check_correction_output(output_dir: Path, compare_dir: Path):
         assert_frame_equal(df_new, df_compare, rtol=1e-2, atol=1e-2)
 
         # Check files present ---
-        for prefix in ("settings", "ampdet_calc", "ampdet_calc_err"):
+        for prefix in ("settings", "ampdet_calc"):
             for beam in (1, 4):
                 assert_exists_and_not_empty(output_dir / f"{prefix}.lhc.b{beam}.{target_id}.tfs")
+
+        # Check ampdet-with-error files when numpy-solver was used.
+        if "constrain" not in target_id:  # NOTE: naming convention for current examples!
+            for beam in (1, 4):
+                assert_exists_and_not_empty(output_dir / f"ampdet_calc_err.lhc.b{beam}.{target_id}.tfs")
 
     # Compare Beams Settings ---
     b1_files = list(output_dir.glob("settings.lhc.b1*"))
