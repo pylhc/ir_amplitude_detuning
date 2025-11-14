@@ -471,7 +471,7 @@ def plot_measurement_comparison():
             ncol=3,
             transpose_legend=True,
             manual_style=style_adaptions,
-            terms=[FirstOrderTerm.X10, FirstOrderTerm.X01, FirstOrderTerm.Y01],
+            terms=list(FirstOrderTerm),
             average=True,
         )
         fig.savefig(LHCSimParams.outputdir / f"plot.ampdet_measured.all.b{beam}.pdf")
@@ -576,7 +576,8 @@ def plot_target_comparison():
                 ylim=[-70, 70],
                 ncol=3,
                 manual_style=style_adaptions,
-                terms=[FirstOrderTerm.X10, FirstOrderTerm.X01, FirstOrderTerm.Y01],
+                # terms=[FirstOrderTerm.X10, FirstOrderTerm.X01, FirstOrderTerm.Y01],
+                terms=list(FirstOrderTerm),
                 is_shift=True,
                 average=True,
             )
@@ -607,7 +608,7 @@ def plot_target_comparison():
                     ylim=[-70, 70],
                     ncol=3,
                     manual_style=style_adaptions,
-                    terms=[FirstOrderTerm.X10, FirstOrderTerm.X01, FirstOrderTerm.Y01],
+                    terms=list(FirstOrderTerm),
                     is_shift=True,
                     average=True,
                 )
@@ -618,10 +619,10 @@ def plot_target_comparison():
 
 if __name__ == '__main__':
     log_setup()
-    lhc_beams = None  # in case you want to skip the simulation
-    lhc_beams = simulation()
-    do_correction(lhc_beams_per_setup=lhc_beams)
-    check_correction(lhc_beams_per_setup=lhc_beams)
-    plot_corrector_strengths()
+    # lhc_beams = None  # in case you want to skip the simulation
+    # lhc_beams = simulation()
+    # do_correction(lhc_beams_per_setup=lhc_beams)
+    # check_correction(lhc_beams_per_setup=lhc_beams)
+    # plot_corrector_strengths()
     plot_target_comparison()
     plot_measurement_comparison()

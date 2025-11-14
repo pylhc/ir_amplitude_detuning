@@ -86,7 +86,7 @@ class MeasuredDetuning(Container):
 MeasuredDetuning.ip1 = MeasuredDetuning.full - MeasuredDetuning.ip5 + MeasuredDetuning.flat
 
 
-class Const2018(Container):
+class CorrectionConstraints(Container):
     """Constraints to be used in the calculations."""
     negative_crossterm: BeamDict[int, Constraints] = BeamDict({b: Constraints(X01="<=0") for b in (1, 2)})
 
@@ -119,6 +119,7 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
     # Compensate the global contribution to X10 and Y01 using the
     # decapole correctors in IP1 and IP5.
     target_global = TargetData(
+        label="ip15",
         correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(1, 5)),
         detuning=MeasuredDetuning.flat - MeasuredDetuning.full,
         optics=optics,
@@ -128,15 +129,17 @@ def get_targets(lhc_beams: LHCBeams | None = None) -> Sequence[Target]:
     # while constraining the crossterm, using the
     # decapole correctors in IP1 and IP5 a.
     target_global_constrained = TargetData(
+        label="ip15constraint",
         correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(1, 5)),
         detuning=MeasuredDetuning.flat - MeasuredDetuning.full,
-        constraints=Const2018.negative_crossterm,
+        constraints=CorrectionConstraints.negative_crossterm,
         optics=optics,
     )
 
     # Compensate the IP5 contribution to X10 and Y01 using the
     # decapole correctors in IP5 only.
     target_ip5 = TargetData(
+        label="ip5",
         correctors=fill_corrector_masks([LHCCorrectors.b6], ips=(5, )),
         detuning=MeasuredDetuning.flat - MeasuredDetuning.ip5,
         optics=optics,  # can use same optics, as the xing in IP5 is the same

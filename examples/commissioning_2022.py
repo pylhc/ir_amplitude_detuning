@@ -62,9 +62,8 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
-# Define Machine Data
-# -------------------
 class LHCSimParams(Container):
+    """LHC simulation parameters for Commissioning in 2022."""
     beams: tuple[int, int] = 1, 4
     year: int = 2022
     outputdir: Path = Path("commissioning_2022")
@@ -73,8 +72,10 @@ class LHCSimParams(Container):
     tune_y: float = 60.31  # vertical tune
 
 
-# Measurement data in 10^3 m^-1; keys represent beam, 2 or 4 will make no difference
 class MeasuredDetuning(Container):
+    """Measured detuning values for different crossing schemes in 10^3 m^-1.
+    Note: Keys are beam numbers, 2 and 4 can be used interchangeably (but consistently) here.
+    """
     flat: DetuningPerBeam = BeamDict({
         1: scaled_detuningmeasurement(X10=(-15.4, 0.9), X01=(33.7, 1), Y01=(-8.4, 0.5)),
         2: scaled_detuningmeasurement(X10=(-8.7, 0.7), X01=(13, 2), Y01=(10, 0.9)),

@@ -98,6 +98,18 @@ addopts = [
 # log_cli_level = "DEBUG"
 # log_format = "%(levelname)7s | %(message)s | %(name)s"
 
+[tool.coverage.run]
+relative_files = true
+omit = [
+    "*_template.py",
+]
+
+[tool.coverage.report]
+exclude_also = [
+  "if TYPE_CHECKING:",  # do not count type checking imports (ignored at runtime) for coverage
+  "except ImportError:",  # do not count missing optional dependencies set to None, we monkeypatch and test that
+]
+
 # ----- Dev Tools Configuration ----- #
 
 [tool.ruff]

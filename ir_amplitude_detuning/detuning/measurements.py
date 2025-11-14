@@ -35,18 +35,12 @@ class MeasureValue:
     error: float = 0.0
 
     def __add__(self, other: float | MeasureValue):
-        if isinstance(other, float):
-            if other:
-                raise NotImplementedError(
-                    "Addition of Measurements with scalar values other than 0 are not implemented.")
-            return MeasureValue(value=self.value, error=self.error)
-
-        return MeasureValue(value=self.value + other.value, error=np.sqrt(self.error**2 + other.error**2))
-
-    def __radd__(self, other: MeasureValue | float):  # make sum work
         if isinstance(other, MeasureValue):
             return MeasureValue(value=self.value + other.value, error=np.sqrt(self.error**2 + other.error**2))
         return MeasureValue(value=self.value + other, error=self.error)
+
+    def __radd__(self, other: MeasureValue | float):
+        return self + other  # __add__, note `0 + obj` is used by sum()
 
     def __sub__(self, other: MeasureValue | float):
         if isinstance(other, MeasureValue):
@@ -57,13 +51,13 @@ class MeasureValue:
         return MeasureValue(value=-self.value, error=self.error)
 
     def __mul__(self, other: float):
-        return MeasureValue(value=self.value * other, error=self.error * other)
+        return MeasureValue(value=self.value * other, error=self.error * abs(other))
 
     def __rmul__(self, other: float):
-        return MeasureValue(value=self.value * other, error=self.error * other)
+        return self * other  # __mul__
 
     def __truediv__(self, other: float):
-        return MeasureValue(value=self.value / other, error=self.error / other)
+        return self * (1 / other)
 
     def __abs__(self):
         return MeasureValue(value=abs(self.value), error=self.error)
@@ -83,36 +77,62 @@ class MeasureValue:
     @staticmethod
     def rms(measurements: Sequence[MeasureValue]):
         """Returns rms of values and errors."""
-        rms_values = np.sqrt(np.mean([m.value**2 for m in measurements]))
-        rms_errors = np.sqrt(np.mean([m.error**2 for m in measurements]))
+        values = np.array([m.value for m in measurements])
+        errors = np.array([m.error for m in measurements])
+
+        def rms(x):
+            return np.sqrt(np.mean(x**2))
+
+        n = len(measurements)
+        rms_values = rms(values)
+        rms_err_times_value = rms(errors * values)
         return MeasureValue(
             value=rms_values,
-            error=1/np.sqrt(len(measurements)) * rms_errors / rms_values,
+            error=1/np.sqrt(n) * rms_err_times_value / rms_values,
         )
 
     @staticmethod
     def weighted_rms(measurements: Sequence[MeasureValue]):
-        """Returns rms of values and errors."""
-        rms_values = np.sqrt(np.average([m.value**2 for m in measurements], weights=[1/m.error**2 for m in measurements]))
-        rms_errors = np.sqrt(np.average([m.error**2 for m in measurements], weights=[1/m.error**2 for m in measurements]))
+        """Returns weighted rms of values and errors."""
+        values = np.array([m.value for m in measurements])
+        errors = np.array([m.error for m in measurements])
+
+        if np.any(errors == 0):
+            raise ValueError("Cannot compute weighted RMS with zero errors.")
+
+        weights = 1 / errors**2
+        sum_weights = np.sum(weights)
         return MeasureValue(
-            value=rms_values,
-            error=1/np.sqrt(len(measurements)) * rms_errors / rms_values,
+            value=np.sqrt(np.sum(values**2 * weights) / sum_weights),
+            error=1/np.sqrt(sum_weights)
         )
 
     @staticmethod
     def mean(measurements: Sequence[MeasureValue]):
-        """Returns mean of values and MAE."""
-        return np.mean(measurements)
+        """Returns mean of the measurements."""
+        values = np.array([m.value for m in measurements])
+        errors = np.array([m.error for m in measurements])
+
+        return MeasureValue(
+            value=np.mean(values),
+            error=np.sqrt(np.sum(errors**2)) / len(measurements),
+        )
 
     @staticmethod
     def weighted_mean(measurements: Sequence[MeasureValue]):
-        """Returns a mean weighted by the errors."""
+        """Returns a mean weighted proportionally to the errors."""
         values = np.array([m.value for m in measurements])
         errors = np.array([m.error for m in measurements])
+
+        if np.any(errors == 0):
+            raise ValueError("Cannot compute weighted RMS with zero errors.")
+
+        weights = 1 / errors**2
+        sum_weights = np.sum(weights)
+
         return MeasureValue(
-            value=weighted_mean(data=values, errors=errors),
-            error=weighted_mean(data=errors, errors=errors),
+            value=np.sum(values * weights) / sum_weights,
+            error = 1 / np.sqrt(sum_weights)
         )
 
     @classmethod
@@ -328,10 +348,29 @@ class Constraints:
     scale: float | None = None
 
     def __post_init__(self):
-        for t in self.terms():
-            val = getattr(self, t)
-            if val[:2] not in ("<=", ">="):
-                raise ValueError(f"Unknown constraint {val}, use either `<=` or `>=`.")
+        for term in self.terms():
+            self._parse_value(getattr(self, term))
+
+    def _parse_value(self, given: str) -> tuple[str, float]:
+        """Parse a single input value.
+        Runs checks that the given value is valid and returns
+        the parsed comparison and value."""
+
+        try:
+            val = given.replace(" ", "")
+        except AttributeError as e:
+            raise ValueError(f"Invalid input {given}, does not appear to be a string.") from e
+
+        comparison = val[:2]
+        if comparison not in ("<=", ">="):
+            raise ValueError(f"Unknown constraint {val}, use either `<=` or `>=`.")
+
+        try:
+            value = float(val[2:])
+        except ValueError as e:
+            raise ValueError(f"Invalid value for constraint {val}, does not parse to float.") from e
+
+        return comparison, value
 
     def terms(self) -> Iterator[str]:
         """Return names for all set terms as iterable."""
@@ -350,7 +389,14 @@ class Constraints:
     def __setitem__(self, item: str, value: str):
         if item not in self.all_terms():
             raise KeyError(f"'{item}' is not in the available terms of a Constraints object.")
-        return setattr(self, item, value)
+
+        self._parse_value(value)
+        setattr(self, item, value)
+
+    def __setattr__(self, name, value):
+        if name in self.all_terms() and value is not None:  # `None` is also fine and happens in __init__
+            self._parse_value(value)
+        object.__setattr__(self, name, value)
 
     def get_leq(self, item: str) -> tuple[int, float]:
         """Returns a tuple ``(sign, value)`` such that
@@ -368,11 +414,13 @@ class Constraints:
         Args:
             item (str): term name, e.g. ``"X10"``.
         """
-        str_item = self[item]
-        sign = 1 if str_item[:2] == "<=" else -1
-        value = float(str_item[2:])
+        definition = self[item]
+        comparison, value = self._parse_value(definition)
+        sign = 1 if comparison == "<=" else -1
+
         if self.scale:
-            value = value * self.scale
+            value *= self.scale
+
         return sign, sign*value
 
 

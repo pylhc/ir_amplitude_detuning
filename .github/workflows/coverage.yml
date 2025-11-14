@@ -12,4 +12,5 @@ jobs:
       uses: pylhc/.github/.github/workflows/coverage.yml@master
       with:
         src-dir: ir_amplitude_detuning
+        pytest-options: --cov=examples
       secrets: inherit
