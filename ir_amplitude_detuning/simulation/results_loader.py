@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 LOG = logging.getLogger(__name__)
 
 
-DetuningPerBeam = BeamDict[int, Detuning]
+DetuningPerBeam = BeamDict[int, Detuning | DetuningMeasurement]
 
 
 def load_simulation_output_tfs(folder: Path, type_: str, beam: int, id_: str) -> tfs.TfsDataFrame:

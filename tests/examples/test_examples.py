@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
 EXAMPLES_TEST_DIR = Path(__file__).parent
-INPUTS_DIR = EXAMPLES_TEST_DIR / "inputs"
+OUPUTS_DIR = EXAMPLES_TEST_DIR / "outputs"
 SIMULATION_DATA_DIR = EXAMPLES_TEST_DIR / "simulation2018"
 EXAMPLES_DIR = EXAMPLES_TEST_DIR.parents[1] / "examples"
 
@@ -93,7 +93,7 @@ def example_md6863(tmp_path_factory: pytest.TempPathFactory) -> Path:
 @pytest.mark.example  # --------------------------------------------------------
 class TestExamplesMD3311:
     """Tests for the 2018 MD3311 example."""
-    INPUT_DIR = INPUTS_DIR / "md3311"
+    INPUT_DIR = OUPUTS_DIR / "md3311"
 
     @pytest.mark.dependency()
     def test_simulation(self, example_md3311: Path):
@@ -149,7 +149,7 @@ class TestExamplesMD3311:
 @pytest.mark.example  # --------------------------------------------------------
 class TestExamplesCommissioning2022:
     """Tests for the 2022 commissioning example."""
-    INPUT_DIR = INPUTS_DIR / "commissioning_2022"
+    INPUT_DIR = OUPUTS_DIR / "commissioning_2022"
 
     @pytest.mark.dependency()
     def test_simulation(self, example_commissioning_2022: Path):
@@ -203,7 +203,7 @@ class TestExamplesCommissioning2022:
     def test_plot_simulation_comparison(self, example_commissioning_2022: Path):
         """Test detuning compensation plotting."""
         output_dir = example_commissioning_2022
-        commissioning_2022.plot_detuning_comparison()
+        commissioning_2022.plot_simulation_comparison()
 
         for beam in (1, 2):
             assert_exists_and_not_empty(
@@ -214,7 +214,7 @@ class TestExamplesCommissioning2022:
 @pytest.mark.example  # --------------------------------------------------------
 class TestExamplesMD6863:
     """Tests for the 2022 MD6863 example."""
-    INPUT_DIR = INPUTS_DIR / "md6863"
+    INPUT_DIR = OUPUTS_DIR / "md6863"
 
     @pytest.mark.dependency()
     def test_simulation(self, example_md6863: Path):
@@ -233,8 +233,9 @@ class TestExamplesMD6863:
         md6863.check_correction(lhc_beams_per_setup)
         _check_correction_ptc_check_output(output_dir, self.INPUT_DIR)
 
-        for beam in lhc_beams_per_setup.values():
-            beam.madx.exit()
+        for lhc_beams in lhc_beams_per_setup.values():
+            for beam in lhc_beams.values():
+                beam.madx.exit()
 
     @pytest.mark.dependency(depends=["TestExamplesMD6863::test_simulation"])
     def test_correction_only(self, example_md6863: Path):

@@ -272,7 +272,7 @@ class LHCBeam:
         madx = self.madx  # shorthand
 
         # suppress output from reading files
-        madx.option(echo=False)
+        madx.option(echo=False)  # note: running into mad-x memory errors in seqedit, when seqfile output not shown
 
         # Load Macros
         madx.call(pathstr(self.path_to_use, "toolkit", "macro.madx"))
@@ -282,7 +282,8 @@ class LHCBeam:
         madx.call(pathstr(self.path_to_use, self.seq_file))
 
         # re-enable output
-        madx.option(echo=True)
+        madx.option(echo=True)  # note: running into mad-x memory errors in seqedit, when seqfile output not shown
+
 
         # Cycling w.r.t. to IP3 (mandatory to find closed orbit in collision in the presence of errors)
         madx.seqedit(sequence=self.seq_name)

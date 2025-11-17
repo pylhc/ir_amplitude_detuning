@@ -113,8 +113,22 @@ class MeasuredDetuning:
     def __setitem__(self, name, value):
         setattr(self, name, value)
 
-    def items(self):
+    def items(self) -> tuple[str, DetuningPerBeam | None]:
         return iter((field.name, getattr(self, field.name)) for field in fields(self))
+
+    def merge_first_order_crossterms(self) -> MeasuredDetuning:
+        """ Merges the """
+        measured_detuning = MeasuredDetuning()
+        for scheme, detuning_per_beam in self.items():
+            detuning_per_beam: DetuningPerBeam | None
+            if detuning_per_beam is None:
+                continue
+
+            for beam, detuning in detuning_per_beam.items():
+                detuning: DetuningMeasurement
+                detuning_per_beam[beam] = detuning.merge_first_order_crossterm()
+            measured_detuning[scheme] = detuning_per_beam
+        return measured_detuning
 
 class XingSchemes(Container):
     """Crossing schemes used in the measurements."""
@@ -152,11 +166,11 @@ class MeasurementConfig:
         return hash((self.beam, self.xing, self.kick_plane, self.b6corr))
 
 
-def format_detuning_per_scheme(detuning: MeasuredDetuning):
+def format_detuning_measurements(detuning: MeasuredDetuning) -> str:
     """Format the detuning data for printing.
 
     Args:
-        detuning (DetuningPerScheme): The detuning data per scheme and beam.
+        detuning (MeasuredDetuning): The detuning data per scheme and beam.
     """
     parts = ["\nLoaded detuning data for MD6863 [10^-3 m^-1]:"]
     for scheme, beams in detuning.items():
@@ -231,7 +245,7 @@ def convert_summary_to_detuning(summary: pd.DataFrame) -> MeasuredDetuning:
         summary (pd.DataFrame): The summary DataFrame.
 
     Returns:
-        DetuningPerScheme: A dictionary of detuning data per scheme and beam.
+        MeasuredDetuning: A dictionary of detuning data per scheme and beam.
     """
     summary.index = [get_config_from_name(name) for name in summary.index]
 
@@ -265,10 +279,11 @@ def get_detuning_data(redo_analysis: bool = False) -> MeasuredDetuning:
         do_analysis=AnalysisOption.always if redo_analysis else AnalysisOption.never,
     )
 
-    detuning = convert_summary_to_detuning(summary)
-    LOG.info(format_detuning_per_scheme(detuning))
+    detuning_measurements = convert_summary_to_detuning(summary)
+    detuning_measurements = detuning_measurements.merge_first_order_crossterms()
+    LOG.info(format_detuning_measurements(detuning_measurements))
 
-    return detuning
+    return detuning_measurements
 
 # Steps of correction calculation ------------------------------------------------------------------
 
@@ -619,10 +634,10 @@ def plot_target_comparison():
 
 if __name__ == '__main__':
     log_setup()
-    # lhc_beams = None  # in case you want to skip the simulation
-    # lhc_beams = simulation()
-    # do_correction(lhc_beams_per_setup=lhc_beams)
-    # check_correction(lhc_beams_per_setup=lhc_beams)
-    # plot_corrector_strengths()
+    lhc_beams = None  # in case you want to skip the simulation
+    lhc_beams = simulation()
+    do_correction(lhc_beams_per_setup=lhc_beams)
+    check_correction(lhc_beams_per_setup=lhc_beams)
+    plot_corrector_strengths()
     plot_target_comparison()
     plot_measurement_comparison()

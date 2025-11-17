@@ -10,10 +10,9 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from functools import partial
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 import numpy as np
-from omc3.utils.stats import weighted_mean
 
 from ir_amplitude_detuning.detuning.terms import FirstOrderTerm, SecondOrderTerm
 
@@ -168,11 +167,11 @@ class Detuning:
             for term in self.terms():
                 self[term] = self[term] * self.scale
 
-    def terms(self):
+    def terms(self) -> Iterator[str]:
         """Return names for all set terms."""
         return iter(name for name in self.all_terms() if getattr(self, name) is not None)
 
-    def items(self):
+    def items(self) -> Iterator[tuple[str, float]]:
         return iter((name, getattr(self, name)) for name in self.terms())
 
     @staticmethod
@@ -191,7 +190,7 @@ class Detuning:
             return mapping[order]
         return tuple(e for m in mapping.values() for e in m)
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: str):
         """Convenience wrapper to access terms via `[]` .
         Not set terms will raise a KeyError.
         """
@@ -199,40 +198,40 @@ class Detuning:
             raise KeyError(f"'{item}' is not set in Detuning object.")
         return getattr(self, item)
 
-    def __setitem__(self, item, value):
+    def __setitem__(self, item: str, value: float):
         """Convenience wrapper to set terms via `[]` ."""
         if item not in self.all_terms():
-            raise KeyError(f"'{item}' is not in the available terms of a Detuning object.")
+            raise KeyError(f"'{item}' is not in the available terms of a {self.__class__.__name__} object.")
         return setattr(self, item, value)
 
-    def __add__(self, other: Detuning):
+    def __add__(self, other: Self) -> Self:
         self._check_terms(other)
         return self.__class__(**{term: self[term] + other[term] for term in self.terms()})
 
-    def __sub__(self, other: Detuning):
+    def __sub__(self, other: Self) -> Self:
         self._check_terms(other)
         return self.__class__(**{term: self[term] - other[term] for term in self.terms()})
 
-    def __neg__(self):
+    def __neg__(self) -> Self:
         return self.__class__(**{term: -self[term] for term in self.terms()})
 
-    def __mul__(self, other: float | Detuning):
-        if isinstance(other, Detuning):
+    def __mul__(self, other: float | Self) -> Self:
+        if isinstance(other, self.__class__):
             self._check_terms(other)
             return self.__class__(**{term: self[term] * other[term] for term in self.terms()})
         return self.__class__(**{term: self[term] * other for term in self.terms()})
 
-    def __truediv__(self, other: float | Detuning):
-        if isinstance(other, Detuning):
+    def __truediv__(self, other: float | Self) -> Self:
+        if isinstance(other, self.__class__):
             self._check_terms(other)
             return self.__class__(**{term: self[term] / other[term] for term in self.terms()})
         return self.__class__(**{term: self[term] / other for term in self.terms()})
 
-    def _check_terms(self, other: Detuning):
+    def _check_terms(self, other: Self):
         not_in_other = [term for term in self.terms() if term not in other.terms()]
         if len(not_in_other):
             raise KeyError(
-                f"Term '{not_in_other}' are not in the other detuning object. "
+                f"Term '{not_in_other}' are not in the other {other.__class__.__name__} object. "
                 f"Subtraction not possible."
             )
 
@@ -240,10 +239,10 @@ class Detuning:
         if len(not_in_self):
             LOG.debug(
                 f"Term '{not_in_self}' from the other object are not in this "
-                f"detuning object. Terms ignored."
+                f"{self.__class__.__name__} object. Terms ignored."
             )
 
-    def apply_acdipole_correction(self) -> Detuning:
+    def apply_acdipole_correction(self) -> Self:
         """Correct for the influence of the AC-Dipole kick in measurement data.
 
         See Eqs. (78) - (81) and Eqs. (94) - (99) in [DillyAmplitudeDetuning2023]_
@@ -264,25 +263,25 @@ class Detuning:
                     copy[term] = copy[term] / value
         return copy
 
-    def merge_first_order_crossterm(self) -> Detuning:
+    def merge_first_order_crossterm(self) -> Self:
         """Merge the cross-terms in the first order detuning into a single term X01,
         to avoid too much weight when fitting.
 
         Returns:
             Detuning: The merged detuning
         """
-        copy = self.__class__(**{term: self[term] for term in self.terms()})
+        the_copy = self.__class__(**dict(self.items()))
 
         if not self.Y10:
-            return copy
+            return the_copy
 
         if not self.X01:
-            copy.X01 = self.Y10  # put Y10 into X01
+            the_copy.X01 = self.Y10  # put Y10 into X01
         else:
-            copy.X01 = (self.X01 + self.Y10) * 0.5  # create an average
+            the_copy.X01 = (self.X01 + self.Y10) * 0.5  # create an average
 
-        copy.Y10 = None
-        return copy
+        the_copy.Y10 = None
+        return the_copy
 
 
 @dataclass(slots=True)
@@ -310,19 +309,19 @@ class DetuningMeasurement(Detuning):
                             f"Found {len(self[term])} values to initialize term {term} "
                             f"of {self.__class__.__name__}, but a maximum of 2 values are allowed."
                         )
-                except TypeError:  # from len(), assumes single number
+                except TypeError:  # from len(); assumes single number
                     self[term] = MeasureValue(self[term])
                 else:
                     self[term] = MeasureValue(*self[term])
 
         Detuning.__post_init__(self)
 
-    def get_detuning(self):
+    def get_detuning(self) -> Detuning:
         """Returns a Detuning object with the values (no errors) of this measurement."""
         return Detuning(**{term: self[term].value for term in self.terms()})
 
     @classmethod
-    def from_detuning(cls, detuning):
+    def from_detuning(cls, detuning) -> Self:
         """Create a DetuningMeasurement from a Detuning object, with zero errors."""
         return cls(**{term: MeasureValue(detuning[term]) for term in detuning.terms()})
 

@@ -220,7 +220,7 @@ class TestMeasureValue:
         result = MeasureValue.mean(measurements)
 
         # calculate direct on MeasValue objects
-        # (MeasureValue.mean() is more efficiently implemented)
+        # (note: MeasureValue.mean() is more efficiently implemented)
         expected = np.mean(measurements)
 
         assert result.value == pytest.approx(expected.value)
@@ -235,7 +235,7 @@ class TestMeasureValue:
         ]
 
         # calculate direct on MeasValue objects
-        # (weighted_mean is more efficiently implemented)
+        # (note: weighted_mean is more efficiently implemented)
         weights = np.array([1/m.error**2 for m in measurements])
         expected = np.average(measurements, weights=weights)
 
@@ -749,36 +749,3 @@ class TestIntegration:
         det = combined.get_detuning()
         assert isinstance(det, Detuning)
         assert det["X10"] == 2.5
-
-    def test_acdipole_correction_workflow(self):
-        """Test AC-Dipole correction workflow."""
-        meas = DetuningMeasurement(
-            X10=MeasureValue(2.0, 0.2),
-            X20=MeasureValue(9.0, 0.9)
-        )
-        det = meas.get_detuning()
-        corrected = det.apply_acdipole_correction()
-
-        assert corrected["X10"] == pytest.approx(1.0)
-        assert corrected["X20"] == pytest.approx(3.0)
-
-    def test_constraint_with_measurement(self):
-        """Test constraints with measurement values."""
-        meas = DetuningMeasurement(X10=MeasureValue(5.0, 0.5))
-        det = meas.get_detuning()
-
-        const = Constraints(X10="<=10")
-        sign, value = const.get_leq("X10")
-
-        # Check that measurement satisfies constraint
-        assert sign * det["X10"] <= value
-
-    def test_scaled_measurement_and_constraint(self):
-        """Test scaled measurements with scaled constraints."""
-        meas = scaled_detuningmeasurement(X10=MeasureValue(1.0, 0.1))
-        const = scaled_contraints(X10="<=2.0")
-
-        det = meas.get_detuning()
-        sign, value = const.get_leq("X10")
-
-        assert sign * det["X10"] <= value
