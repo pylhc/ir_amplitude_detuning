@@ -304,7 +304,16 @@ class DetuningMeasurement(Detuning):
     def __post_init__(self):
         for term in self.terms():
             if not isinstance(self[term], MeasureValue):
-                self[term] = MeasureValue(*self[term])
+                try:
+                    if len(self[term]) > 2:
+                        raise ValueError(
+                            f"Found {len(self[term])} values to initialize term {term} "
+                            f"of {self.__class__.__name__}, but a maximum of 2 values are allowed."
+                        )
+                except TypeError:  # from len(), assumes single number
+                    self[term] = MeasureValue(self[term])
+                else:
+                    self[term] = MeasureValue(*self[term])
 
         Detuning.__post_init__(self)
 

@@ -407,6 +407,11 @@ def check_corrections_ptc(
             target_id = settings_file.suffixes[-2].strip(".")
             loaded_settings[target_id] = settings_file.read_text()
 
+        if len(loaded_settings) == 1:
+            raise FileNotFoundError(
+                f"No settings files found matching '{settings_glob}' in '{lhc_beam.outputdir}'."
+            )
+
         for target_id, settings in loaded_settings.items():
             if settings is not None:
                 lhc_beam.madx.input(settings)

@@ -113,24 +113,19 @@ class TestExamplesMD3311:
             beam.madx.exit()
 
     @pytest.mark.dependency(depends=["TestExamplesMD3311::test_simulation"])
-    def test_do_correction(self, example_md3311: Path):
-        """Test the correction calculation loading from files."""
+    def test_correction_only(self, example_md3311: Path):
+        """Test the correction calculation/check loading from files."""
         output_dir = example_md3311
 
         _clear_correction_output(output_dir)
+
         md3311.do_correction()
         _check_correction_output(output_dir, self.INPUT_DIR)
 
-    @pytest.mark.dependency(depends=["TestExamplesMD3311::test_simulation"])
-    def test_check_correction(self, example_md3311: Path):
-        """Test the check correction ptc simulation when loading from files."""
-        output_dir = example_md3311
-
-        _clear_correction_output(output_dir)
         md3311.check_correction()
         _check_correction_ptc_check_output(output_dir, self.INPUT_DIR)
 
-    @pytest.mark.dependency(depends=["TestExamplesMD3311::test_do_correction"])
+    @pytest.mark.dependency(depends=["TestExamplesMD3311::test_correction_only"])
     def test_plot_corrector_strengths(self, example_md3311: Path):
         """Test corrector strength plotting."""
         output_dir = example_md3311
@@ -138,7 +133,7 @@ class TestExamplesMD3311:
 
         assert_exists_and_not_empty(output_dir / "plot.b6_correctors.ip15.pdf")
 
-    @pytest.mark.dependency(depends=["TestExamplesMD3311::test_do_correction"])
+    @pytest.mark.dependency(depends=["TestExamplesMD3311::test_correction_only"])
     def test_plot_detuning_compensation(self, example_md3311: Path):
         """Test detuning compensation plotting."""
         output_dir = example_md3311
@@ -174,24 +169,18 @@ class TestExamplesCommissioning2022:
             beam.madx.exit()
 
     @pytest.mark.dependency(depends=["TestExamplesCommissioning2022::test_simulation"])
-    def test_do_correction(self, example_commissioning_2022: Path):
-        """Test the correction calculation loading from files."""
+    def test_correction_only(self, example_commissioning_2022: Path):
+        """Test the correction calculation/check loading from files."""
         output_dir = example_commissioning_2022
 
         _clear_correction_output(output_dir)
         commissioning_2022.do_correction()
         _check_correction_output(output_dir, self.INPUT_DIR)
 
-    @pytest.mark.dependency(depends=["TestExamplesCommissioning2022::test_simulation"])
-    def test_check_correction(self, example_commissioning_2022: Path):
-        """Test the check correction ptc simulation when loading from files."""
-        output_dir = example_commissioning_2022
-
-        _clear_correction_output(output_dir)
         commissioning_2022.check_correction()
         _check_correction_ptc_check_output(output_dir, self.INPUT_DIR, from_files=True)
 
-    @pytest.mark.dependency(depends=["TestExamplesCommissioning2022::test_do_correction"])
+    @pytest.mark.dependency(depends=["TestExamplesCommissioning2022::test_correction_only"])
     def test_plot_corrector_strengths(self, example_commissioning_2022: Path):
         """Test corrector strength plotting."""
         output_dir = example_commissioning_2022
@@ -199,7 +188,7 @@ class TestExamplesCommissioning2022:
 
         assert_exists_and_not_empty(output_dir / "plot.b6_correctors.ip15.pdf")
 
-    @pytest.mark.dependency(depends=["TestExamplesCommissioning2022::test_do_correction"])
+    @pytest.mark.dependency(depends=["TestExamplesCommissioning2022::test_correction_only"])
     def test_plot_detuning_comparison(self, example_commissioning_2022: Path):
         """Test detuning compensation plotting."""
         output_dir = example_commissioning_2022
@@ -210,7 +199,7 @@ class TestExamplesCommissioning2022:
                 output_dir / f"plot.ampdet_comparison.b{beam}.pdf"
             )
 
-    @pytest.mark.dependency(depends=["TestExamplesCommissioning2022::test_do_correction"])
+    @pytest.mark.dependency(depends=["TestExamplesCommissioning2022::test_correction_only"])
     def test_plot_simulation_comparison(self, example_commissioning_2022: Path):
         """Test detuning compensation plotting."""
         output_dir = example_commissioning_2022
@@ -248,24 +237,18 @@ class TestExamplesMD6863:
             beam.madx.exit()
 
     @pytest.mark.dependency(depends=["TestExamplesMD6863::test_simulation"])
-    def test_do_correction(self, example_md6863: Path):
-        """Test the correction calculation loading from files."""
+    def test_correction_only(self, example_md6863: Path):
+        """Test the correction calculation/check loading from files."""
         output_dir = example_md6863
 
         _clear_correction_output(output_dir)
         md6863.do_correction()
         _check_correction_output(output_dir, self.INPUT_DIR)
 
-    @pytest.mark.dependency(depends=["TestExamplesMD6863::test_simulation"])
-    def test_check_correction(self, example_md6863: Path):
-        """Test the check correction ptc simulation when loading from files."""
-        output_dir = example_md6863
-
-        _clear_correction_output(output_dir)
         md6863.check_correction()
         _check_correction_ptc_check_output(output_dir, self.INPUT_DIR)
 
-    @pytest.mark.dependency(depends=["TestExamplesMD6863::test_do_correction"])
+    @pytest.mark.dependency(depends=["TestExamplesMD6863::test_correction_only"])
     def test_plot_corrector_strengths(self, example_md6863: Path):
         """Test corrector strength plotting."""
         output_dir = example_md6863
@@ -273,7 +256,7 @@ class TestExamplesMD6863:
 
         assert_exists_and_not_empty(output_dir / "plot.b6_correctors.ip15.pdf")
 
-    @pytest.mark.dependency(depends=["TestExamplesMD6863::test_do_correction"])
+    @pytest.mark.dependency(depends=["TestExamplesMD6863::test_correction_only"])
     def test_plot_measurement_comparison(self, example_md6863: Path):
         """Test measurement comparison plotting."""
         output_dir = example_md6863
@@ -284,7 +267,7 @@ class TestExamplesMD6863:
                 output_dir / f"plot.ampdet_measured.all.b{beam}.pdf"
             )
 
-    @pytest.mark.dependency(depends=["TestExamplesMD6863::test_do_correction"])
+    @pytest.mark.dependency(depends=["TestExamplesMD6863::test_correction_only"])
     def test_plot_target_comparison(self, example_md6863: Path):
         """Test target comparison plotting."""
         output_dir = example_md6863
