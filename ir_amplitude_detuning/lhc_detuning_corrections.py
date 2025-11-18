@@ -110,7 +110,7 @@ def create_optics(
     beams: Sequence[int],
     outputdir: Path,
     output_id: str = '',
-    xing: dict[str, dict] | None = None,  # default set below
+    xing: dict[str, str | float] | None = None,  # default set below
     optics: str | Path | None = None,  # defaults to 30cm round optics
     year: int = 2018,  # lhc year
     tune_x: float = 62.28,  # horizontal tune
@@ -157,7 +157,7 @@ def calculate_corrections(
     beams: Sequence[int],
     outputdir: Path,
     targets: Sequence[Target],
-    method: Method = Method.cvxpy
+    method: Method = Method.auto
     ) -> dict[str, CorrectionResults]:
     """Calculate corrections based on targets and given correctors.
 
@@ -179,8 +179,8 @@ def calculate_corrections(
         try:
             values = calculate_correction(target, method=method)
         except ValueError:
-            LOG.error(f"Optimization failed for {target.name}  (fields: {get_fields(target)}.")
-            values = {}
+            LOG.error(f"Optimization failed for {target.name}  (fields: {get_fields(target.correctors)}.")
+            continue
 
         # Save results ---
         madx_command = generate_madx_command(values)
@@ -323,6 +323,7 @@ def detuning_tfs_out_with_and_without_errors(lhc_out: LHCBeam | FakeLHCBeam, id_
         df (pd.DataFrame): The calculated detuning terms.
     """
     has_errors = False
+    df_values = df.copy()
     df_errors = df.copy()
 
     for column in df.columns:
@@ -331,12 +332,12 @@ def detuning_tfs_out_with_and_without_errors(lhc_out: LHCBeam | FakeLHCBeam, id_
         except AttributeError:
             pass  # string column
         else:
-            df[column] = values.apply(lambda x: x.value)
-            df_errors[column] = df[column]
+            df_values[column] = values.apply(lambda x: x.value)
+            df_errors[column] = df_values[column]
             df_errors[f"{ERR}{column}"] = values.apply(lambda x: x.error).fillna(0)
             has_errors = has_errors or df_errors[f"{ERR}{column}"].any()
 
-    tfs.write(lhc_out.output_path(AMPDET_CALC_ID, id_), df)
+    tfs.write(lhc_out.output_path(AMPDET_CALC_ID, id_), df_values)
     if has_errors:
         tfs.write(lhc_out.output_path(AMPDET_CALC_ERR_ID, id_), df_errors)
 

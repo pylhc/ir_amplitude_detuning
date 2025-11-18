@@ -6,11 +6,14 @@ See also https://stackoverflow.com/a/34520971.
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import git
-import pytest
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    import pytest
 
 GITLAB_REPO_ACC_MODELS: str = "https://gitlab.cern.ch/acc-models/acc-models-{}.git"
 

@@ -117,7 +117,7 @@ class MeasuredDetuning:
         return iter((field.name, getattr(self, field.name)) for field in fields(self))
 
     def merge_first_order_crossterms(self) -> MeasuredDetuning:
-        """ Merges the """
+        """Create average of the first order crossterm on all measurements."""
         measured_detuning = MeasuredDetuning()
         for scheme, detuning_per_beam in self.items():
             detuning_per_beam: DetuningPerBeam | None
@@ -486,7 +486,7 @@ def plot_measurement_comparison():
             ncol=3,
             transpose_legend=True,
             manual_style=style_adaptions,
-            terms=list(FirstOrderTerm),
+            terms=[FirstOrderTerm.X10, FirstOrderTerm.X01, FirstOrderTerm.Y01],
             average=True,
         )
         fig.savefig(LHCSimParams.outputdir / f"plot.ampdet_measured.all.b{beam}.pdf")
@@ -591,8 +591,7 @@ def plot_target_comparison():
                 ylim=[-70, 70],
                 ncol=3,
                 manual_style=style_adaptions,
-                # terms=[FirstOrderTerm.X10, FirstOrderTerm.X01, FirstOrderTerm.Y01],
-                terms=list(FirstOrderTerm),
+                terms=[FirstOrderTerm.X10, FirstOrderTerm.X01, FirstOrderTerm.Y01],
                 is_shift=True,
                 average=True,
             )
@@ -623,7 +622,7 @@ def plot_target_comparison():
                     ylim=[-70, 70],
                     ncol=3,
                     manual_style=style_adaptions,
-                    terms=list(FirstOrderTerm),
+                    terms=[FirstOrderTerm.X10, FirstOrderTerm.X01, FirstOrderTerm.Y01],
                     is_shift=True,
                     average=True,
                 )
