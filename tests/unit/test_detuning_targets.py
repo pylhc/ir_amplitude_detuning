@@ -1,7 +1,3 @@
-"""
-Unit tests for detuning targets classes.
-"""
-
 from __future__ import annotations
 
 import pytest

@@ -39,6 +39,7 @@ def load_simulation_output_tfs(folder: Path, type_: str, beam: int, id_: str) ->
     """Load simluation output in tfs form.
     Assumes the simulation writes in the following pattern:
     {type}.{anything}.b{beam}.{id}.tfs
+    Loads the first matching file it finds.
 
     Args:
         folder (Path): The folder containing the data.
@@ -136,7 +137,6 @@ def get_calculated_detuning_for_ip(
         raise ValueError(f"No data for IP {ip} in {folder} for beam {beam} and id {id_}.")
     df_ip = df.loc[ip_mask, :].drop(columns=[IP]).set_index(FIELDS, drop=True)
     return convert_dataframe_to_dict(df_ip)
-
 
 
 def get_calculated_detuning_for_field(

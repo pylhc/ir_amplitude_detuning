@@ -1,9 +1,5 @@
-"""
-Unit tests for the measurements module
--------------------------------------
+from __future__ import annotations
 
-Tests for MeasureValue, Detuning, DetuningMeasurement, and Constraints classes.
-"""
 import numpy as np
 import pytest
 

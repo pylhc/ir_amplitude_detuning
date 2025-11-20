@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from unittest.mock import Mock, patch
 
 import pandas as pd
@@ -19,7 +21,7 @@ from ir_amplitude_detuning.lhc_detuning_corrections import (
     get_nominal_optics,
     get_optics,
 )
-from ir_amplitude_detuning.simulation.lhc_simulation import FakeLHCBeam
+from ir_amplitude_detuning.simulation.lhc_simulation import ACC_MODELS, FakeLHCBeam
 from ir_amplitude_detuning.utilities.constants import (
     AMPDET_CALC_ERR_ID,
     AMPDET_CALC_ID,
@@ -45,15 +47,16 @@ class TestGetOptics:
         """Test getting optics for year 2018."""
         result = get_optics(2018)
         assert isinstance(result, str)
-        assert "2018" in result
-        assert "opticsfile.22_ctpps2" in result
+        assert result.startswith(str(ACC_MODELS))
+        assert "PROTON" in result
+        assert result.endswith("opticsfile.22_ctpps2")
 
     def test_get_optics_2022(self):
         """Test getting optics for year 2022."""
         result = get_optics(2022)
         assert isinstance(result, str)
-        assert "2022" in result
-        assert "ats_30cm.madx" in result
+        assert result.startswith(str(ACC_MODELS))
+        assert result.endswith("ats_30cm.madx")
 
     def test_get_optics_invalid_year(self):
         """Test that invalid year raises KeyError."""
