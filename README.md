@@ -54,35 +54,35 @@ The worklow is usually as follows:
    The setup parameters are defined in the `SimParams` container.<br>
    _This step is optional if you already have the optics (twiss) as DataFrames at hand._
 
-   > [!WARNING]
-   > If you are providing MAD-X or MAD-NG twiss output, **always use beam 4**.
+> [!WARNING]
+> If you are providing MAD-X or MAD-NG twiss output, **always use beam 4**.
 
-1. Plug in the measured amplitude detuning values into the `Measurements` container.<br>
+2. Plug in the measured amplitude detuning values into the `Measurements` container.<br>
    _These could be directly put into the targets, but usually it's easier to define them separately._
 
-1. Define correction targets: apart from the `name`, these consist of the detuning values
+3. Define correction targets: apart from the `name`, these consist of the detuning values
    to be corrected. These are be grouped into different `TargetData` instances, which can e.g. contain
    different setups of the machine (crossing schemes, optics, etc.,) given as twiss `DataFrames`
    loaded from the simulation output.
 
-1. Run the correction calculation with the defined targets and corrector field orders,
+4. Run the correction calculation with the defined targets and corrector field orders,
    this gives the corrector settings per `Target` to apply to the machine.
 
-   > [!WARNING]
-   > This assumes the corrector circuits/variables are implemented with positive sign leading to positive
-   > K-values in the magnets as seen from beam 1 and with the respective anti-symmetry compensating signs
-   > (e.g. in normal-oriented quadrupoles) in beam 4.
+> [!WARNING]
+> This assumes the corrector circuits/variables are implemented with positive sign leading to positive
+> gradients (KN, KNL) in the magnets as seen from beam 1 and with the respective anti-symmetry compensating signs
+> (e.g. in normal-oriented quadrupoles) in beam 4.
 
-1. Assess the correction quality by calculating the contributions analytically.
+5. Assess the correction quality by calculating the contributions analytically.
    This is fast and allows to compare different sources (e.g. different corrector field orders or different IPs)
    at a single `Target` in addition to comparing the different `Target`s with each other.
 
-1. Assess the correction quality by re-simulating the machine with the applied corrector settings
+6. Assess the correction quality by re-simulating the machine with the applied corrector settings
    (implemented: Using Mad-X/PTC).
    This is slower, but gives a more realistic picture of the correction quality,
    as all non-linear effects and feed-downs are taken into account.
 
-1. Plot the results to visualize the correction quality, e.g. by comparing the detuning before and after correction
+7. Plot the results to visualize the correction quality, e.g. by comparing the detuning before and after correction
    or how well the correction matches the target detuning.
 
 A lot of details about the individual steps can be found in the examples.
