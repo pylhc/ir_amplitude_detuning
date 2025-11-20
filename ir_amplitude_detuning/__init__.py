@@ -1,0 +1,7 @@
+__title__ = "ir_amplitude_detuning"
+__description__ = "Read and write ir_amplitude_detuning files."
+__url__ = "https://github.com/pylhc/ir_amplitude_detuning"
+__version__ = "0.1.0"
+__author__ = "pylhc"
+__author_email__ = "pylhc@github.com"
+__license__ = "MIT"
