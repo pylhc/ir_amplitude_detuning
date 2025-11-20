@@ -1,15 +1,13 @@
 from __future__ import annotations
-import logging
-from typing import TYPE_CHECKING
 
 from functools import partial
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 import pandas as pd
 import pytest
 import tfs
-from pandas.testing import assert_frame_equal, assert_series_equal
+from pandas.testing import assert_frame_equal
 
 # Import the module under test
 from ir_amplitude_detuning.simulation import results_loader as rl
