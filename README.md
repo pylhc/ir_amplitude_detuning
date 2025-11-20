@@ -54,6 +54,9 @@ The worklow is usually as follows:
    The setup parameters are defined in the `SimParams` container.<br>
    _This step is optional if you already have the optics (twiss) as DataFrames at hand._
 
+   > [!WARNING]
+   > If you are providing MAD-X or MAD-NG twiss output, **always use beam 4**.
+
 1. Plug in the measured amplitude detuning values into the `Measurements` container.<br>
    _These could be directly put into the targets, but usually it's easier to define them separately._
 
@@ -64,6 +67,11 @@ The worklow is usually as follows:
 
 1. Run the correction calculation with the defined targets and corrector field orders,
    this gives the corrector settings per `Target` to apply to the machine.
+
+   > [!WARNING]
+   > This assumes the corrector circuits/variables are implemented with positive sign leading to positive
+   > K-values in the magnets as seen from beam 1 and with the respective anti-symmetry compensating signs
+   > (e.g. in normal-oriented quadrupoles) in beam 4.
 
 1. Assess the correction quality by calculating the contributions analytically.
    This is fast and allows to compare different sources (e.g. different corrector field orders or different IPs)
@@ -136,7 +144,6 @@ which is either the name given to the `Target`s or `nominal` for the machine wit
 - settings.lhc.b#._output_id_.madx: A madx command, assigning the calculated corrector values to the circuits.
 - twiss.lhc.b#._output_id_.tfs: Output of the `twiss` command, containing the optics (after applying the found correction or `nominal`).
 - plot.*.pdf: Different plots comparing the detuning before and after correction, as well as the calculated detuning from the applied corrector settings.
-
 
 ## Different Machines and Codes
 

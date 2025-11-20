@@ -210,8 +210,7 @@ def calculate_matrix_row(beam: int, twiss: pd.DataFrame, correctors: Correctors,
     # Build row ---
     m = pd.Series(0., index=correctors)
 
-    beam_sign = beam_direction(beam)
-    symmetry_sign = magnet_symmetry_sign(beam)
+    symmemtry_sign = beam_symmetry_sign(beam)
 
     for corrector in correctors:
         magnet = corrector.magnet
@@ -226,23 +225,23 @@ def calculate_matrix_row(beam: int, twiss: pd.DataFrame, correctors: Correctors,
 
         match order:
             case 1:
-                x = beam_sign * twiss.loc[magnet, "X"]                             # changes signs beam 4 -> beam 2
-                y = twiss.loc[magnet, "Y"]                                         # same sign in beam 2 and beam 4
+                x = twiss.loc[magnet, "X"]
+                y = twiss.loc[magnet, "Y"]
 
                 match corrector.field:
                     case FieldComponent.b4:
-                        m[corrector] = symmetry_sign * coeff                        # b4 directly contributes
+                        m[corrector] = symmemtry_sign * coeff                        # b4 directly contributes
                     case FieldComponent.b5:
-                        m[corrector] = x * coeff                                    # b5 feeddown to b4
+                        m[corrector] = x * coeff                                     # b5 feeddown to b4
                     case FieldComponent.b6:
-                        m[corrector] = symmetry_sign * 0.5 * (x**2 - y**2) * coeff  # b6 feeddown to b4
+                        m[corrector] = symmemtry_sign * 0.5 * (x**2 - y**2) * coeff  # b6 feeddown to b4
 
             case 2:
                 match corrector.field:
                     case FieldComponent.b6:
-                        m[corrector] = symmetry_sign * coeff                        # b6 directly contributes
+                        m[corrector] = symmemtry_sign * coeff                        # b6 directly contributes
                     case _:
-                        continue                                                    # other fields do not contribute
+                        continue                                                     # other fields do not contribute
     return m
 
 
@@ -285,9 +284,17 @@ def get_detuning_coeff(term: DetuningTerm, beta: dict[str, float]) -> float:
     raise KeyError(f"Unknown Term {term}")
 
 
-def magnet_symmetry_sign(beam: int) -> int:
-    """Sign to be used for magnets that are anti-symmetric under beam direction
-    change, e.g. K4(L) and K6(L) in beam 2 and beam 4 will have opposite sign.
+def beam_symmetry_sign(beam: int) -> int:
+    """Sign to be used for magnets whose fields are anti-symmetric under beam direction change,
+     e.g. K4(L) and K6(L) in beam 2 will have opposite sign compared to beam 1.
+
+    This is needed, as we calculate the detuning of each beam independently (hence the feed-down
+    is calculated with the offset as seen from the beam itself), but have a common magnet (the corrector) to be powered,
+    whose field might look different depending on from which side you go through it.
+
+    .. warning::
+       This assumes that the magnet powering (which is what we calculate) is implemented with a positive sign
+       in beam 1 and - when the field is anti-symmetric - a negative sign in beam 4.
 
     Args:
         beam (int): Beam number
@@ -296,15 +303,3 @@ def magnet_symmetry_sign(beam: int) -> int:
         int: 1 or -1
     """
     return 1 if beam % 2 else -1
-
-
-def beam_direction(beam: int) -> int:
-    """Get the direction of the beam.
-
-    Args:
-        beam (int): Beam number
-
-    Returns:
-        int: 1 or -1
-    """
-    return -1 if beam == 2 else 1

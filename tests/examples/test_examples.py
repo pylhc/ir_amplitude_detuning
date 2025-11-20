@@ -8,62 +8,34 @@ the expected corretor settings.
 
 from __future__ import annotations
 
-import shutil
 import sys
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
 import tfs
 from pandas.testing import assert_frame_equal
 
-from ir_amplitude_detuning.simulation.lhc_simulation import PATHS
 from ir_amplitude_detuning.utilities.constants import NAME
-from tests.conftest import assert_exists_and_not_empty, clone_acc_models
+from tests.conftest import EXAMPLES_DIR, TEST_EXAMPLES_DIR, assert_exists_and_not_empty
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
+    from pathlib import Path
 
-EXAMPLES_TEST_DIR = Path(__file__).parent
-OUPUTS_DIR = EXAMPLES_TEST_DIR / "outputs"
-SIMULATION_DATA_DIR = EXAMPLES_TEST_DIR / "simulation2018"
-EXAMPLES_DIR = EXAMPLES_TEST_DIR.parents[1] / "examples"
 
 if str(EXAMPLES_DIR.parent) not in sys.path:
     sys.path.insert(0, str(EXAMPLES_DIR.parent))
 
 from examples import md3311, md6863, commissioning_2022  # noqa
 
+OUPUTS_DIR = TEST_EXAMPLES_DIR / "outputs"
 
-# Fixtures to prepare Models ---------------------------------------------------
+
+# Trigger fixture to prepare Models --------------------------------------------
 
 @pytest.fixture(scope="module", autouse=True)
-def prepare_models(tmp_path_factory: pytest.TempPathFactory):
-    # 2018
-    temp_path_2018 = tmp_path_factory.mktemp("acc-models-lhc-2018")
-    for seq_file in SIMULATION_DATA_DIR.glob("*.seq"):
-        shutil.copy(src=seq_file, dst=temp_path_2018/seq_file.name)
-
-    macro = SIMULATION_DATA_DIR / "macro.madx"
-    toolkit_dir = temp_path_2018 / "toolkit"
-    toolkit_dir.mkdir(exist_ok=True)
-    shutil.copy(src=macro, dst=toolkit_dir / macro.name)
-
-    optics = SIMULATION_DATA_DIR / "opticsfile.22_ctpps2"
-    optics_dir = temp_path_2018 / "PROTON"
-    optics_dir.mkdir(exist_ok=True)
-    shutil.copy(src=optics, dst=optics_dir / optics.name)
-
-    # 2022
-    temp_path_2022 = clone_acc_models(tmp_path_factory, accel="lhc", year=2022)
-
-    # UGLY :(
-    PATHS.update({
-        "optics2018": temp_path_2018,
-        "optics_repo": temp_path_2022.parent,
-    })
-
-
+def prepare_models_local(prepare_models):
+    return prepare_models
 
 # Fixtures to prepare Outputdir ------------------------------------------------
 

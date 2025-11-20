@@ -40,7 +40,6 @@ from ir_amplitude_detuning.detuning.calculations import (
 from ir_amplitude_detuning.detuning.measurements import MeasureValue
 from ir_amplitude_detuning.detuning.targets import Target
 from ir_amplitude_detuning.simulation.lhc_simulation import (
-    ACC_MODELS,
     FakeLHCBeam,
     LHCBeam,
     LHCCorrectors,
@@ -82,9 +81,10 @@ LOG = logging.getLogger(__name__)
 
 
 def get_optics(year: int) -> str:
+    """Return the path to the 30cm (round) optics file for the given year."""
     return {
-        2018: pathstr("optics2018", "PROTON", "opticsfile.22_ctpps2"),
-        2022: pathstr(ACC_MODELS, "strengths", "ATS_Nominal", "2022", "squeeze", "ats_30cm.madx")
+        2018: pathstr("PROTON", "opticsfile.22_ctpps2"),
+        2022: pathstr("strengths", "ATS_Nominal", "2022", "squeeze", "ats_30cm.madx")
     }[year]
 
 

@@ -37,27 +37,25 @@ from ir_amplitude_detuning.utilities.correctors import CorrectorMask, FieldCompo
 LOG = logging.getLogger(__name__)  # setup in main()
 LOG_LEVEL = logging.DEBUG
 
-ACC_MODELS: str = "acc-models-lhc"
+ACC_MODELS: Path = Path("acc-models-lhc")
 
-PATHS: dict[str, Path] = {
-    "optics2018": Path("/afs/cern.ch/eng/lhc/optics/runII/2018"),
-    "optics_repo": Path("/afs/cern.ch/eng/acc-models/lhc"),
-    ACC_MODELS: Path(ACC_MODELS),
+PATHS: dict[str, Path] = {  # adapt if no access to AFS
+    "optics_runII": Path("/afs/cern.ch/eng/lhc/optics/runII"),
+    "acc_models_lhc": Path("/afs/cern.ch/eng/acc-models/lhc"),
 }
 
 
-def pathstr(key: str, *args: str) -> str:
+def pathstr(*args: str) -> str:
     """Wrapper to get the path (as string! Because MADX wants strings)
-    with the base from the dict ``PATHS``.
+    with the base acc-models-lhc.
 
     Args:
-        key (str): Key for the base-path in ``PATHS``.
         args (str): Path parts to attach to the base.
 
     Returns:
-        str: Full path with the base from  given ``key``.
+        str: Full path as string.
     """
-    return str(PATHS[key].joinpath(*args))
+    return str(ACC_MODELS.joinpath(*args))
 
 
 def drop_allzero_columns(df: TfsDataFrame, keep: Sequence = ()) -> TfsDataFrame:
@@ -76,7 +74,17 @@ def drop_allzero_columns(df: TfsDataFrame, keep: Sequence = ()) -> TfsDataFrame:
 class LHCCorrectors:
     """Container for the corrector definitions used in the LHC.
 
-        These correctors are installed into the MCTX and powered via kcdx3 and kctx3 circuits.
+        As the LHC does not have decapoe correctors, all correctors are
+        installed into the MCTX and powered via kcdx3 and kctx3 circuits.
+        The decapole correctors are hence only used for simulation purposes.
+        For HiLumi, which has more actual IR correctors that can be used,
+        you will need to adapt the simulation and correctors a bit,
+        but it should be straightforward.
+
+        Note that in the correction algorithm only the normal-oriented
+        fields are implemented. You will need to add a5 if you are planning
+        on using this corrector.
+
         The length is set to 0.615 m, which is the length of the MCTs.
         The pattern is used to find the correctors in the MAD-X sequence.
     """
@@ -125,23 +133,34 @@ class LHCBeam:
     def __post_init__(self):
         """Setup the MADX, output dirs and logging as well as additional instance parameters."""
         self.outputdir.mkdir(exist_ok=True, parents=True)
-        self.madx = Madx(**cpymad_logging_setup(level=LOG_LEVEL,  # sets also standard loggers
-                                                command_log=self.outputdir/'madx_commands.log',
-                                                full_log=self.outputdir/'full_output.log'))
+        self.madx = Madx(
+            **cpymad_logging_setup(  # sets also standard loggers
+                level=LOG_LEVEL,
+                command_log=self.outputdir / "madx_commands.log",
+                full_log=self.outputdir / "full_output.log",
+            ),
+            cwd=self.outputdir,
+        )
         self.logger = {key: logging.getLogger(key).handlers for key in ("", MADXOUT, MADXCMD)}  # save logger to reinstate later
+
+        if self.beam == 2:
+            LOG.debug("Input as Beam 2 detected. Running with Beam 4.")
+            self.beam = 4
+
         self.madx.globals.mylhcbeam = self.beam  # used in macros
 
         # Define Sequence to use
         self.seq_name, self.seq_file, self.bv_flag = get_lhc_sequence_filename_and_bv(self.beam, accel="lhc" if self.year < 2020 else "hllhc")  # `hllhc` just for naming of the sequence file, i.e. without _as_built
 
-        self.path_to_use = "optics2018"
-        if self.year > 2019:  # after 2019, use acc-models
-            self.path_to_use = ACC_MODELS
+        # Setup Model Paths (always use acc-models-like symlink)
+        if self.year < 2015:
+            raise NotImplementedError("LHC models before run II are not implemented in this simulation.")
 
-            acc_models_path = PATHS[ACC_MODELS]
-            if acc_models_path.exists():
-                acc_models_path.unlink()
-            acc_models_path.symlink_to(pathstr("optics_repo", str(self.year)))
+        model_src = PATHS["acc_models_lhc" if self.year > 2019 else "optics_runII"] / str(self.year)
+        acc_models_path = self.outputdir / ACC_MODELS
+        if acc_models_path.exists():
+            acc_models_path.unlink()
+        acc_models_path.symlink_to(model_src)
 
     # Output Helper ---
     def output_path(self, type_: str, output_id: str, dir_: Path | None = None, suffix: str = ".tfs") -> Path:
@@ -271,19 +290,21 @@ class LHCBeam:
         self.reinstate_loggers()
         madx = self.madx  # shorthand
 
-        # suppress output from reading files
-        madx.option(echo=False)  # note: running into mad-x memory errors in seqedit, when seqfile output not shown
+        # suppress output from reading files, which leads to much smaller test-logs
+        # e.g. in the CI and allows for actual test-debugging.
+        # Note: I am locally running into mad-x memory-out-of-scope errors in the madx.seqedit
+        # below with the two madx.options commands here. No idea why. It works in the CI.
+        madx.option(echo=False)
 
         # Load Macros
-        madx.call(pathstr(self.path_to_use, "toolkit", "macro.madx"))
+        madx.call(pathstr("toolkit", "macro.madx"))
 
         # Lattice Setup ---------------------------------------
         # Load Sequence
-        madx.call(pathstr(self.path_to_use, self.seq_file))
+        madx.call(pathstr(self.seq_file))
 
         # re-enable output
-        madx.option(echo=True)  # note: running into mad-x memory errors in seqedit, when seqfile output not shown
-
+        madx.option(echo=True)
 
         # Cycling w.r.t. to IP3 (mandatory to find closed orbit in collision in the presence of errors)
         madx.seqedit(sequence=self.seq_name)

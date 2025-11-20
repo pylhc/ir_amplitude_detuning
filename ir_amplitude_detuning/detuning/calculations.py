@@ -82,6 +82,11 @@ def calculate_correction(
     while everything that contributes to the right hand side (i.e. the detuning values *V*, or similarly the constraint values)
     is named ``v_*``.
 
+    .. warning::
+       The calculated magnet strength assumes that the magnet circuit is implemented with a positive sign,
+       giving a positive field gradient, in beam 1 and - when the field is anti-symmetric - a negative sign in beam 4
+       and does not have any coefficients.
+
     Args:
         target (Target): A Target object defining the target detuning and constraints.
         method (Method): The results of which method used to solve the equation system to be returned.

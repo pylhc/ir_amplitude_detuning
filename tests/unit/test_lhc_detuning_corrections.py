@@ -1,11 +1,10 @@
 from unittest.mock import Mock, patch
 
 import pandas as pd
-from pandas.testing import assert_frame_equal, assert_series_equal
 import pytest
 import tfs
+from pandas.testing import assert_frame_equal, assert_series_equal
 
-from ir_amplitude_detuning.detuning.calculations import Method
 from ir_amplitude_detuning.detuning.measurements import MeasureValue
 from ir_amplitude_detuning.lhc_detuning_corrections import (
     CorrectionResults,
