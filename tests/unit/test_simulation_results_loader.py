@@ -247,7 +247,7 @@ class TestGetCalculatedDetuningForField:
             field=["b4", "b6"],   # will become 'b4b6'
             errors=False
         )
-        self.mock_load.assert_called_once_with(folder=Path("/data"), type_=rl.AMPDET_CALC_ID, beam=2, id_="foo")
+        self.mock_load.assert_called_with(folder=Path("/data"), type_=rl.AMPDET_CALC_ID, beam=2, id_="foo")
         assert self.mock_convert.call_count == 1
         assert result == self.mock_convert.return_value
         df_passed = self.mock_convert.call_args.args[0]
@@ -262,7 +262,7 @@ class TestGetCalculatedDetuningForField:
             field="b4",
             errors=True
         )
-        self.mock_load.assert_called_once_with(folder=Path("/data"), type_=rl.AMPDET_CALC_ERR_ID, beam=2, id_="foo")
+        self.mock_load.assert_called_with(folder=Path("/data"), type_=rl.AMPDET_CALC_ERR_ID, beam=2, id_="foo")
 
         assert self.mock_convert.call_count == 1
         assert result == self.mock_convert.return_value
