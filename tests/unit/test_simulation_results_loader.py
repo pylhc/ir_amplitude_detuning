@@ -240,6 +240,8 @@ class TestGetCalculatedDetuningForField:
         self.mock_convert = mock_convert
 
     def test_dual_field_filtering(self):
+        self.mock_convert.reset_mock()
+
         result = rl.get_calculated_detuning_for_field(
             folder=Path("/data"),
             beam=2,
@@ -255,6 +257,8 @@ class TestGetCalculatedDetuningForField:
         assert_frame_equal(df_passed, self.df_expected_b4b6, check_like=True)
 
     def test_single_field_filtering(self):
+        self.mock_convert.reset_mock()
+
         result = rl.get_calculated_detuning_for_field(
             folder=Path("/data"),
             beam=2,

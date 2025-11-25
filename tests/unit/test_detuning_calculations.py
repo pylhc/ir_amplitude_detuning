@@ -94,7 +94,8 @@ class TestCalculateCorrection:
         result = calculate_correction(mock_target, method=method)
 
         # Check the results ---
-        assert mock_build_matrix.called_with(mock_target)
+        mock_build_matrix.assert_called_with(mock_target)
+
         assert isinstance(result, pd.Series)
         assert len(result) == 2
 
