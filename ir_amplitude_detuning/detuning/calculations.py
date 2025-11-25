@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING
 import cvxpy as cvx
 import numpy as np
 import pandas as pd
+from cvxpy.settings import ERROR, INF_OR_UNB
 
 from ir_amplitude_detuning.detuning.equation_system import (
     build_detuning_correction_matrix,
@@ -95,9 +96,10 @@ def calculate_correction(
         pd.Series[float]: A Series of circuit names and their settings in KNL values.
     """
     # Check input ---
-
-    if method not in Method:
-        raise ValueError(f"Unknown method: {method}. Use one of: {list(Method)}")
+    try:
+        method = Method(method)
+    except ValueError as e:
+        raise ValueError(f"Unknown method: {method}. Use one of: {list(Method)}") from e
 
     # Build equation system ---
 
@@ -116,7 +118,7 @@ def calculate_correction(
 
     prob = cvx.Problem(cvx.Minimize(cost), constraints)
     prob.solve()
-    if prob.status in ["infeasible", "unbounded"]:
+    if prob.status in INF_OR_UNB + ERROR:
         raise ValueError(f"Optimization failed! Reason: {prob.status}.")
 
     x_cvxpy = pd.Series(x.value, index=eqsys.m.columns)

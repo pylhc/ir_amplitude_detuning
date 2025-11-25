@@ -17,7 +17,10 @@ if TYPE_CHECKING:
 class StrEnum(str, Enum):
     """Enum with string representation.
 
-    Note: Can be removed in Python 3.11 as it is implemented there as `enum.StrEnum`.
+    Note:
+          Can possibly be removed in Python 3.11 as it is implemented there as `enum.StrEnum`.
+          But beware, that `"value" in StrEnum` raises `TypeError` until Python 3.12,
+          workaround is `"value" in list(StrEnum)` or to try `StrEnum(value)`.
     """
     def __repr__(self) -> str:
         return self.value
