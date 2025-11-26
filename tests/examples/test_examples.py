@@ -193,7 +193,7 @@ class TestExamplesMD6863:
         """Test the simulation function and do-correction with passed beams."""
         output_dir = example_md6863
 
-        xing_configs = list(md6863.XingSchemes.keys())
+        xing_configs = md6863.XingSchemes.keys()
         assert len(xing_configs) == 4
 
         lhc_beams_per_setup = md6863.simulation()

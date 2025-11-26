@@ -40,11 +40,11 @@ class ContainerMeta(type):
         # everything in the class, but ignore all private attributes and functions/attributes defined here
         return iter(key for key in cls.__dict__ if not key.startswith("_") and key not in ContainerMeta.__dict__)
 
-    def __len__(cls):
+    def __len__(cls) -> int:
         return len(tuple(cls.__iter__()))
 
-    def keys(cls):
-        return cls.__iter__()
+    def keys(cls) -> list[str]:
+        return list(cls.__iter__())
 
 
 class Container(metaclass=ContainerMeta):
@@ -125,6 +125,9 @@ def to_loop(iterable: Iterable[Any]) -> list[Iterable[int]]:
     Returns:
         list[Iterable[int]]: List of lists of elements
     """
+    if not iterable:
+        raise ValueError("Nothing to loop over.")
+
     combined = [iterable]
 
     if len(iterable) == 1:
