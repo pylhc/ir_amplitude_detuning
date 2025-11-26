@@ -6,11 +6,9 @@ from unittest.mock import Mock, patch
 import numpy as np
 import pandas as pd
 import pytest
-from pandas.testing import assert_frame_equal, assert_series_equal
+from pandas.testing import assert_series_equal
 
 from ir_amplitude_detuning.detuning.equation_system import (
-    BETA,
-    ROW_ID,
     DetuningCorrectionEquationSystem,
     beam_symmetry_sign,
     build_detuning_correction_matrix,
@@ -27,7 +25,6 @@ from ir_amplitude_detuning.detuning.measurements import (
 )
 from ir_amplitude_detuning.detuning.targets import TargetData
 from ir_amplitude_detuning.utilities.correctors import Corrector, FieldComponent
-
 
 # ============================================================================
 # Tests for DetuningCorrectionEquationSystem
