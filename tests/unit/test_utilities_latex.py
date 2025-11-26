@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
 
 from ir_amplitude_detuning.detuning.measurements import MeasureValue
-
 from ir_amplitude_detuning.utilities.latex import (
     dqd2j,
     exp_m,
@@ -16,7 +15,6 @@ from ir_amplitude_detuning.utilities.latex import (
     unit_exp_m,
     ylabel_from_detuning_term,
 )
-
 
 # ============================================================================
 # Tests for print_correction_and_error_as_latex
