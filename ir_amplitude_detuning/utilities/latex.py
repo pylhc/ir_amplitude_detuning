@@ -22,22 +22,23 @@ if TYPE_CHECKING:
 LOG = logging.getLogger(__name__)
 
 
-def print_correction_and_error_as_latex(values: Sequence[MeasureValue], correctors: Sequence[str], length: Sequence[float] | float = 0.615) -> None:
+def print_correction_and_error_as_latex(
+    values: Sequence[MeasureValue],
+    correctors: Sequence[str],
+    exponent: float | None = None,
+    ) -> None:
     """Print the correction values with errors as latex table snippet.
 
     Args:
         values: List of MeasureValue with the correction values
         correctors: List of corrector names, same length as values
-        length: Length of the correctors in m, default 0.615 m for MCTs
+        exponent (float, optional): Exponent of 10 for the unit of the values.
     """
-    try:
-        len(length)
-    except TypeError:
-        length = [length] * len(values)
+    if len(values) != len(correctors):
+        raise ValueError("Values and correctors must have the same length.")
 
-    assert len(values) == len(correctors) == len(length), "Values, correctors and length must have the same length."
-
-    values_scaled = np.array([v * 1e-3 / l for v, l in zip(values, length)])  # convert to KNL [10^3] # noqa: E741
+    if exponent:
+        values = [v * 10**-exponent for v in values]
 
     def mv2s(data: MeasureValue) -> str:
         """Covert MeasureValue to string with error in paranthesis."""
@@ -53,9 +54,9 @@ def print_correction_and_error_as_latex(values: Sequence[MeasureValue], correcto
         return fr"{data.value:.3f}({uncert})"
 
     LOG.info(
-        f"Latex table snippet for correctors (KNL values [10^-3]):\n\n"
+        f"Latex table snippet for correctors {f'[10^{exponent}]' if exponent else ''}:\n\n"
         f" & {' & '.join(correctors)}\\\\\n"
-        f" & {' & '.join(mv2s(x) for x in values_scaled)}\\\\\n"
+        f" & {' & '.join(mv2s(x) for x in values)}\\\\\n"
     )
 
 
@@ -139,23 +140,28 @@ def dqd2j(tune: str, action: str) -> str:
 
 def exp_m(e_power: int, m_power: int) -> str:
     """Latex representation of unit 10^power m^inv.
-    Example: em(3, -1) -> "\\cdot 10^{3}\\;$m$^{-1}".
+    Example: exp_m(3, -1) -> "\\cdot 10^{3}\\;$m$^{-1}".
 
     Args:
-        power: integer power of 10
-        inv: integer power of m
+        e_power: integer power of 10
+        m_power: integer power of m
     """
+    m_str = fr"\;$m$^{{{m_power:d}}}"
     if not e_power:
-        return fr"\;$m$^{{{m_power:d}}}"
-    return fr"\cdot 10^{{{e_power:d}}}\;$m$^{{{m_power:d}}}"
+        return m_str
+    return fr"\cdot 10^{{{e_power:d}}}{m_str}"
 
 
 def unit_exp_m(e_power: int, m_power: int) -> str:
     """Latex representation of unit 10^power m^inv.
-    Example: unit(3, -1) -> "\\; [10^{3}\\;$m$^{-1}]".
+    Example: unit_exp_m(3, -1) -> "\\; [10^{3}\\;$m$^{-1}]".
 
     Args:
-        power: integer power of 10
-        inv: integer power of m
+        e_power: integer power of 10
+        m_power: integer power of m
     """
-    return fr"\; [10^{{{e_power:d}}} $m$^{{{m_power:+d}}}]"
+    m_str = fr"$m$^{{{m_power:d}}}"
+    e_str = ""
+    if e_power:
+        e_str = fr"10^{{{e_power:d}}} "
+    return fr"\; [{e_str}{m_str}]"
