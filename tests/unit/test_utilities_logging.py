@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import logging
 import sys
-from io import StringIO
-
-import pytest
+from typing import TYPE_CHECKING
 
 from ir_amplitude_detuning.utilities.logging import log_setup
+
+if TYPE_CHECKING:
+    import pytest
 
 
 class TestLogSetup:
