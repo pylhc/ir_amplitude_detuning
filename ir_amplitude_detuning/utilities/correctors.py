@@ -49,6 +49,11 @@ class Corrector:
         if self.field not in list(FieldComponent):
             raise ValueError(f"Field must be one of {list(FieldComponent)}, got {self.field}.")
 
+    def __setattr__(self, name: str, value) -> None:
+        if name == "field" and value not in list(FieldComponent):
+            raise ValueError(f"Field must be one of {list(FieldComponent)}, got {value}.")
+        object.__setattr__(self, name, value)
+
     def __lt__(self, other: Corrector) -> bool:
         """Less-than operator for sorting correctors.
         Sorting is done by field, then by IP side (L before R), then by IP number (lower before higher),
@@ -72,8 +77,8 @@ class Corrector:
 
         # Correctors are at the same side of the same IP
         if self_ipside[0].lower() == "l":
-            return self_match.group(1) > self_match.group(1)  # larger = further downstream
-        return self_match.group(1) < self_match.group(1)  # larger = further upstream
+            return self_match.group(1) > other_match.group(1)  # larger = further downstream
+        return self_match.group(1) < other_match.group(1)  # larger = further upstream
 
     def __hash__(self):
         return hash(self.magnet + self.circuit)
@@ -123,20 +128,6 @@ def get_fields(correctors: Correctors) -> list[FieldComponent]:
         list[FieldComponent]: sorted list of uniqe field components
     """
     return sorted({corrector.field for corrector in correctors})
-
-
-def assert_corrector_fields(correctors: Correctors):
-    """Assert the correctors have been defined with the correct fields.
-
-    Args:
-        correctors (Correctors): list of correctors
-    """
-    fields = get_fields(correctors)
-    if not fields:
-        raise ValueError("No detuning correctors defined!")
-
-    if any(field not in list(FieldComponent) for field in fields):
-        raise ValueError(f"Field must be one of {list(FieldComponent)}, got {fields}.")
 
 
 def fill_corrector_masks(corrector_masks: Sequence[CorrectorMask | Corrector], ips: Sequence[int], sides: Sequence[str] = "LR") -> Correctors:
