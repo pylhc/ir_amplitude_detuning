@@ -10,10 +10,11 @@ import logging
 import sys
 
 
-def log_setup():
+def log_setup(**kwargs):
     """Set up a basic logger."""
     logging.basicConfig(
         stream=sys.stdout,
         level=logging.INFO,
-        format="%(levelname)7s | %(message)s | %(name)s"
+        format="%(levelname)7s | %(message)s | %(name)s",
+        **kwargs,
     )
