@@ -225,11 +225,48 @@ class TestCalcEffectiveDetuning:
 
     def test_calc_effective_detuning_empty_optics(self):
         """Test with empty optics dictionary."""
-        result = calc_effective_detuning({}, pd.Series(dtype=float))
+        result = calc_effective_detuning({}, pd.Series(0, index=[Mock(ip=None)], dtype=float))
 
         # Returns empty dict with no beams
         assert isinstance(result, dict)
         assert len(result) == 0
+
+    @patch("ir_amplitude_detuning.detuning.calculations.calculate_matrix_row")
+    def test_calc_effective_detuning_no_ips(self, mock_calculate_matrix_row):
+        """Test with correctors without IPs."""
+        # Create mocks ---
+        all_correctors = [
+            Corrector(
+                field=field,
+                length=0.5,
+                magnet=f"{type_}ip{ip or 0}{field}",
+                circuit=f"k{type_}ip{ip or 0}{field}",
+                ip=ip,
+            )
+            for type_, field, ip in (
+                ("c1", FieldComponent.b4, None),
+                ("c2", FieldComponent.b4, None),
+            )
+        ]
+        values = pd.Series([1, 2], index=all_correctors, dtype=float)
+
+        mock_optics = {1: Mock()}
+        def mocked_calulation(beam, optics, correctors, term):
+            assert correctors == all_correctors  # no filtering as all ips are None, and both have same field
+            return np.ones([1, len(correctors)])
+
+        mock_calculate_matrix_row.side_effect = mocked_calulation
+        all_terms = list(FirstOrderTerm) + list(SecondOrderTerm)
+
+        # Run ---
+        result = calc_effective_detuning(mock_optics, values)
+
+        # Check results ---
+        assert isinstance(result, dict)
+        assert len(result) == 1  # one beam
+        assert len(result[1]) == 1  # one field, "one" ip (None)
+        assert all(result[1].loc[:, all_terms] == values.sum())  # calculation returns [1, 1]
+        assert mock_calculate_matrix_row.call_count == len(all_terms)
 
     @patch("ir_amplitude_detuning.detuning.calculations.calculate_matrix_row")
     def test_calc_effective_detuning(self, mock_calculate_matrix_row):

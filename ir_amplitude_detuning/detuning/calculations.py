@@ -146,7 +146,8 @@ def calc_effective_detuning(optics: TwissPerBeam, values: pd.Series) -> dict[int
     """
     correctors: Correctors = values.index
 
-    loop_ips: list[Iterable[int]] = to_loop(sorted({c.ip for c in correctors if c.ip is not None}))
+    ips = {c.ip for c in correctors if c.ip is not None} or {None}  # latter if all are None
+    loop_ips: list[Iterable[int]] = to_loop(sorted(ips))
     ip_strings: list[str] = [''.join(map(str, ips)) for ips in loop_ips]
 
     loop_fields: list[str] = to_loop(sorted({c.field for c in correctors}))
