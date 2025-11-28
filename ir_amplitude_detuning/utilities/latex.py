@@ -10,8 +10,6 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-import numpy as np
-
 from ir_amplitude_detuning.detuning.terms import DetuningTerm, detuning_term_to_planes, get_order
 
 if TYPE_CHECKING:

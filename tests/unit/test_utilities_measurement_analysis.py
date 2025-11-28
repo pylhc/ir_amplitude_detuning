@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from pathlib import Path
-from unittest.mock import MagicMock, Mock, call, patch
+from typing import TYPE_CHECKING
+from unittest.mock import Mock, call, patch
 
 import numpy as np
 import pandas as pd
@@ -10,7 +10,7 @@ import tfs
 from omc3.optics_measurements.constants import EXT, KICK_NAME
 from omc3.tune_analysis.constants import get_bbq_out_name, get_kick_out_name
 
-from ir_amplitude_detuning.detuning.measurements import Detuning, DetuningMeasurement, MeasureValue
+from ir_amplitude_detuning.detuning.measurements import Detuning, DetuningMeasurement
 from ir_amplitude_detuning.detuning.terms import FirstOrderTerm, SecondOrderTerm
 from ir_amplitude_detuning.utilities.constants import ERR
 from ir_amplitude_detuning.utilities.measurement_analysis import (
@@ -24,6 +24,9 @@ from ir_amplitude_detuning.utilities.measurement_analysis import (
     get_terms_and_error_terms,
 )
 from tests.conftest import INPUTS_DIR
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 MEASUREMENT_INPUTS_DIR = INPUTS_DIR / "measurement"
 
