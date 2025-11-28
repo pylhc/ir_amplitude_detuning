@@ -108,7 +108,6 @@ omit = [
 exclude_also = [
   "if TYPE_CHECKING:",  # do not count type checking imports (ignored at runtime) for coverage
   "except ImportError:",  # do not count missing optional dependencies set to None, we monkeypatch and test that
-  "if __name__ == \"__main__\":",  # do not count entry-points (in examples only); we test the functions directly
 ]
 
 # ----- Dev Tools Configuration ----- #

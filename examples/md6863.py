@@ -631,7 +631,7 @@ def plot_target_comparison():
 
 # Run --------------------------------------------------------------------------
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     log_setup()
     lhc_beams = None  # in case you want to skip the simulation
     lhc_beams = simulation()

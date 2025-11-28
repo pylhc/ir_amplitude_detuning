@@ -45,7 +45,7 @@ class AnalysisOption(StrEnum):
 
 def get_beam_from_dir(analysis_dir: Path) -> int:
     """Determine the beam number from the analysis directory.
-    Assumes either the directory name is of the form ``B{beam}_`` or
+    Assumes either the directory name is of the form ``B{beam}_``/``b{beam}_`` or
     the parent or the parent directory is of the form ``LHCB{beam}``.
 
     Args:
@@ -54,7 +54,7 @@ def get_beam_from_dir(analysis_dir: Path) -> int:
     Returns:
         int: The beam number
     """
-    if match := re.match(r"^B(\d)_", analysis_dir.name):
+    if match := re.match(r"^B(\d)_", analysis_dir.name, flags=re.IGNORECASE):
         return int(match.group(1))
 
     gui_machine_dir = analysis_dir.absolute().parents[1]  #  LHCB#/Results/Analysis
