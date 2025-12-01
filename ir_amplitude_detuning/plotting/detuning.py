@@ -111,6 +111,8 @@ def plot_measurements(setups: Sequence[PlotSetup], **kwargs):
     terms: Sequence[str] = kwargs.pop('terms', Detuning.all_terms())
     measured_only: Sequence[str] = kwargs.pop('measured_only', False)
     average: str | bool = kwargs.pop('average', False)
+    if average is True:
+        average = "auto"
 
     if kwargs:
         raise ValueError(f"Unknown keyword arguments: {kwargs.keys()}")
@@ -170,7 +172,7 @@ def plot_measurements(setups: Sequence[PlotSetup], **kwargs):
         # Add Average ---
         extra_labels = []
         if average:
-            av_meas, av_label = get_average(measurement_setup, average, detuning_terms)
+            av_meas, av_label = get_average(measurement_setup, terms=detuning_terms, method=average)
             x_pos = n_components - 1 + (idx_measurement + 1) * measurement_width
             plot_value_or_measurement(
                 ax, measurement=av_meas * rescale_value,
@@ -221,13 +223,13 @@ def get_measured_detuning_terms(measurements: Sequence[PlotSetup], terms: Sequen
     ]
 
 
-def get_average(measurement_setup: PlotSetup, average: bool | str, terms: Sequence[str]) -> tuple[MeasureValue | float, str]:
+def get_average(measurement_setup: PlotSetup, terms: Sequence[str], method: str = "auto") -> tuple[MeasureValue | float, str]:
     """Calculate the average of the measurements.
 
     Args:
         measurement_setup (MeasurementSetup): The measurements to average.
-        average (bool | str): The average method to use.
         terms (Sequence[str]): The terms to average.
+        method (str): The average method to use.
     """
     meas_values = [getattr(measurement_setup.measurement, detuning_component) for detuning_component in terms]
     meas_values = [mv for mv in meas_values if mv is not None]
@@ -235,14 +237,14 @@ def get_average(measurement_setup: PlotSetup, average: bool | str, terms: Sequen
 
     # determine average method
     weighted = "weighted_"
-    if average is True:
-        av_method = f"{weighted if is_measurement else ''}rms"
+    if method == "auto":
+        method = f"{weighted if is_measurement else ''}rms"
 
-    if weighted in av_method and not all(isinstance(mv, MeasureValue) for mv in meas_values):
-        raise ValueError(f"Average {average} requires all measurements to be of type MeasureValue.")
+    if weighted in method and not all(isinstance(mv, MeasureValue) for mv in meas_values):
+        raise ValueError(f"Average {method} requires all measurements to be of type MeasureValue.")
 
     # calculate average
-    match av_method:
+    match method:
         case "rms":
             if is_measurement:
                 av_meas: MeasureValue = MeasureValue.rms(meas_values)
@@ -253,9 +255,10 @@ def get_average(measurement_setup: PlotSetup, average: bool | str, terms: Sequen
             av_meas: MeasureValue = MeasureValue.weighted_rms(meas_values)
             av_label = "RMS"
         case "mean":
-            av_meas: MeasureValue | float = MeasureValue.mean(meas_values)
             if is_measurement:
-                av_meas = getattr(av_meas, "value", av_meas)
+                av_meas: MeasureValue = MeasureValue.mean(meas_values)
+            else:
+                av_meas: float  = np.mean(meas_values)
             av_label = "Mean"
         case "weighted_mean":
             av_meas: MeasureValue = MeasureValue.weighted_mean(meas_values)
@@ -292,7 +295,7 @@ def plot_value_or_measurement(
             elinewidth=1,  # looks offset otherwise
             ls="",
         )
-    return ax.plot(x, measurement, label=label, color=color, ls="")
+    return ax.plot(x, getattr(measurement, "value", measurement), label=label, color=color, ls="")
 
 
 def get_handles_labels(measurements: Sequence[PlotSetup]) -> tuple[list[Line2D], list[str]]:
