@@ -354,7 +354,7 @@ class TestDoDetuningAnalysis:
         mock_beam.assert_called_once_with(tmp_path)
         mock_plane.assert_called_once_with(tmp_path)
 
-        if with_bbq != "file":  # even if present, should be re-extraced
+        if with_bbq != "file":  # extraction if not present or requested
             bbq_file = None
 
         mock_outlier_filter_opt.assert_called_once()
