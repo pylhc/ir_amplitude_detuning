@@ -1,14 +1,12 @@
-"""Tests for the plotting.correctors module."""
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from matplotlib.lines import Line2D
 import pandas as pd
-from pandas.testing import assert_frame_equal, assert_series_equal
 import pytest
 import tfs
 from matplotlib import pyplot as plt
+from pandas.testing import assert_series_equal
 
 from ir_amplitude_detuning.plotting.correctors import (
     get_corrector_strengths,

@@ -1,4 +1,3 @@
-"""Tests for the plotting.utils module."""
 from __future__ import annotations
 
 import re
@@ -7,7 +6,10 @@ from unittest.mock import Mock
 import pytest
 from matplotlib.colors import to_rgb
 
-from ir_amplitude_detuning.detuning.measurements import Constraints, Detuning, DetuningMeasurement, MeasureValue
+from ir_amplitude_detuning.detuning.measurements import (
+    Constraints,
+    DetuningMeasurement,
+)
 from ir_amplitude_detuning.detuning.targets import Target, TargetData
 from ir_amplitude_detuning.plotting.utils import (
     OtherColors,
@@ -17,7 +19,6 @@ from ir_amplitude_detuning.plotting.utils import (
     get_full_target_labels,
 )
 from ir_amplitude_detuning.utilities.correctors import Corrector, FieldComponent
-
 
 # ============================================================================
 # Tests for get_default_scaling

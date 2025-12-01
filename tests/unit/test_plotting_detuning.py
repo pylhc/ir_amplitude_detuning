@@ -1,13 +1,12 @@
 
-"""Tests for the plotting.detuning module."""
 from __future__ import annotations
 
 from unittest.mock import patch
 
-from matplotlib.container import ErrorbarContainer
-from matplotlib.lines import Line2D
 import pytest
 from matplotlib import pyplot as plt
+from matplotlib.container import ErrorbarContainer
+from matplotlib.lines import Line2D
 
 from ir_amplitude_detuning.detuning.measurements import (
     Detuning,
