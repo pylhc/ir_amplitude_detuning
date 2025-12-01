@@ -430,9 +430,3 @@ class Constraints:
             value *= self.scale
 
         return sign, sign*value
-
-
-# Default scaling is 1E3 as measurements are usually given in 1E3 m^-1
-scaled_detuning = partial(Detuning, scale=1e3)
-scaled_contraints = partial(Constraints, scale=1e3)
-scaled_detuningmeasurement = partial(DetuningMeasurement, scale=1e3)

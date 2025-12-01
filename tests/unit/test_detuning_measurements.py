@@ -8,9 +8,6 @@ from ir_amplitude_detuning.detuning.measurements import (
     Detuning,
     DetuningMeasurement,
     MeasureValue,
-    scaled_contraints,
-    scaled_detuning,
-    scaled_detuningmeasurement,
 )
 from ir_amplitude_detuning.detuning.terms import FirstOrderTerm
 
@@ -697,28 +694,6 @@ class TestConstraints:
         const = Constraints(X10="<=5.0")
         with pytest.raises(KeyError):
             const.get_leq("X01")
-
-
-class TestScaledPartials:
-    """Tests for the scaled partial functions."""
-
-    def test_scaled_detuning(self):
-        """Test scaled_detuning creates Detuning with 1e3 scale."""
-        det = scaled_detuning(X10=1.0, Y01=2.0)
-        assert det["X10"] == pytest.approx(1e3)
-        assert det["Y01"] == pytest.approx(2e3)
-
-    def test_scaled_contraints(self):
-        """Test scaled_contraints creates Constraints with 1e3 scale."""
-        const = scaled_contraints(X10="<=1.0")
-        sign, value = const.get_leq("X10")
-        assert value == pytest.approx(1e3)
-
-    def test_scaled_detuningmeasurement(self):
-        """Test scaled_detuningmeasurement creates DetuningMeasurement with 1e3 scale."""
-        meas = scaled_detuningmeasurement(X10=MeasureValue(1.0, 0.1))
-        assert meas["X10"].value == pytest.approx(1e3)
-        assert meas["X10"].error == pytest.approx(100)
 
 
 class TestIntegration:

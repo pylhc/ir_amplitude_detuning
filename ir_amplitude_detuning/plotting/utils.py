@@ -63,14 +63,23 @@ class OtherColors:
     flat = '#17becf'  # blue-teal
 
 
-def get_full_target_labels(targets: Sequence[Target], suffixes: Sequence[str] | None = None, scale_exponent: float = 3) -> dict[str, str]:
-    """Get a label that includes all detuning terms so that they can be easily compared.
-    To save space only the first target_data is used.
+def get_full_target_labels(
+    targets: Sequence[Target],
+    suffixes: Sequence[str] | None = None,
+    rescale: float = 3
+    ) -> dict[str, str]:
+    """Get a latex label that includes values of all detuning terms, so that they can be easily compared.
+    This is useful to plot the results of multiple targets on the same figure, without having to invent confusing
+    labels. Instead you can just use the target detuning values that went into the correction.
+    It ignores constraints and only the first target_data is used - otherwise the labels would be too long.
+    Extra information can be added via the suffixes.
 
     Args:
         targets (Sequence[Target]): List of Target objects to get labels for.
         suffixes (Sequence[str] | None): List of suffixes to add to the labels.
-        scale (float): Scaling factor for the detuning values.
+        rescale (float): Exponent of the scaling factor.
+            (e.g. 3 to give data in units of 10^3, which multiplies the data by 10^-3)
+            Default: 3.
 
     Returns:
         dict[str, str]: Dictionary of labels for each target identified by its name.
@@ -78,19 +87,22 @@ def get_full_target_labels(targets: Sequence[Target], suffixes: Sequence[str] | 
     if suffixes is not None and len(suffixes) != len(targets):
         raise ValueError("Number of suffixes must match number of targets.")
 
-    scaling = 10**-scale_exponent
+    scaling = 10**-rescale
 
     names = [target.name for target in targets]
     labels = [None for _ in targets]
     for idx_target, target in enumerate(targets):
         target_data: TargetData = target.data[0]
         scaled_values = {
-            term: (target_data.detuning[1][term] * scaling, target_data.detuning[2][term] * scaling)
-            for term in target_data.detuning[1].terms()
+            term: tuple("--".center(6) if val is None else f"{getattr(val, 'value', val) * scaling: 5.1f}"
+            for beam in [1, 2]
+            for val in [getattr(target_data.detuning[beam], term)])
+            for term in set(target_data.detuning[1].terms()) | set(target_data.detuning[2].terms())
         }
+
         label = "\n".join(
             [
-                f"${latex.term2dqdj(term)}$ = {f'{values[0].value: 5.1f} | {values[1].value: 5.1f}'.center(15)}"
+                f"${latex.term2dqdj(term)}$ = {f'{values[0]} | {values[1]}'.center(15)}"
                 for term, values in scaled_values.items()
             ]
         )

@@ -26,7 +26,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ir_amplitude_detuning.detuning.calculations import Method
-from ir_amplitude_detuning.detuning.measurements import scaled_detuningmeasurement
+from ir_amplitude_detuning.detuning.measurements import DetuningMeasurement
 from ir_amplitude_detuning.detuning.targets import (
     Target,
     TargetData,
@@ -77,12 +77,12 @@ class MeasuredDetuning(Container):
     Note: Keys are beam numbers, 2 and 4 can be used interchangeably (but consistently) here.
     """
     flat: DetuningPerBeam = BeamDict({
-        1: scaled_detuningmeasurement(X10=(-15.4, 0.9), X01=(33.7, 1), Y01=(-8.4, 0.5)),
-        2: scaled_detuningmeasurement(X10=(-8.7, 0.7), X01=(13, 2), Y01=(10, 0.9)),
+        1: DetuningMeasurement(X10=(-15.4, 0.9), X01=(33.7, 1), Y01=(-8.4, 0.5), scale=1e3),
+        2: DetuningMeasurement(X10=(-8.7, 0.7), X01=(13, 2), Y01=(10, 0.9), scale=1e3),
     })
     full: DetuningPerBeam = BeamDict({
-        1: scaled_detuningmeasurement(X10=(20, 4), X01=(43, 4), Y01=(-10, 3)),
-        2: scaled_detuningmeasurement(X10=(26, 0.8), X01=(-27, 4), Y01=(18, 7)),
+        1: DetuningMeasurement(X10=(20, 4), X01=(43, 4), Y01=(-10, 3), scale=1e3),
+        2: DetuningMeasurement(X10=(26, 0.8), X01=(-27, 4), Y01=(18, 7), scale=1e3),
     })
 
 # Steps of calculations --------------------------------------------------------

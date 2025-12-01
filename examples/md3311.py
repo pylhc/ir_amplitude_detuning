@@ -20,8 +20,8 @@ from typing import TYPE_CHECKING
 from ir_amplitude_detuning.detuning.calculations import Method
 from ir_amplitude_detuning.detuning.measurements import (
     Constraints,
+    DetuningMeasurement,
     FirstOrderTerm,
-    scaled_detuningmeasurement,
 )
 from ir_amplitude_detuning.detuning.targets import (
     Target,
@@ -69,16 +69,16 @@ class MeasuredDetuning(Container):
     Note: Keys are beam numbers, 2 and 4 can be used interchangeably (but consistently) here.
     """
     flat: DetuningPerBeam = BeamDict({
-        1: scaled_detuningmeasurement(X10=(0.8, 0.5), Y01=(-3, 1)),
-        2: scaled_detuningmeasurement(X10=(-7.5, 0.5), Y01=(6, 1)),
+        1: DetuningMeasurement(X10=(0.8, 0.5), Y01=(-3, 1), scale=1e3),
+        2: DetuningMeasurement(X10=(-7.5, 0.5), Y01=(6, 1), scale=1e3),
     })
     full: DetuningPerBeam = BeamDict({
-        1: scaled_detuningmeasurement(X10=(34, 1), Y01=(-38, 1)),
-        2: scaled_detuningmeasurement(X10=(-3, 1), Y01=(13, 3)),
+        1: DetuningMeasurement(X10=(34, 1), Y01=(-38, 1), scale=1e3),
+        2: DetuningMeasurement(X10=(-3, 1), Y01=(13, 3), scale=1e3),
     })
     ip5: DetuningPerBeam = BeamDict({
-        1: scaled_detuningmeasurement(X10=(56, 6), Y01=(3, 2)),
-        2: scaled_detuningmeasurement(X10=(1.5, 0.5), Y01=(12, 1)),
+        1: DetuningMeasurement(X10=(56, 6), Y01=(3, 2), scale=1e3),
+        2: DetuningMeasurement(X10=(1.5, 0.5), Y01=(12, 1), scale=1e3),
     })
     ip1: DetuningPerBeam = None  # IP1 was not measured, calculated below
 

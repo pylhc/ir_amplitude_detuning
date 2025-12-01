@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ir_amplitude_detuning.detuning.calculations import Method
-from ir_amplitude_detuning.detuning.measurements import Constraints, scaled_detuningmeasurement
+from ir_amplitude_detuning.detuning.measurements import Constraints, DetuningMeasurement
 from ir_amplitude_detuning.detuning.targets import (
     Target,
     TargetData,
@@ -79,12 +79,12 @@ class MeasuredDetuning(Container):
     TODO: Fill in what you measured!
     """
     flat: DetuningPerBeam = BeamDict({
-        1: scaled_detuningmeasurement(X10=(0, 0), X01=(0, 0), Y01=(0, 0)),
-        2: scaled_detuningmeasurement(X10=(0, 0), X01=(0, 0), Y01=(0, 0)),
+        1: DetuningMeasurement(X10=(0, 0), X01=(0, 0), Y01=(0, 0), scale=1e3),
+        2: DetuningMeasurement(X10=(0, 0), X01=(0, 0), Y01=(0, 0), scale=1e3),
     })
     full: DetuningPerBeam = BeamDict({
-        1: scaled_detuningmeasurement(X10=(0, 0), X01=(0, 0), Y01=(0, 0)),
-        2: scaled_detuningmeasurement(X10=(0, 0), X01=(0, 0), Y01=(0, 0)),
+        1: DetuningMeasurement(X10=(0, 0), X01=(0, 0), Y01=(0, 0), scale=1e3),
+        2: DetuningMeasurement(X10=(0, 0), X01=(0, 0), Y01=(0, 0), scale=1e3),
     })
 
 class CorrectionConstraints(Container):
