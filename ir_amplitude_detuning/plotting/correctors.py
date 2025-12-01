@@ -190,6 +190,8 @@ def get_corrector_strengths(folder: Path, beam: int, id_: str, corrector_pattern
 
 def pair_correctors(correctors: Sequence[str]) -> dict[str, dict[str, str]]:
     """Returns a dictionary of ips with a dictionary left and right correctors.
+    Assumes per IP and side there is only one corrector given and does
+    not distinguish between corrector types.
 
     Args:
         correctors (Sequence[str]): The correctors to pair.
