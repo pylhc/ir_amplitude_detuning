@@ -347,7 +347,7 @@ class TestDoDetuningAnalysis:
 
 
         # Run ---
-        result = do_detuning_analysis(tmp_path, extract_bbq=with_bbq)
+        result = do_detuning_analysis(tmp_path, extract_bbq=(with_bbq == "extract"))
 
         # Check ---
         assert result is mock_result
@@ -357,15 +357,15 @@ class TestDoDetuningAnalysis:
         if with_bbq != "file":  # even if present, should be re-extraced
             bbq_file = None
 
-        assert mock_outlier_filter_opt.called_once()
-        assert mock_kick_and_bbq_df.called_once_with(
+        mock_outlier_filter_opt.assert_called_once()
+        mock_kick_and_bbq_df.assert_called_once_with(
             kick=tmp_path,
             bbq_in=bbq_file,
             beam=1234,
             filter_opt=mock_filter_opt
         )
 
-        assert mock_analysis.called_once_with(
+        mock_analysis.assert_called_once_with(
             mock_kick_df,
             "test_plane",
             detuning_order=1,  # reasonable default
