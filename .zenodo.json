@@ -11,5 +11,5 @@
         }
     ],
     "title": "ir_amplitude_detuning",
-    "description": "Python 3 package for dodecapole corrections in the LHC insertion regions."
+    "description": "Python tools to correct amplitude detuning in the insertion regions of a particle accelerator.."
 }

@@ -1,5 +1,5 @@
 __title__ = "ir_amplitude_detuning"
-__description__ = "Tools to correct amplitude detuning in the Insertion Regions."
+__description__ = "Tools to correct amplitude detuning in the Insertion Regions of a particle accelerator."
 __url__ = "https://github.com/pylhc/ir_amplitude_detuning"
 __version__ = "1.0.0"
 __author__ = "pylhc"
