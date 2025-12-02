@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -17,6 +17,11 @@ from ir_amplitude_detuning.detuning.terms import FirstOrderTerm, SecondOrderTerm
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
+
+    try:
+        from typing import Self  # py 3.11+
+    except ImportError:
+        from typing_extensions import Self  # py 3.10
 
 LOG = logging.getLogger(__name__)
 
