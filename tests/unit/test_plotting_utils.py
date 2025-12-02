@@ -72,8 +72,7 @@ class TestGetColorForField:
     def test_get_color_for_field_invalid(self):
         """Test that invalid fields raise NotImplementedError."""
         # Create a mock field that doesn't match any case
-        mock_field = Mock(spec=FieldComponent)
-        mock_field.__str__ = Mock(return_value="invalid_field")
+        mock_field = "invalid_field"
 
         with pytest.raises(NotImplementedError, match="Field must be one of"):
             get_color_for_field(mock_field)
