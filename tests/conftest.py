@@ -7,10 +7,19 @@ See also https://stackoverflow.com/a/34520971.
 from __future__ import annotations
 
 import shutil
+import sys
 from pathlib import Path
 
 import git
+import matplotlib as mpl
 import pytest
+
+if sys.platform.startswith("win"):
+    # Disable TKinter on Windows (not supported, at least in the github workflows).
+    # This needs to be done BEFORE importing matplotlib anywhere else, so doing it
+    # here should take care of that automatically.
+    mpl.use("Agg")
+
 
 # ============================================================================
 # Important Paths
