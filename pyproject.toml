@@ -13,10 +13,10 @@ exclude = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["ir_dodecapole_correction"]
+packages = ["ir_amplitude_detuning"]
 
 [project]
-name = "ir_dodecapole_correction"
+name = "ir_amplitude_detuning"
 readme = "README.md"
 description = "An accelerator physics tools package for the OMC team at CERN."
 authors = [
@@ -73,15 +73,15 @@ doc = [
 ]
 
 all = [
-  "ir_dodecapole_correction[test]",
-  "ir_dodecapole_correction[doc]",
+  "ir_amplitude_detuning[test]",
+  "ir_amplitude_detuning[doc]",
 ]
 
 [project.urls]
-homepage = "https://github.com/pylhc/ir_dodecapole_correction"
-repository = "https://github.com/pylhc/ir_dodecapole_correction"
-documentation = "https://pylhc.github.io/ir_dodecapole_correction/"
-changelog = "https://github.com/pylhc/ir_dodecapole_correction/blob/master/CHANGELOG.md"
+homepage = "https://github.com/pylhc/ir_amplitude_detuning"
+repository = "https://github.com/pylhc/ir_amplitude_detuning"
+documentation = "https://pylhc.github.io/ir_amplitude_detuning/"
+changelog = "https://github.com/pylhc/ir_amplitude_detuning/blob/master/CHANGELOG.md"
 
 
 # ----- Testing ----- #
