@@ -1,0 +1,112 @@
+"""
+General Plotting Utilities
+--------------------------
+
+This module contains general utilities to help with the plotting.
+"""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from ir_amplitude_detuning.utilities import latex
+from ir_amplitude_detuning.utilities.correctors import FieldComponent
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from ir_amplitude_detuning.detuning.measurements import FirstOrderTerm, SecondOrderTerm
+    from ir_amplitude_detuning.detuning.targets import Target, TargetData
+
+
+def get_default_scaling(term: FirstOrderTerm | SecondOrderTerm) -> tuple[int, float]:
+    """Get the default scaling factor for a detuning term.
+
+    Args:
+        term (str): Detuning term, e.g. "X02"
+
+    Returns:
+        tuple[int, float]: (exponent, scaling)
+    """
+    exponent = {1: 3, 2: 12}[int(term[1]) + int(term[2])]
+    scaling = 10**-exponent
+    return exponent, scaling
+
+
+def get_color_for_field(field: FieldComponent):
+    """Get predefined colors for the fields."""
+    match field:
+        case FieldComponent.b5:
+            return '#7f7f7f'  # middle gray
+        case FieldComponent.b6:
+            return '#d62728'  # brick red
+        case FieldComponent.b4:
+            return '#bcbd22'  # curry yellow-green
+    raise NotImplementedError(f"Field must be one of {list(FieldComponent)}, got {field}.")
+
+
+def get_color_for_ip(ip: str):
+    """Get predefined colors for the IPs."""
+    match ip:
+        case "15":
+            return '#1f77b4'  # muted blue
+        case "1":
+            return '#9467bd'  # muted purple
+        case "5":
+            return '#2ca02c'  # cooked asparagus green
+    raise NotImplementedError(f"IP must be one of ['15', '1', '5'], got {ip}.")
+
+
+class OtherColors:
+    """Other predefined colors."""
+    estimated = '#ff7f0e'  # safety orange
+    flat = '#17becf'  # blue-teal
+
+
+def get_full_target_labels(
+    targets: Sequence[Target],
+    suffixes: Sequence[str] | None = None,
+    rescale: float = 3
+    ) -> dict[str, str]:
+    """Get a latex label that includes values of all detuning terms, so that they can be easily compared.
+    This is useful to plot the results of multiple targets on the same figure, without having to invent confusing
+    labels. Instead you can just use the target detuning values that went into the correction.
+    It ignores constraints and only the first target_data is used - otherwise the labels would be too long.
+    Extra information can be added via the suffixes.
+
+    Args:
+        targets (Sequence[Target]): List of Target objects to get labels for.
+        suffixes (Sequence[str] | None): List of suffixes to add to the labels.
+        rescale (float): Exponent of the scaling factor.
+            (e.g. 3 to give data in units of 10^3, which multiplies the data by 10^-3)
+            Default: 3.
+
+    Returns:
+        dict[str, str]: Dictionary of labels for each target identified by its name.
+    """
+    if suffixes is not None and len(suffixes) != len(targets):
+        raise ValueError("Number of suffixes must match number of targets.")
+
+    scaling = 10**-rescale
+
+    names = [target.name for target in targets]
+    labels = [None for _ in targets]
+    for idx_target, target in enumerate(targets):
+        target_data: TargetData = target.data[0]
+        scaled_values = {
+            term: tuple("--".center(6) if val is None else f"{getattr(val, 'value', val) * scaling: 5.1f}"
+            for beam in [1, 2]
+            for val in [getattr(target_data.detuning[beam], term)])
+            for term in set(target_data.detuning[1].terms()) | set(target_data.detuning[2].terms())
+        }
+
+        label = "\n".join(
+            [
+                f"${latex.term2dqdj(term)}$ = {f'{values[0]} | {values[1]}'.center(15)}"
+                for term, values in scaled_values.items()
+            ]
+        )
+        if suffixes is not None:
+            label += f"\n{suffixes[idx_target]}"
+        labels[idx_target] = label
+    return dict(zip(names, labels))

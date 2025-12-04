@@ -1,0 +1,15 @@
+{
+    "creators": [
+        {
+            "name": "OMC-Team",
+            "affiliation": "CERN"
+        },
+        {
+            "name": "Joschua Dilly",
+            "affiliation": "CERN",
+            "orcid": "0000-0001-7864-5448"
+        }
+    ],
+    "title": "ir_amplitude_detuning",
+    "description": "Python tools to correct amplitude detuning in the insertion regions of a particle accelerator."
+}

@@ -1,0 +1,16 @@
+# Runs all tests and creates a coverage report
+name: Coverage
+
+on:  # Runs on all push events to master branch and any push related to a pull request
+  push:
+    branches:
+      - master
+  pull_request:  # Check requried coverage before able to merge
+
+jobs:
+  coverage:
+      uses: pylhc/.github/.github/workflows/coverage.yml@master
+      with:
+        src-dir: ir_amplitude_detuning
+        pytest-options: --cov=examples
+      secrets: inherit
