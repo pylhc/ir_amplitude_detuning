@@ -11,5 +11,5 @@
         }
     ],
     "title": "ir_amplitude_detuning",
-    "description": "Python tools to correct amplitude detuning in the insertion regions of a particle accelerator.."
+    "description": "Python tools to correct amplitude detuning in the insertion regions of a particle accelerator."
 }

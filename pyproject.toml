@@ -18,7 +18,7 @@ packages = ["ir_amplitude_detuning"]
 [project]
 name = "ir_amplitude_detuning"
 readme = "README.md"
-description = "An accelerator physics tools package for the OMC team at CERN."
+description = "Python tools to correct amplitude detuning in the insertion regions of a particle accelerator."
 authors = [
     {name = "OMC Team", email = "pylhc@github.com"},  # see zenodo file / commits for details
 ]
@@ -47,13 +47,13 @@ classifiers = [
 dependencies = [
   "numpy >= 1.24",
   "cvxpy >= 1.5",
-  "omc3 >= 0.24",
   "pandas >= 2.1",
   "tfs-pandas >= 3.8",
   "matplotlib >= 3.8",
   "optics-functions >= 0.1",
   "cpymad >= 1.17.0",
   "cpymad_lhc >= 0.2.1",
+  "omc3 >= 0.24",
 ]
 
 [project.optional-dependencies]
