@@ -1,8 +1,8 @@
 Examples
 ========
 
-.. automodule:: examples.2022_commissioning
+.. automodule:: examples.commissioning_2022
 
-.. automodule:: examples.2018_md3311
+.. automodule:: examples.md3311
 
-.. automodule:: examples.2022_md6863
+.. automodule:: examples.md6863
