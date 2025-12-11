@@ -155,3 +155,12 @@ A big concession to the LHC layout is the assumption of IPs and beams, which mig
 You should be able to work around this by simply assigning `None` to the `ip` attribute of correctors and using only beam 1
 (beam 2 and beam 4 trigger some special behaviour in the calculations to take beam direction and mad-x conventions into account).
 **Beware**: This has not been tested yet!
+
+## Development
+
+A `uv` lockfile is included in the repository to easily set up a development environment.
+One can get setup with `uv` by running in the root of this repository:
+
+```bash
+uv sync
+```
