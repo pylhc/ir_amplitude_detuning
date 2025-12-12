@@ -1,5 +1,12 @@
 # Corrections from Amplitude Detuning
 
+[![Cron Testing](https://github.com/pylhc/ir_amplitude_detuning/workflows/Cron%20Testing/badge.svg)](https://github.com/pylhc/ir_amplitude_detuning/actions?query=workflow%3A%22Cron+Testing%22)
+[![Coverage](https://raw.githubusercontent.com/pylhc/ir_amplitude_detuning/python-coverage-comment-action-data/badge.svg)](https://github.com/pylhc/ir_amplitude_detuning/tree/python-coverage-comment-action-data)
+[![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/ir_amplitude_detuning.svg?style=popout)](https://github.com/pylhc/ir_amplitude_detuning/)
+[![GitHub release](https://img.shields.io/github/release/pylhc/ir_amplitude_detuning.svg?style=popout)](https://github.com/pylhc/ir_amplitude_detuning/)
+[![PyPI Version](https://img.shields.io/pypi/v/ir_amplitude_detuning?label=PyPI&logo=pypi)](https://pypi.org/project/ir_amplitude_detuning/)
+[![DOI](https://zenodo.org/badge/781569978.svg)](https://doi.org/10.5281/zenodo.17911938)
+
 This package provides tools to examine measured amplitude detuning and calculate corrections based on the measurements.
 There is also a lot of handy functionality to assess the quality of correction and compare different correction schemes.
 
