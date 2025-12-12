@@ -1,0 +1,368 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ir_amplitude_detuning.simulation.results_loader &mdash; ir_amplitude_detuning 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-codeautolink.css?v=b2176991" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=508b26b5" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#setup-commissioning-2022">Setup Commissioning 2022</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#setup-md3311-2018">Setup MD3311 (2018)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#setup-for-md6863-2022">Setup for MD6863 (2022)</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/main.html">Main Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/main.html#lhc-detuning-corrections">LHC Detuning Corrections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/detuning.html">Detuning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#detuning-calculations">Detuning Calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#equation-system">Equation System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#classes-for-detuning">Classes for Detuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#correction-targets">Correction Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#detuning-terms">Detuning Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/simulation.html#lhc-simulation-class">LHC Simulation Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/simulation.html#simulation-results-loaders">Simulation Results Loaders</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/plotting.html">Plotting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/plotting.html#plot-corrector-strengths">Plot Corrector Strengths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/plotting.html#detuning-plots">Detuning Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/plotting.html#general-plotting-utilities">General Plotting Utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/utilities.html">Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#common-utilities">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#correctors">Correctors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#latex-utilities">Latex Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#logging">Logging</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Bibliography</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../bibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ir_amplitude_detuning</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ir_amplitude_detuning.simulation.results_loader</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ir_amplitude_detuning.simulation.results_loader</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Simulation Results Loaders</span>
+<span class="sd">--------------------------</span>
+
+<span class="sd">Load and sort the simulated detuning data into handy datastructures.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tfs</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.detuning.calculations</span><span class="w"> </span><span class="kn">import</span> <span class="n">FIELDS</span><span class="p">,</span> <span class="n">IP</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.detuning.measurements</span><span class="w"> </span><span class="kn">import</span> <span class="n">Detuning</span><span class="p">,</span> <span class="n">DetuningMeasurement</span><span class="p">,</span> <span class="n">MeasureValue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.utilities.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">BeamDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.utilities.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AMPDET_CALC_ERR_ID</span><span class="p">,</span>
+    <span class="n">AMPDET_CALC_ID</span><span class="p">,</span>
+    <span class="n">AMPDET_ID</span><span class="p">,</span>
+    <span class="n">ERR</span><span class="p">,</span>
+    <span class="n">NOMINAL_ID</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.utilities.correctors</span><span class="w"> </span><span class="kn">import</span> <span class="n">FieldComponent</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="n">DetuningPerBeam</span> <span class="o">=</span> <span class="n">BeamDict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Detuning</span> <span class="o">|</span> <span class="n">DetuningMeasurement</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="load_simulation_output_tfs">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.results_loader.load_simulation_output_tfs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_simulation_output_tfs</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">id_</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load simluation output in tfs form.</span>
+<span class="sd">    Assumes the simulation writes in the following pattern:</span>
+<span class="sd">    {type}.{anything}.b{beam}.{id}.tfs</span>
+<span class="sd">    Loads the first matching file it finds.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        folder (Path): The folder containing the data.</span>
+<span class="sd">        type_ (str): The type of data to load (e.g. ampet, settings).</span>
+<span class="sd">        beam (int): The beam number.</span>
+<span class="sd">        id_ (str): The id of the data (e.g. target name).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">beam</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+        <span class="n">beam</span> <span class="o">=</span> <span class="s1">&#39;[24]&#39;</span>
+    <span class="n">glob</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">.*.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">id_</span><span class="si">}</span><span class="s2">.tfs&quot;</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">folder</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">glob</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No file matching &#39;</span><span class="si">{</span><span class="n">glob</span><span class="si">}</span><span class="s2">&#39; in </span><span class="si">{</span><span class="n">folder</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_detuning_from_ptc_output">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.results_loader.get_detuning_from_ptc_output">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_detuning_from_ptc_output</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>  <span class="n">terms</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Detuning</span><span class="o">.</span><span class="n">all_terms</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">Detuning</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert PTC output to a Series.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (DataFrame): DataFrame as given by PTC.</span>
+<span class="sd">        terms (Sequence[str]): Terms to extract</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Detuning</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">terms</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;NAME == &quot;ANH</span><span class="si">{</span><span class="n">term</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot; and &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;ORDER1 == </span><span class="si">{</span><span class="n">term</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> and ORDER2 == </span><span class="si">{</span><span class="n">term</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1"> &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;and ORDER3 == 0 and ORDER4 == 0&#39;</span>
+        <span class="p">)[</span><span class="s2">&quot;VALUE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">results</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Extracted detuning values:</span><span class="se">\n</span><span class="si">{</span><span class="n">results</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="load_ptc_detuning">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.results_loader.load_ptc_detuning">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_ptc_detuning</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">id_</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Detuning</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load detuning data from PTC output for the given beam and target.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        folder (Path): The folder containing the data.</span>
+<span class="sd">        beam (int): The beam number.</span>
+<span class="sd">        id_ (str): The id of the data (target name).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">load_simulation_output_tfs</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="n">AMPDET_ID</span><span class="p">,</span> <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span> <span class="n">id_</span><span class="o">=</span><span class="n">id_</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">get_detuning_from_ptc_output</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="convert_dataframe_to_dict">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.results_loader.convert_dataframe_to_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_dataframe_to_dict</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Detuning</span> <span class="o">|</span> <span class="n">DetuningMeasurement</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a dataframe containing detuning-term columns into a dictionary of Detuning objects,</span>
+<span class="sd">    sorted by the index of the dataframe.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pd.Dataframe): Dataframe to be converted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">error_columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">ERR</span><span class="p">)</span>
+
+    <span class="c1"># without errors</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">error_columns</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">Detuning</span><span class="p">(</span><span class="o">**</span><span class="n">series</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">series</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()}</span>
+
+    <span class="c1"># with errors</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">series</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">series</span><span class="p">[</span><span class="o">~</span><span class="n">error_columns</span><span class="p">]</span>
+        <span class="n">measure_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+            <span class="p">{</span><span class="n">term</span><span class="p">:</span> <span class="n">MeasureValue</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">series</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ERR</span><span class="si">}{</span><span class="n">term</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">term</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">DetuningMeasurement</span><span class="p">(</span><span class="o">**</span><span class="n">measure_values</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="get_calculated_detuning_for_ip">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.results_loader.get_calculated_detuning_for_ip">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_calculated_detuning_for_ip</span><span class="p">(</span>
+    <span class="n">folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">id_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">ip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Detuning</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load and sort the detuning data for a given IP.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        folder (Path): The folder containing the data.</span>
+<span class="sd">        beam (int): The beam number.</span>
+<span class="sd">        id_ (str): The id of the data (target name).</span>
+<span class="sd">        ip (str): The IP(s) to load. If multiple can be given as a single string, e.g. &quot;15&quot;,</span>
+<span class="sd">            as this is how the data should be stored in the dataframe.</span>
+<span class="sd">        errors (bool, optional): Whether to load the errors or not.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: The detuning data for the given IP in a dictionary, sorted by the different fields in the file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">type_</span> <span class="o">=</span> <span class="n">AMPDET_CALC_ID</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">errors</span> <span class="k">else</span> <span class="n">AMPDET_CALC_ERR_ID</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">load_simulation_output_tfs</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="n">type_</span><span class="p">,</span> <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span> <span class="n">id_</span><span class="o">=</span><span class="n">id_</span><span class="p">)</span>
+    <span class="n">ip_mask</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">IP</span><span class="p">]</span> <span class="o">==</span> <span class="n">ip</span>
+    <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">ip_mask</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No data for IP </span><span class="si">{</span><span class="n">ip</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">folder</span><span class="si">}</span><span class="s2"> for beam </span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2"> and id </span><span class="si">{</span><span class="n">id_</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="n">df_ip</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ip_mask</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">IP</span><span class="p">])</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">FIELDS</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">convert_dataframe_to_dict</span><span class="p">(</span><span class="n">df_ip</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_calculated_detuning_for_field">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.results_loader.get_calculated_detuning_for_field">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_calculated_detuning_for_field</span><span class="p">(</span>
+    <span class="n">folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">id_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">field</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">FieldComponent</span><span class="p">]</span> <span class="o">|</span> <span class="n">FieldComponent</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Detuning</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load and sort the detuning data for a given set of fields.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        folder (Path): The folder containing the data.</span>
+<span class="sd">        beam (int): The beam number.</span>
+<span class="sd">        id_ (str): The id of the data (target name).</span>
+<span class="sd">        field (Iterable[FieldComponent] | FieldComponent):</span>
+<span class="sd">            The field(s) to load. If multiple are given they will be converted into a single string, e.g. &quot;b5b6&quot;,</span>
+<span class="sd">            as this is how the data should be stored in the dataframe.</span>
+<span class="sd">        errors (bool, optional): Whether to load the errors or not.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict[str, Detuning]: The Detuning data in a dictionary, sorted by the different IPs in the file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">type_</span> <span class="o">=</span> <span class="n">AMPDET_CALC_ID</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">errors</span> <span class="k">else</span> <span class="n">AMPDET_CALC_ERR_ID</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">load_simulation_output_tfs</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="n">type_</span><span class="p">,</span> <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span> <span class="n">id_</span><span class="o">=</span><span class="n">id_</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">field</span><span class="p">))</span>
+
+    <span class="n">fields_mask</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">FIELDS</span><span class="p">]</span> <span class="o">==</span> <span class="n">field</span>
+    <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">fields_mask</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No data for fields </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">folder</span><span class="si">}</span><span class="s2"> for beam </span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2"> and id </span><span class="si">{</span><span class="n">id_</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">df_fields</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">fields_mask</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">FIELDS</span><span class="p">])</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">IP</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">convert_dataframe_to_dict</span><span class="p">(</span><span class="n">df_fields</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_detuning_change_ptc">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.results_loader.get_detuning_change_ptc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_detuning_change_ptc</span><span class="p">(</span>
+    <span class="n">folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">ids</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">beams</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the detuning data from PTC simulations for the given set of ids (target names)</span>
+<span class="sd">    and return their change with respect to the nominal values.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        folder (Path): The folder containing the data.</span>
+<span class="sd">        ids (str): The ids of the data (target names).</span>
+<span class="sd">        beams (int): The beam numbers.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ptc_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">id_</span><span class="p">:</span> <span class="n">BeamDict</span><span class="p">({</span><span class="n">beam</span><span class="p">:</span> <span class="n">load_ptc_detuning</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">beam</span><span class="p">,</span> <span class="n">id_</span><span class="p">)</span> <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="n">beams</span><span class="p">})</span> <span class="k">for</span> <span class="n">id_</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">}</span>
+    <span class="n">nominal_data</span> <span class="o">=</span> <span class="n">BeamDict</span><span class="p">({</span><span class="n">beam</span><span class="p">:</span> <span class="n">load_ptc_detuning</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">beam</span><span class="p">,</span> <span class="n">NOMINAL_ID</span><span class="p">)</span> <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="n">beams</span><span class="p">})</span>
+    <span class="k">for</span> <span class="n">id_</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
+        <span class="n">ptc_data</span><span class="p">[</span><span class="n">id_</span><span class="p">]</span> <span class="o">=</span> <span class="n">ptc_data</span><span class="p">[</span><span class="n">id_</span><span class="p">]</span> <span class="o">-</span> <span class="n">nominal_data</span>
+    <span class="k">return</span> <span class="n">ptc_data</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

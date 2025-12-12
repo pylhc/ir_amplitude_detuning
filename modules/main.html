@@ -1,0 +1,416 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Main Modules &mdash; ir_amplitude_detuning 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx-codeautolink.css?v=b2176991" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=508b26b5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Detuning" href="detuning.html" />
+    <link rel="prev" title="Examples" href="../examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#setup-commissioning-2022">Setup Commissioning 2022</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#setup-md3311-2018">Setup MD3311 (2018)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#setup-for-md6863-2022">Setup for MD6863 (2022)</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Main Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#lhc-detuning-corrections">LHC Detuning Corrections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="detuning.html">Detuning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="detuning.html#detuning-calculations">Detuning Calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="detuning.html#equation-system">Equation System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="detuning.html#classes-for-detuning">Classes for Detuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="detuning.html#correction-targets">Correction Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="detuning.html#detuning-terms">Detuning Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#lhc-simulation-class">LHC Simulation Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#simulation-results-loaders">Simulation Results Loaders</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">Plotting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#plot-corrector-strengths">Plot Corrector Strengths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#detuning-plots">Detuning Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#general-plotting-utilities">General Plotting Utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html#common-utilities">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html#correctors">Correctors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html#latex-utilities">Latex Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html#logging">Logging</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Bibliography</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../bibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ir_amplitude_detuning</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Main Modules</li>
+      <li class="wy-breadcrumbs-aside">
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/pylhc/ir_amplitude_detuning" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+  <nav id="local-table-of-contents" role="navigation" aria-labelledby="local-table-of-contents-title">
+    <h4 id="local-table-of-contents-title">On This Page</h4>
+    <ul>
+<li><a class="reference internal" href="#">Main Modules</a><ul>
+<li><a class="reference internal" href="#lhc-detuning-corrections">LHC Detuning Corrections</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav>
+
+  
+           <div itemprop="articleBody">
+             
+  <section id="main-modules">
+<h1>Main Modules<a class="headerlink" href="#main-modules" title="Link to this heading"></a></h1>
+<section id="lhc-detuning-corrections">
+<h2>LHC Detuning Corrections<a class="headerlink" href="#lhc-detuning-corrections" title="Link to this heading"></a></h2>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>THIS FILE CANNOT BE RUN AS A SCRIPT !!!</p>
+<p>It does contain the main simulation functions for the LHC scenarios,
+but to set the parameters needed (e.g. the measurement),
+see the examples.</p>
+</div>
+<p>This module contains the main function to run an LHC simulation with
+the given parameters via MAD-X and calculate the corrections based on
+the provided targets.</p>
+<p>This module is similar to the main function to run and calculate the correction,
+but also allows to use different crossing-schemes.
+That is, you can specify a crossing scheme per measurement and the
+feed-down is calculated based on that scheme.
+As the simulation takes a while and multiple measurements might rely on the same
+crossing scheme, the optics are calculated and saved first.
+They can be then either read or passed to the correction function.</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ir_amplitude_detuning.lhc_detuning_corrections.</span></span><span class="sig-name descname"><span class="pre">CorrectionResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pd.Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataframe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tfs.TfsDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">madx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ir_amplitude_detuning/lhc_detuning_corrections.html#CorrectionResults"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Class to store the results of a correction calculation.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">name</span></span></dt>
+<dd><p>The name of the correction target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">series</span></span></dt>
+<dd><p>Series of the correction KNL values for each corrector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">pd.Series</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">dataframe</span></span></dt>
+<dd><p>Same information as the Series, but in a DataFrame format,
+with the corrector-magnet names as index and the other data
+split into columns. See <code class="xref py py-func docutils literal notranslate"><span class="pre">generate_knl_tfs()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">tfs.TfsDataFrame</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">madx</span></span></dt>
+<dd><p>The MAD-X code to apply the correction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">ir_amplitude_detuning.lhc_detuning_corrections.</span></span><span class="sig-name descname"><span class="pre">calculate_corrections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Target</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Method</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">auto</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">CorrectionResults</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/ir_amplitude_detuning/lhc_detuning_corrections.html#calculate_corrections"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Calculate corrections based on targets and given correctors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>beams</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence[int]</span></code>) -- The beam numbers to calculate corrections for.</p></li>
+<li><p><strong>outputdir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) -- The output directory.</p></li>
+<li><p><strong>targets</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence[Target]</span></code>) -- The targets to calculate corrections for.</p></li>
+<li><p><strong>method</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Method</span></code>) -- The method to use for calculating the corrections (see <code class="xref py py-func docutils literal notranslate"><span class="pre">ir_amplitude_detuning.detuning.calculations()</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The results for each target.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, CorrectionResults]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">ir_amplitude_detuning.lhc_detuning_corrections.</span></span><span class="sig-name descname"><span class="pre">check_corrections_analytically</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TwissPerBeam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CorrectionResults</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pd.DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/ir_amplitude_detuning/lhc_detuning_corrections.html#check_corrections_analytically"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Calculate the <code class="xref py py-func docutils literal notranslate"><span class="pre">effective</span> <span class="pre">detuning</span></code> for each beam and
+write the results into a <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs</span></code> file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputdir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) -- The output directory.</p></li>
+<li><p><strong>optics</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TwissPerBeam</span></code>) -- The machine optics.</p></li>
+<li><p><strong>results</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">CorrectionResults</span></code>) -- The calculated correction results.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">ir_amplitude_detuning.lhc_detuning_corrections.</span></span><span class="sig-name descname"><span class="pre">check_corrections_ptc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lhc_beams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LHCBeam</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2018</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tune_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">62.28</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tune_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60.31</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ir_amplitude_detuning/lhc_detuning_corrections.html#check_corrections_ptc"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Check the corrections via PTC.</p>
+<p>This installs decapole corrector magnets and reads the corrections
+from the settings file.
+If <code class="docutils literal notranslate"><span class="pre">lhc_beams</span></code> are given, the output paths will be adapted and these used,
+otherwise new <code class="xref py py-class docutils literal notranslate"><span class="pre">LHCBeam</span></code> s
+will be set up.</p>
+<p>PTC is run for the <code class="docutils literal notranslate"><span class="pre">nominal</span></code> machine as well as all <code class="docutils literal notranslate"><span class="pre">settings.*</span></code> files
+found in the output directory.
+The PTC output ids are parsed from the settings file names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputdir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) -- Output directory.</p></li>
+<li><p><strong>lhc_beams</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict[int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">LHCBeam]</span></code>) -- Pre-run LHC beams.</p></li>
+<li><p><strong>beams</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence[int]</span></code>) -- Beams (if <code class="docutils literal notranslate"><span class="pre">lhc_beams</span></code> is None).</p></li>
+<li><p><strong>xing</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict[str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict]</span></code>) -- Crossing scheme (if <code class="docutils literal notranslate"><span class="pre">lhc_beams</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>).</p></li>
+<li><p><strong>optics</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) -- Path to the optics file (if <code class="docutils literal notranslate"><span class="pre">lhc_beams</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>).</p></li>
+<li><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) -- Year (if <code class="docutils literal notranslate"><span class="pre">lhc_beams</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>).</p></li>
+<li><p><strong>tune_x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) -- Horizontal tune (if <code class="docutils literal notranslate"><span class="pre">lhc_beams</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>).</p></li>
+<li><p><strong>tune_y</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) -- Vertical tune (if <code class="docutils literal notranslate"><span class="pre">lhc_beams</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">ir_amplitude_detuning.lhc_detuning_corrections.</span></span><span class="sig-name descname"><span class="pre">create_optics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2018</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tune_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">62.28</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tune_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60.31</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LHCBeam</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/ir_amplitude_detuning/lhc_detuning_corrections.html#create_optics"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Run MAD-X to create optics for all crossing-schemes.</p>
+<p>The optics are saved in subfolders of the output directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>beams</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence[int]</span></code>) -- The beam numbers.</p></li>
+<li><p><strong>outputdir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) -- The output directory.</p></li>
+<li><p><strong>output_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em>) -- The output id. Defaults to ‘’.</p></li>
+<li><p><strong>xing</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict[str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict]</span></code>, <em>optional</em>) -- The crossing scheme. Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>,
+which is set to the top-energy collision scheme below.</p></li>
+<li><p><strong>optics</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em>) -- The optics. Defaults to “round3030”.</p></li>
+<li><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <em>optional</em>) -- The year. Defaults to 2018.</p></li>
+<li><p><strong>tune_x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) -- The horizontal tune. Defaults to 62.31.</p></li>
+<li><p><strong>tune_y</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) -- The vertical tune. Defaults to 60.32.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The LHC beams, i.e. a dictionary of LHCBeam objects.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>LHCBeams</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">ir_amplitude_detuning.lhc_detuning_corrections.</span></span><span class="sig-name descname"><span class="pre">detuning_tfs_out_with_and_without_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhc_out</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LHCBeam</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">FakeLHCBeam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pd.DataFrame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ir_amplitude_detuning/lhc_detuning_corrections.html#detuning_tfs_out_with_and_without_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Write out the detuning results, given as <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code> into a
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs</span></code> file.
+If the input <code class="xref py py-obj docutils literal notranslate"><span class="pre">DataFrame</span></code> contains <code class="xref py py-class docutils literal notranslate"><span class="pre">MeasureValue</span></code> objects,
+the values and errors are extracted and two files are written:
+One with only the values and one with the values and errors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lhc_out</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LHCBeam</span> <span class="pre">|</span> <span class="pre">FakeLHCBeam</span></code>) -- LHCBeam object to find the correct output path.</p></li>
+<li><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- The identifier (e.g. target name) of the calculation.</p></li>
+<li><p><strong>df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) -- The calculated detuning terms.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">ir_amplitude_detuning.lhc_detuning_corrections.</span></span><span class="sig-name descname"><span class="pre">generate_knl_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pd.Series</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tfs.TfsDataFrame</span></span></span><a class="reference internal" href="../_modules/ir_amplitude_detuning/lhc_detuning_corrections.html#generate_knl_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Generate a TFS dataframe with the corrector values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>values</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.Series</span></code>) -- The correction values. Assumes the index are
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Corrector</span></code> objects.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">ir_amplitude_detuning.lhc_detuning_corrections.</span></span><span class="sig-name descname"><span class="pre">generate_madx_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pd.Series</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/ir_amplitude_detuning/lhc_detuning_corrections.html#generate_madx_command"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Generate a MAD-X command to set the corrector values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>values</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.Series</span></code>) -- The correction values. Assumes the index are the Corrector objects.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">ir_amplitude_detuning.lhc_detuning_corrections.</span></span><span class="sig-name descname"><span class="pre">get_label_outputdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">beam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></span><a class="reference internal" href="../_modules/ir_amplitude_detuning/lhc_detuning_corrections.html#get_label_outputdir"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Get the outputdir sub-dir for a given label and beam.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputdir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) -- The output directory.</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- The label for the sub-dir (e.g. a name for the optics)</p></li>
+<li><p><strong>beam</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) -- The beam number.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">ir_amplitude_detuning.lhc_detuning_corrections.</span></span><span class="sig-name descname"><span class="pre">get_nominal_optics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LHCBeams</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TwissPerBeam</span></span></span><a class="reference internal" href="../_modules/ir_amplitude_detuning/lhc_detuning_corrections.html#get_nominal_optics"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return previously generated nominal machine optics as a dictionary of TfsDataFrames per Beam, either directly from the
+LHCBeams objects (if given) or reading from the labeled sub-folder in the output-path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>beams</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">LHCBeams</span> <span class="pre">|</span> <span class="pre">Sequence[int]</span></code>) -- The LHCBeams objects or a sequence of beam numbers.</p></li>
+<li><p><strong>outputdir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) -- The output directory.</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- The label for the sub-dir (e.g. a name for the optics)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">ir_amplitude_detuning.lhc_detuning_corrections.</span></span><span class="sig-name descname"><span class="pre">get_optics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/ir_amplitude_detuning/lhc_detuning_corrections.html#get_optics"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return the path to the 30cm (round) optics file for the given year.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="detuning.html" class="btn btn-neutral float-right" title="Detuning" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

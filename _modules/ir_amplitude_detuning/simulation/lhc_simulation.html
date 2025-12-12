@@ -1,0 +1,615 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ir_amplitude_detuning.simulation.lhc_simulation &mdash; ir_amplitude_detuning 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-codeautolink.css?v=b2176991" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=508b26b5" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#setup-commissioning-2022">Setup Commissioning 2022</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#setup-md3311-2018">Setup MD3311 (2018)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#setup-for-md6863-2022">Setup for MD6863 (2022)</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/main.html">Main Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/main.html#lhc-detuning-corrections">LHC Detuning Corrections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/detuning.html">Detuning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#detuning-calculations">Detuning Calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#equation-system">Equation System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#classes-for-detuning">Classes for Detuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#correction-targets">Correction Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#detuning-terms">Detuning Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/simulation.html#lhc-simulation-class">LHC Simulation Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/simulation.html#simulation-results-loaders">Simulation Results Loaders</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/plotting.html">Plotting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/plotting.html#plot-corrector-strengths">Plot Corrector Strengths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/plotting.html#detuning-plots">Detuning Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/plotting.html#general-plotting-utilities">General Plotting Utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/utilities.html">Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#common-utilities">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#correctors">Correctors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#latex-utilities">Latex Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#logging">Logging</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Bibliography</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../bibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ir_amplitude_detuning</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ir_amplitude_detuning.simulation.lhc_simulation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ir_amplitude_detuning.simulation.lhc_simulation</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">LHC Simulation Class</span>
+<span class="sd">--------------------</span>
+
+<span class="sd">Run a cpymad MAD-X simulation for the LHC optics (2018) without errors.</span>
+<span class="sd">In addition, extra functionality is added to install kcdx decapole correctors</span>
+<span class="sd">into the MCTX and assign powering for decapole and dodecapole circuits.</span>
+
+<span class="sd">The class ``LHCBeam`` is setting up and running cpymad.</span>
+<span class="sd">This class can be useful for a lot of different studies, by extending</span>
+<span class="sd">it with extra functionality.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassVar</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">tfs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cpymad.madx</span><span class="w"> </span><span class="kn">import</span> <span class="n">Madx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cpymad_lhc.corrector_limits</span><span class="w"> </span><span class="kn">import</span> <span class="n">LimitChecks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cpymad_lhc.coupling_correction</span><span class="w"> </span><span class="kn">import</span> <span class="n">correct_coupling</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cpymad_lhc.general</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">amplitude_detuning_ptc</span><span class="p">,</span>
+    <span class="n">get_k_strings</span><span class="p">,</span>
+    <span class="n">get_lhc_sequence_filename_and_bv</span><span class="p">,</span>
+    <span class="n">get_tfs</span><span class="p">,</span>
+    <span class="n">match_tune</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cpymad_lhc.ir_orbit</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_orbit</span><span class="p">,</span> <span class="n">orbit_setup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cpymad_lhc.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">MADXCMD</span><span class="p">,</span> <span class="n">MADXOUT</span><span class="p">,</span> <span class="n">cpymad_logging_setup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">optics_functions.coupling</span><span class="w"> </span><span class="kn">import</span> <span class="n">closest_tune_approach</span><span class="p">,</span> <span class="n">coupling_via_cmatrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tfs</span><span class="w"> </span><span class="kn">import</span> <span class="n">TfsDataFrame</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.utilities.correctors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CorrectorMask</span><span class="p">,</span> <span class="n">FieldComponent</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>  <span class="c1"># setup in main()</span>
+<span class="n">LOG_LEVEL</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span>
+
+<span class="n">ACC_MODELS</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;acc-models-lhc&quot;</span><span class="p">)</span>
+
+<span class="n">PATHS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1"># adapt if no access to AFS</span>
+    <span class="s2">&quot;optics_runII&quot;</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/afs/cern.ch/eng/lhc/optics/runII&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;acc_models_lhc&quot;</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/afs/cern.ch/eng/acc-models/lhc&quot;</span><span class="p">),</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="pathstr">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.pathstr">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pathstr</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper to get the path (as string! Because MADX wants strings)</span>
+<span class="sd">    with the base acc-models-lhc.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        args (str): Path parts to attach to the base.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Full path as string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">ACC_MODELS</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="drop_allzero_columns">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.drop_allzero_columns">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">drop_allzero_columns</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">keep</span><span class="p">:</span> <span class="n">Sequence</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Drop columns that contain only zeros, to save harddrive space.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (TfsDataFrame): DataFrame with all data</span>
+<span class="sd">        keep (Sequence): Columns to keep even if all zero.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        TfsDataFrame: DataFrame with only non-zero columns.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">(</span><span class="n">df</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">keep</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="LHCCorrectors">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCCorrectors">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LHCCorrectors</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Container for the corrector definitions used in the LHC.</span>
+
+<span class="sd">        As the LHC does not have decapoe correctors, all correctors are</span>
+<span class="sd">        installed into the MCTX and powered via kcdx3 and kctx3 circuits.</span>
+<span class="sd">        The decapole correctors are hence only used for simulation purposes.</span>
+<span class="sd">        For HiLumi, which has more actual IR correctors that can be used,</span>
+<span class="sd">        you will need to adapt the simulation and correctors a bit,</span>
+<span class="sd">        but it should be straightforward.</span>
+
+<span class="sd">        Note that in the correction algorithm only the normal-oriented</span>
+<span class="sd">        fields are implemented. You will need to add a5 if you are planning</span>
+<span class="sd">        on using this corrector.</span>
+
+<span class="sd">        The length is set to 0.615 m, which is the length of the MCTs.</span>
+<span class="sd">        The pattern is used to find the correctors in the MAD-X sequence.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">b5</span> <span class="o">=</span> <span class="n">CorrectorMask</span><span class="p">(</span>
+        <span class="n">field</span><span class="o">=</span><span class="n">FieldComponent</span><span class="o">.</span><span class="n">b5</span><span class="p">,</span>
+        <span class="n">length</span><span class="o">=</span><span class="mf">0.615</span><span class="p">,</span>
+        <span class="n">magnet_pattern</span><span class="o">=</span><span class="s2">&quot;MCTX.3</span><span class="si">{side}{ip}</span><span class="s2">&quot;</span><span class="p">,</span>  <span class="c1"># installed into the MCTX</span>
+        <span class="n">circuit_pattern</span><span class="o">=</span><span class="s2">&quot;kcdx3.</span><span class="si">{side}{ip}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">madx_type</span><span class="o">=</span><span class="s2">&quot;MCTX&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">b6</span> <span class="o">=</span> <span class="n">CorrectorMask</span><span class="p">(</span>
+        <span class="n">field</span><span class="o">=</span><span class="n">FieldComponent</span><span class="o">.</span><span class="n">b6</span><span class="p">,</span>
+        <span class="n">length</span><span class="o">=</span><span class="mf">0.615</span><span class="p">,</span>
+        <span class="n">magnet_pattern</span><span class="o">=</span><span class="s2">&quot;MCTX.3</span><span class="si">{side}{ip}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">circuit_pattern</span><span class="o">=</span><span class="s2">&quot;kctx3.</span><span class="si">{side}{ip}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">madx_type</span><span class="o">=</span><span class="s2">&quot;MCTX&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;MCTX.*[15]$&quot;</span>  <span class="c1"># used to find correctors in twiss-table</span></div>
+
+
+
+<div class="viewcode-block" id="LHCBeam">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">()</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LHCBeam</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Object containing all the information about the machine setup and</span>
+<span class="sd">    performing the MAD-X commands to run the simulation.&quot;&quot;&quot;</span>
+    <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">outputdir</span><span class="p">:</span> <span class="n">Path</span>
+    <span class="n">xing</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">optics</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2018</span>
+    <span class="n">tune_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">62.28</span>
+    <span class="n">tune_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">60.31</span>
+    <span class="n">chroma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">emittance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">7.29767146889e-09</span>
+    <span class="n">n_particles</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e10</span>   <span class="c1"># number of particles in beam</span>
+    <span class="c1"># Placeholders (set in functions)</span>
+    <span class="n">df_twiss_nominal</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">df_twiss_nominal_ir</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">df_ampdet_nominal</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># Constants</span>
+    <span class="n">ACCEL</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;lhc&#39;</span>
+    <span class="n">TWISS_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;NAME&#39;</span><span class="p">,</span> <span class="s1">&#39;KEYWORD&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;LRAD&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;BETX&#39;</span><span class="p">,</span> <span class="s1">&#39;BETY&#39;</span><span class="p">,</span> <span class="s1">&#39;ALFX&#39;</span><span class="p">,</span> <span class="s1">&#39;ALFY&#39;</span><span class="p">,</span> <span class="s1">&#39;DX&#39;</span><span class="p">,</span> <span class="s1">&#39;DY&#39;</span><span class="p">,</span> <span class="s1">&#39;MUX&#39;</span><span class="p">,</span> <span class="s1">&#39;MUY&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;R11&#39;</span><span class="p">,</span> <span class="s1">&#39;R12&#39;</span><span class="p">,</span> <span class="s1">&#39;R21&#39;</span><span class="p">,</span> <span class="s1">&#39;R22&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">get_k_strings</span><span class="p">()</span>
+    <span class="n">ERROR_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NAME&quot;</span><span class="p">,</span> <span class="s2">&quot;DX&quot;</span><span class="p">,</span> <span class="s2">&quot;DY&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">get_k_strings</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setup the MADX, output dirs and logging as well as additional instance parameters.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputdir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">madx</span> <span class="o">=</span> <span class="n">Madx</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">cpymad_logging_setup</span><span class="p">(</span>  <span class="c1"># sets also standard loggers</span>
+                <span class="n">level</span><span class="o">=</span><span class="n">LOG_LEVEL</span><span class="p">,</span>
+                <span class="n">command_log</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outputdir</span> <span class="o">/</span> <span class="s2">&quot;madx_commands.log&quot;</span><span class="p">,</span>
+                <span class="n">full_log</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outputdir</span> <span class="o">/</span> <span class="s2">&quot;full_output.log&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outputdir</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">handlers</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">MADXOUT</span><span class="p">,</span> <span class="n">MADXCMD</span><span class="p">)}</span>  <span class="c1"># save logger to reinstate later</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">beam</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input as Beam 2 detected. Running with Beam 4.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">beam</span> <span class="o">=</span> <span class="mi">4</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="o">.</span><span class="n">mylhcbeam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beam</span>  <span class="c1"># used in macros</span>
+
+        <span class="c1"># Define Sequence to use</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seq_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bv_flag</span> <span class="o">=</span> <span class="n">get_lhc_sequence_filename_and_bv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="p">,</span> <span class="n">accel</span><span class="o">=</span><span class="s2">&quot;lhc&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">year</span> <span class="o">&lt;</span> <span class="mi">2020</span> <span class="k">else</span> <span class="s2">&quot;hllhc&quot;</span><span class="p">)</span>  <span class="c1"># `hllhc` just for naming of the sequence file, i.e. without _as_built</span>
+
+        <span class="c1"># Setup Model Paths (always use acc-models-like symlink)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">year</span> <span class="o">&lt;</span> <span class="mi">2015</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;LHC models before run II are not implemented in this simulation.&quot;</span><span class="p">)</span>
+
+        <span class="n">model_src</span> <span class="o">=</span> <span class="n">PATHS</span><span class="p">[</span><span class="s2">&quot;acc_models_lhc&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">year</span> <span class="o">&gt;</span> <span class="mi">2019</span> <span class="k">else</span> <span class="s2">&quot;optics_runII&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+        <span class="n">acc_models_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputdir</span> <span class="o">/</span> <span class="n">ACC_MODELS</span>
+        <span class="k">if</span> <span class="n">acc_models_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">acc_models_path</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+        <span class="n">acc_models_path</span><span class="o">.</span><span class="n">symlink_to</span><span class="p">(</span><span class="n">model_src</span><span class="p">)</span>
+
+    <span class="c1"># Output Helper ---</span>
+<div class="viewcode-block" id="LHCBeam.output_path">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.output_path">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dir_</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.tfs&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the output path for standardized tfs names in the default output directory.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            type_ (str): Type of the output file (e.g. &#39;twiss&#39;, &#39;errors&#39;, &#39;ampdet&#39;)</span>
+<span class="sd">            output_id (str): Name of the output (e.g. &#39;nominal&#39;)</span>
+<span class="sd">            dir_ (Path): Override default directory.</span>
+<span class="sd">            suffix (str): suffix of the output file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Path: Path to the output file</span>
+<span class="sd">         &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">dir_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dir_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputdir</span>
+        <span class="k">return</span> <span class="n">dir_</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s1">.lhc.b</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="si">:</span><span class="s1">d</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">output_id</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
+
+<div class="viewcode-block" id="LHCBeam.get_twiss">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.get_twiss">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_twiss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index_regex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;BPM|M|IP&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Uses the ``twiss`` command to get the current optics in the machine</span>
+<span class="sd">        as TfsDataFrame.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            output_id (str): ID to use in the output (see ``output_path``).</span>
+<span class="sd">                             If not given, no output is written.</span>
+<span class="sd">            index_regex (str): Filter DataFrame index (NAME) by this pattern.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            TfsDataFrame: DataFrame containing the optics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;chrom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;chrom&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;centre&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;centre&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">madx</span><span class="o">.</span><span class="n">twiss</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seq_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">df_twiss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_last_twiss</span><span class="p">(</span><span class="n">index_regex</span><span class="o">=</span><span class="n">index_regex</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">output_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_tfs</span><span class="p">(</span><span class="n">df_twiss</span><span class="p">,</span> <span class="s1">&#39;twiss&#39;</span><span class="p">,</span> <span class="n">output_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df_twiss</span></div>
+
+
+<div class="viewcode-block" id="LHCBeam.get_last_twiss">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.get_last_twiss">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_last_twiss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_regex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;BPM|M|IP&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the twiss table of the last calculated twiss.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            index_regex (str): Filter DataFrame index (NAME) by this pattern.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            TfsDataFrame: DataFrame containing the optics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">get_tfs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">madx</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">twiss</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">TWISS_COLUMNS</span><span class="p">,</span> <span class="n">index_regex</span><span class="o">=</span><span class="n">index_regex</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LHCBeam.get_ampdet">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.get_ampdet">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ampdet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write out current amplitude detuning via PTC.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            output_id (str): ID to use in the output (see ``output_path``).</span>
+<span class="sd">                             If not given, no output is written.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            TfsDataFrame: Containing the PTC output data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">output_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">(</span><span class="s1">&#39;ampdet&#39;</span><span class="p">,</span> <span class="n">output_id</span><span class="p">)</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculating amplitude detuning for </span><span class="si">{</span><span class="n">output_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">amplitude_detuning_ptc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">madx</span><span class="p">,</span> <span class="n">ampdet</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">chroma</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LHCBeam.write_tfs">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.write_tfs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_tfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the given TfsDataFrame with the standardized name (see ``output_path``)</span>
+<span class="sd">        and the index ``NAME``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (TfsDataFrame): DataFrame to write.</span>
+<span class="sd">            type_ (str): Type of the output file (see ``output_path``)</span>
+<span class="sd">            output_id (str): Name of the output (see ``output_path``)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">important_columns</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;BETX&quot;</span><span class="p">,</span> <span class="s2">&quot;BETY&quot;</span><span class="p">)</span>  <span class="c1"># keep even if all-zero</span>
+        <span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="n">output_id</span><span class="p">),</span>
+            <span class="n">drop_allzero_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="n">important_columns</span><span class="p">),</span>
+            <span class="n">save_index</span><span class="o">=</span><span class="s2">&quot;NAME&quot;</span>
+        <span class="p">)</span></div>
+
+
+    <span class="c1"># Wrapper ---</span>
+<div class="viewcode-block" id="LHCBeam.log_orbit">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.log_orbit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_orbit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Log the current orbit.&quot;&quot;&quot;</span>
+        <span class="n">log_orbit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">madx</span><span class="p">,</span> <span class="n">accel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ACCEL</span><span class="p">,</span> <span class="n">year</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LHCBeam.closest_tune_approach">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.closest_tune_approach">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">closest_tune_approach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate and print out the closest tune approach from the twiss</span>
+<span class="sd">        DataFrame given. If no frame is given, it gets the current twiss.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (TfsDataFrame): Twiss DataFrame.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_twiss</span><span class="p">()</span>
+        <span class="n">df_coupling</span> <span class="o">=</span> <span class="n">coupling_via_cmatrix</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="n">closest_tune_approach</span><span class="p">(</span><span class="n">df_coupling</span><span class="p">,</span> <span class="n">qx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tune_x</span><span class="p">,</span> <span class="n">qy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tune_y</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LHCBeam.correct_coupling">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.correct_coupling">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">correct_coupling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Correct the current coupling in the machine.&quot;&quot;&quot;</span>
+        <span class="n">correct_coupling</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">madx</span><span class="p">,</span>
+                         <span class="n">accel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ACCEL</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seq_name</span><span class="p">,</span>
+                         <span class="n">qx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tune_x</span><span class="p">,</span> <span class="n">qy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tune_y</span><span class="p">,</span>
+                         <span class="n">dqx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chroma</span><span class="p">,</span> <span class="n">dqy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chroma</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LHCBeam.match_tune">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.match_tune">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">match_tune</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Match the machine to the preconfigured tunes.&quot;&quot;&quot;</span>
+        <span class="n">match_tune</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">madx</span><span class="p">,</span>
+                   <span class="n">accel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ACCEL</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seq_name</span><span class="p">,</span>
+                   <span class="n">qx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tune_x</span><span class="p">,</span> <span class="n">qy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tune_y</span><span class="p">,</span>
+                   <span class="n">dqx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chroma</span><span class="p">,</span> <span class="n">dqy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chroma</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LHCBeam.reinstate_loggers">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.reinstate_loggers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reinstate_loggers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the saved logger handlers to the current logger.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">handlers</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="n">handlers</span></div>
+
+
+<div class="viewcode-block" id="LHCBeam.get_other_beam">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.get_other_beam">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_other_beam</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the respective other beam number.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">beam</span> <span class="o">==</span> <span class="mi">4</span> <span class="k">else</span> <span class="mi">4</span></div>
+
+
+    <span class="c1"># Main ---</span>
+
+<div class="viewcode-block" id="LHCBeam.setup_machine">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.setup_machine">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_machine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Nominal machine setup function.</span>
+<span class="sd">        Initialized the beam and applies optics, crossing.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reinstate_loggers</span><span class="p">()</span>
+        <span class="n">madx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">madx</span>  <span class="c1"># shorthand</span>
+
+        <span class="c1"># suppress output from reading files, which leads to much smaller test-logs</span>
+        <span class="c1"># e.g. in the CI and allows for actual test-debugging.</span>
+        <span class="c1"># Note: I am locally running into mad-x memory-out-of-scope errors in the madx.seqedit</span>
+        <span class="c1"># below with the two madx.options commands here. No idea why. It works in the CI.</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="n">echo</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Load Macros</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">pathstr</span><span class="p">(</span><span class="s2">&quot;toolkit&quot;</span><span class="p">,</span> <span class="s2">&quot;macro.madx&quot;</span><span class="p">))</span>
+
+        <span class="c1"># Lattice Setup ---------------------------------------</span>
+        <span class="c1"># Load Sequence</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">pathstr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq_file</span><span class="p">))</span>
+
+        <span class="c1"># re-enable output</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="n">echo</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Cycling w.r.t. to IP3 (mandatory to find closed orbit in collision in the presence of errors)</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">seqedit</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seq_name</span><span class="p">)</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">cycle</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;IP3&quot;</span><span class="p">)</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">endedit</span><span class="p">()</span>
+
+        <span class="c1"># Define Optics and make beam</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optics</span><span class="p">))</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">beam</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seq_name</span><span class="p">,</span> <span class="n">bv</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bv_flag</span><span class="p">,</span>
+                  <span class="n">energy</span><span class="o">=</span><span class="s2">&quot;NRJ&quot;</span><span class="p">,</span> <span class="n">particle</span><span class="o">=</span><span class="s2">&quot;proton&quot;</span><span class="p">,</span> <span class="n">npart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_particles</span><span class="p">,</span>
+                  <span class="n">kbunch</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ex</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">emittance</span><span class="p">,</span> <span class="n">ey</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">emittance</span><span class="p">)</span>
+
+        <span class="c1"># Setup Orbit</span>
+        <span class="n">orbit_setup</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">accel</span><span class="o">=</span><span class="s1">&#39;lhc&#39;</span><span class="p">,</span> <span class="n">year</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">xing</span><span class="p">)</span>
+
+        <span class="n">madx</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seq_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LHCBeam.save_nominal">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.save_nominal">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_nominal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">id_</span><span class="o">=</span><span class="s2">&quot;nominal&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save nominal machine into Dataclass slots and (if `id_` is not None) output to tfs.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reinstate_loggers</span><span class="p">()</span>
+
+        <span class="c1"># Save Nominal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match_tune</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_twiss_nominal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_twiss</span><span class="p">(</span><span class="n">id_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_ampdet_nominal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ampdet</span><span class="p">(</span><span class="n">id_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_orbit</span><span class="p">()</span>
+
+        <span class="c1"># Save nominal optics in IR+Correctors for ir nl correction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_twiss_nominal_ir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_last_twiss</span><span class="p">(</span><span class="n">index_regex</span><span class="o">=</span><span class="s2">&quot;M(QS?X|BX|BRC|C[SOT]S?X)&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">id_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ir_id</span> <span class="o">=</span> <span class="s1">&#39;optics_ir&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">id_</span> <span class="o">==</span> <span class="s2">&quot;nominal&quot;</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">id_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_tfs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_twiss_nominal_ir</span><span class="p">,</span> <span class="s1">&#39;twiss&#39;</span><span class="p">,</span> <span class="n">ir_id</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LHCBeam.install_circuits_into_mctx">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.install_circuits_into_mctx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">install_circuits_into_mctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Installs kcdx and (and reinstalls kctx) into the Dodecapole Correctors.</span>
+
+<span class="sd">        This allows for decapole and dodecapole correction with the MCTX magnets for test purposes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reinstate_loggers</span><span class="p">()</span>
+        <span class="n">beam_sign_str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">beam</span> <span class="o">==</span> <span class="mi">4</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="s2">&quot;LR&quot;</span><span class="p">:</span>
+                <span class="n">corrector_b5</span> <span class="o">=</span> <span class="n">LHCCorrectors</span><span class="o">.</span><span class="n">b5</span><span class="o">.</span><span class="n">get_corrector</span><span class="p">(</span><span class="n">side</span><span class="p">,</span> <span class="n">ip</span><span class="p">)</span>
+                <span class="n">corrector_b6</span> <span class="o">=</span> <span class="n">LHCCorrectors</span><span class="o">.</span><span class="n">b6</span><span class="o">.</span><span class="n">get_corrector</span><span class="p">(</span><span class="n">side</span><span class="p">,</span> <span class="n">ip</span><span class="p">)</span>
+
+                <span class="k">assert</span> <span class="n">corrector_b5</span><span class="o">.</span><span class="n">magnet</span> <span class="o">==</span> <span class="n">corrector_b6</span><span class="o">.</span><span class="n">magnet</span><span class="p">,</span> <span class="s2">&quot;Magnet name for b5 and b6 must be the same as we install b5 corrector in same magnet!&quot;</span>
+
+                <span class="n">deca_knl</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">corrector_b5</span><span class="o">.</span><span class="n">circuit</span><span class="si">}</span><span class="s2"> * l.</span><span class="si">{</span><span class="n">corrector_b5</span><span class="o">.</span><span class="n">madx_type</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">dodeca_knl</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">beam_sign_str</span><span class="si">}{</span><span class="n">corrector_b6</span><span class="o">.</span><span class="n">circuit</span><span class="si">}</span><span class="s2"> * l.</span><span class="si">{</span><span class="n">corrector_b6</span><span class="o">.</span><span class="n">madx_type</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">madx</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">corrector_b6</span><span class="o">.</span><span class="n">magnet</span><span class="si">}</span><span class="s2">, KNL := </span><span class="se">{{</span><span class="s2">0, 0, 0, 0, </span><span class="si">{</span><span class="n">deca_knl</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">dodeca_knl</span><span class="si">}</span><span class="se">}}</span><span class="s2">, polarity=+1;&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">corrector_b5</span><span class="o">.</span><span class="n">circuit</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">corrector_b6</span><span class="o">.</span><span class="n">circuit</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="LHCBeam.reset_detuning_circuits">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.reset_detuning_circuits">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_detuning_circuits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset all kcdx and kctx circuits (to zero).&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="s2">&quot;LR&quot;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">corrector_mask</span> <span class="ow">in</span> <span class="p">(</span><span class="n">LHCCorrectors</span><span class="o">.</span><span class="n">b5</span><span class="p">,</span> <span class="n">LHCCorrectors</span><span class="o">.</span><span class="n">b6</span><span class="p">):</span>
+                    <span class="n">corrector</span> <span class="o">=</span> <span class="n">corrector_mask</span><span class="o">.</span><span class="n">get_corrector</span><span class="p">(</span><span class="n">side</span><span class="p">,</span> <span class="n">ip</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">corrector</span><span class="o">.</span><span class="n">circuit</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="LHCBeam.check_kctx_limits">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.LHCBeam.check_kctx_limits">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_kctx_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check the corrector kctx limits.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reinstate_loggers</span><span class="p">()</span>
+        <span class="n">magnet_type</span> <span class="o">=</span> <span class="n">LHCCorrectors</span><span class="o">.</span><span class="n">b6</span><span class="o">.</span><span class="n">madx_type</span>
+        <span class="n">checks</span> <span class="o">=</span> <span class="n">LimitChecks</span><span class="p">(</span>
+            <span class="n">madx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">madx</span><span class="p">,</span>
+            <span class="n">beam</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="p">,</span>
+            <span class="n">limit_to_max</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">values_dict</span><span class="o">=</span><span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">magnet_type</span><span class="si">}</span><span class="s2">1&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;kmax_</span><span class="si">{</span><span class="n">magnet_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span>
+        <span class="p">)</span>
+        <span class="n">checks</span><span class="o">.</span><span class="n">run_checks</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">checks</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="c1"># raise ValueError(&quot;One or more strengths are out of its limits, see log.&quot;)</span>
+            <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FakeLHCBeam">
+<a class="viewcode-back" href="../../../modules/simulation.html#ir_amplitude_detuning.simulation.lhc_simulation.FakeLHCBeam">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">()</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FakeLHCBeam</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mock of LHCBeam to use in calculations without the functions noticing.</span>
+<span class="sd">    Used in the main-functions to load tfs-files without running MAD-X again.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">outputdir</span><span class="p">:</span> <span class="n">Path</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputdir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LHCBeam</span><span class="o">.</span><span class="n">output_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

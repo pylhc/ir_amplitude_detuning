@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ir_amplitude_detuning.utilities.correctors &mdash; ir_amplitude_detuning 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-codeautolink.css?v=b2176991" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=508b26b5" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#setup-commissioning-2022">Setup Commissioning 2022</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#setup-md3311-2018">Setup MD3311 (2018)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#setup-for-md6863-2022">Setup for MD6863 (2022)</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/main.html">Main Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/main.html#lhc-detuning-corrections">LHC Detuning Corrections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/detuning.html">Detuning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#detuning-calculations">Detuning Calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#equation-system">Equation System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#classes-for-detuning">Classes for Detuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#correction-targets">Correction Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/detuning.html#detuning-terms">Detuning Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/simulation.html#lhc-simulation-class">LHC Simulation Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/simulation.html#simulation-results-loaders">Simulation Results Loaders</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/plotting.html">Plotting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/plotting.html#plot-corrector-strengths">Plot Corrector Strengths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/plotting.html#detuning-plots">Detuning Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/plotting.html#general-plotting-utilities">General Plotting Utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/utilities.html">Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#common-utilities">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#correctors">Correctors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#latex-utilities">Latex Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utilities.html#logging">Logging</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Bibliography</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../bibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ir_amplitude_detuning</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ir_amplitude_detuning.utilities.correctors</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ir_amplitude_detuning.utilities.correctors</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Correctors</span>
+<span class="sd">----------</span>
+
+<span class="sd">Utilities for working with Correctors,</span>
+<span class="sd">implemented to make the code more machine-independent,</span>
+<span class="sd">as you should be able to easily add new corrector definitions for a new machine.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeAlias</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.utilities.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrEnum</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FieldComponent">
+<a class="viewcode-back" href="../../../modules/utilities.html#ir_amplitude_detuning.utilities.correctors.FieldComponent">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FieldComponent</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fields for which detuning calculations are implemented.&quot;&quot;&quot;</span>
+    <span class="n">b4</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;b4&quot;</span>
+    <span class="n">b5</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;b5&quot;</span>
+    <span class="n">b6</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;b6&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Corrector">
+<a class="viewcode-back" href="../../../modules/utilities.html#ir_amplitude_detuning.utilities.correctors.Corrector">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Corrector</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to hold corrector information.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        field: magnetic field component shorthand (e.g. &#39;b5&#39; or &#39;b6&#39;)</span>
+<span class="sd">        length: length of the corrector in m</span>
+<span class="sd">        magnet: MAD-X magnet name, e.g. &quot;MCTX.3L1&quot;</span>
+<span class="sd">        circuit: MAD-X circuit name, e.g. &quot;kctx3.l1&quot;</span>
+<span class="sd">        ip: IP the corrector is located at (for filtering if only certain IPs are corrected)</span>
+<span class="sd">        madx_type: MAD-X magnet type, e.g. &quot;MCTX&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">field</span><span class="p">:</span> <span class="n">FieldComponent</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">magnet</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">circuit</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">ip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">madx_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">FieldComponent</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Field must be one of </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">FieldComponent</span><span class="p">)</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;field&quot;</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">FieldComponent</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Field must be one of </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">FieldComponent</span><span class="p">)</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Corrector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Less-than operator for sorting correctors.</span>
+<span class="sd">        Sorting is done by field, then by IP side (L before R), then by IP number (lower before higher),</span>
+<span class="sd">        then by position along the beamline (upstream before downstream).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">field</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">field</span>
+
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;.*(\d+)([lr]\d)$&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+        <span class="n">self_match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magnet</span><span class="p">)</span>
+        <span class="n">other_match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">magnet</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">self_match</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">other_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">circuit</span>
+
+        <span class="n">self_ipside</span> <span class="o">=</span> <span class="n">self_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">other_ipside</span> <span class="o">=</span> <span class="n">other_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">self_ipside</span> <span class="o">!=</span> <span class="n">other_ipside</span><span class="p">:</span>
+            <span class="c1"># Sort by IP then left to right</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">self_ipside</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">self_ipside</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">other_ipside</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">other_ipside</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># Correctors are at the same side of the same IP</span>
+        <span class="k">if</span> <span class="n">self_ipside</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;l&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">self_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">other_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># larger = further downstream</span>
+        <span class="k">return</span> <span class="n">self_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">other_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># larger = further upstream</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magnet</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">magnet</span><span class="si">}</span><span class="s2">&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="CorrectorMask">
+<a class="viewcode-back" href="../../../modules/utilities.html#ir_amplitude_detuning.utilities.correctors.CorrectorMask">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CorrectorMask</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to hold corrector templates to be filled in with IP and side.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        field: magnetic field component shorthand (e.g. &#39;b5&#39; or &#39;b6&#39;)</span>
+<span class="sd">        length: length of the corrector in m</span>
+<span class="sd">        magnet_pattern: MAD-X magnet name pattern, e.g. &quot;MCTX.3{side}{ip}&quot;</span>
+<span class="sd">        circuit_pattern: MAD-X circuit name pattern, e.g. &quot;kctx3.{side}{ip}&quot;</span>
+<span class="sd">        ip:</span>
+<span class="sd">        madx_type: MAD-X magnet type, e.g. &quot;MCTX&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">field</span><span class="p">:</span> <span class="n">FieldComponent</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">magnet_pattern</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">circuit_pattern</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">madx_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_corrector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">side</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ip</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Corrector</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Corrector</span><span class="p">(</span>
+            <span class="n">field</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="p">,</span>
+            <span class="n">length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+            <span class="n">magnet</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">magnet_pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="n">side</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">ip</span><span class="o">=</span><span class="n">ip</span><span class="p">),</span>
+            <span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit_pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="n">side</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">ip</span><span class="o">=</span><span class="n">ip</span><span class="p">),</span>
+            <span class="n">ip</span><span class="o">=</span><span class="n">ip</span><span class="p">,</span>
+            <span class="n">madx_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">madx_type</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<span class="n">Correctors</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Corrector</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="get_fields">
+<a class="viewcode-back" href="../../../modules/utilities.html#ir_amplitude_detuning.utilities.correctors.get_fields">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_fields</span><span class="p">(</span><span class="n">correctors</span><span class="p">:</span> <span class="n">Correctors</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">FieldComponent</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all field components available for correction by the correctors.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        correctors (Correctors): list of correctors</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[FieldComponent]: sorted list of uniqe field components</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">({</span><span class="n">corrector</span><span class="o">.</span><span class="n">field</span> <span class="k">for</span> <span class="n">corrector</span> <span class="ow">in</span> <span class="n">correctors</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="fill_corrector_masks">
+<a class="viewcode-back" href="../../../modules/utilities.html#ir_amplitude_detuning.utilities.correctors.fill_corrector_masks">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fill_corrector_masks</span><span class="p">(</span><span class="n">corrector_masks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">CorrectorMask</span> <span class="o">|</span> <span class="n">Corrector</span><span class="p">],</span> <span class="n">ips</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">sides</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;LR&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Correctors</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fill the corrector masks with the ips and sides.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        corrector_masks (Sequence[CorrectorMask | Corrector]): list of corrector masks or correctors.</span>
+<span class="sd">        ips (Sequence[int]): list of ips.</span>
+<span class="sd">        sides (Sequence[str]): list of sides.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[Corrector]: sorted list of correctors</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">corrector_masks</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="n">ips</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">sides</span><span class="p">:</span>
+                    <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">get_corrector</span><span class="p">(</span><span class="n">side</span><span class="p">,</span> <span class="n">ip</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

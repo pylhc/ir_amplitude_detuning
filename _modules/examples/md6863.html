@@ -1,0 +1,848 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>examples.md6863 &mdash; ir_amplitude_detuning 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-codeautolink.css?v=b2176991" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=508b26b5" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#setup-commissioning-2022">Setup Commissioning 2022</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#setup-md3311-2018">Setup MD3311 (2018)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#setup-for-md6863-2022">Setup for MD6863 (2022)</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/main.html">Main Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/main.html#lhc-detuning-corrections">LHC Detuning Corrections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/detuning.html">Detuning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/detuning.html#detuning-calculations">Detuning Calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/detuning.html#equation-system">Equation System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/detuning.html#classes-for-detuning">Classes for Detuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/detuning.html#correction-targets">Correction Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/detuning.html#detuning-terms">Detuning Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/simulation.html#lhc-simulation-class">LHC Simulation Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/simulation.html#simulation-results-loaders">Simulation Results Loaders</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/plotting.html">Plotting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/plotting.html#plot-corrector-strengths">Plot Corrector Strengths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/plotting.html#detuning-plots">Detuning Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/plotting.html#general-plotting-utilities">General Plotting Utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/utilities.html">Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utilities.html#common-utilities">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utilities.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utilities.html#correctors">Correctors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utilities.html#latex-utilities">Latex Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utilities.html#logging">Logging</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Bibliography</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ir_amplitude_detuning</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">examples.md6863</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <h1>Source code for examples.md6863</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Setup for MD6863 (2022)</span>
+<span class="sd">-----------------------</span>
+
+<span class="sd">`Source on github &lt;https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/md6863.py&gt;`_.</span>
+
+<span class="sd">In this example, the dodecapole corrections are calculated based on</span>
+<span class="sd">the measurements performed during MD6863 in 2022.</span>
+
+<span class="sd">This setup is the most complicated one of the examples given in this package,</span>
+<span class="sd">as we are not only calculating the correction, but also extract the data directly</span>
+<span class="sd">from the omc3 output directories.</span>
+<span class="sd">In fact, you can modify this example easily below, to even run the detuning</span>
+<span class="sd">analysis in omc3 first.</span>
+
+<span class="sd">To achieve this automation, a naming scheme for the output-directories is assumed (see :func:`get_config_from_name`),</span>
+<span class="sd">that allows this script to sort the measurements into the different machine settings used,</span>
+<span class="sd">these are:</span>
+
+<span class="sd">- With full crossing scheme in IP1 and IP5</span>
+<span class="sd">- With flat crossing scheme in IP1 and IP5</span>
+<span class="sd">- With positive crossing scheme in IP5</span>
+<span class="sd">- With negative crossing scheme in IP5</span>
+
+<span class="sd">The naming scheme is as follows:</span>
+
+<span class="sd">``b$BEAM_1_$XING1_5_$XING5_ampdet_$PLANE_b6_$CORR``</span>
+
+<span class="sd">Where:</span>
+
+<span class="sd">- ``$BEAM`` is the beam number</span>
+<span class="sd">- ``$XING1`` and ``$XING5`` are the IP1 and IP5 crossing schemes, respectively, in signed-integer murad or &#39;off&#39; for flat</span>
+<span class="sd">- ``$PLANE`` is the plane of the kick, either &#39;H&#39; or &#39;V&#39; or &#39;X&#39; or &#39;Y&#39;</span>
+<span class="sd">- ``$CORR`` is the whether there is b6 correction, either &#39;in&#39; or &#39;out&#39;</span>
+
+<span class="sd">The resulting data is then used to calculate the correction.</span>
+
+<span class="sd">You can find the detunig as well in https://gitlab.cern.ch/jdilly/lhc_amplitude_detuning_summary/</span>
+<span class="sd">and Table 7.2 of [DillyThesis2024]_ ; there are minor differences due to different analysis settings.</span>
+
+<span class="sd">Some more information can be found in Chapter 7.4.1 of [DillyThesis2024]_ .</span>
+<span class="sd">In particular, Table 7.3 contains, in the &quot;MD6863&quot; rows,</span>
+<span class="sd">the results of the corrections performed here.</span>
+
+<span class="sd">The resulting detuning values are depicted in Figures 7.5, 7.7 and 7.10.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">fields</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.detuning.calculations</span><span class="w"> </span><span class="kn">import</span> <span class="n">Method</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.detuning.measurements</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetuningMeasurement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.detuning.targets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Target</span><span class="p">,</span> <span class="n">TargetData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.detuning.terms</span><span class="w"> </span><span class="kn">import</span> <span class="n">FirstOrderTerm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.lhc_detuning_corrections</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LHCBeams</span><span class="p">,</span>
+    <span class="n">calculate_corrections</span><span class="p">,</span>
+    <span class="n">check_corrections_analytically</span><span class="p">,</span>
+    <span class="n">check_corrections_ptc</span><span class="p">,</span>
+    <span class="n">create_optics</span><span class="p">,</span>
+    <span class="n">get_nominal_optics</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.plotting.correctors</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_correctors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.plotting.detuning</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlotSetup</span><span class="p">,</span> <span class="n">plot_measurements</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.plotting.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">OtherColors</span><span class="p">,</span> <span class="n">get_color_for_field</span><span class="p">,</span> <span class="n">get_color_for_ip</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.simulation.lhc_simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">LHCCorrectors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.simulation.results_loader</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DetuningPerBeam</span><span class="p">,</span>
+    <span class="n">get_calculated_detuning_for_field</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.utilities.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">BeamDict</span><span class="p">,</span> <span class="n">Container</span><span class="p">,</span> <span class="n">StrEnum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.utilities.correctors</span><span class="w"> </span><span class="kn">import</span> <span class="n">FieldComponent</span><span class="p">,</span> <span class="n">fill_corrector_masks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.utilities.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_setup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.utilities.measurement_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AnalysisOption</span><span class="p">,</span>
+    <span class="n">create_summary</span><span class="p">,</span>
+    <span class="n">get_detuning_from_series</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Labels">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.Labels">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Labels</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Labels for the different measurement configurations (as enum to avoid typos).&quot;&quot;&quot;</span>
+    <span class="n">flat</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;flat&quot;</span>
+    <span class="n">full</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;full&quot;</span>
+    <span class="n">ip5p</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ip5p&quot;</span>
+    <span class="n">ip5m</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ip5m&quot;</span>
+    <span class="n">corrected</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;corrected&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="MeasuredDetuning">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.MeasuredDetuning">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MeasuredDetuning</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dataclass to hold the detuning data per scheme/configuration.&quot;&quot;&quot;</span>
+    <span class="n">flat</span><span class="p">:</span> <span class="n">DetuningPerBeam</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">full</span><span class="p">:</span> <span class="n">DetuningPerBeam</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ip5p</span><span class="p">:</span> <span class="n">DetuningPerBeam</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ip5m</span><span class="p">:</span> <span class="n">DetuningPerBeam</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">corrected</span><span class="p">:</span> <span class="n">DetuningPerBeam</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DetuningPerBeam</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">((</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">))</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+<div class="viewcode-block" id="MeasuredDetuning.merge_first_order_crossterms">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.MeasuredDetuning.merge_first_order_crossterms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_first_order_crossterms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MeasuredDetuning</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create average of the first order crossterm on all measurements.&quot;&quot;&quot;</span>
+        <span class="n">measured_detuning</span> <span class="o">=</span> <span class="n">MeasuredDetuning</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">scheme</span><span class="p">,</span> <span class="n">detuning_per_beam</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">detuning_per_beam</span><span class="p">:</span> <span class="n">DetuningPerBeam</span> <span class="o">|</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">detuning_per_beam</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">for</span> <span class="n">beam</span><span class="p">,</span> <span class="n">detuning</span> <span class="ow">in</span> <span class="n">detuning_per_beam</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">detuning</span><span class="p">:</span> <span class="n">DetuningMeasurement</span>
+                <span class="n">detuning_per_beam</span><span class="p">[</span><span class="n">beam</span><span class="p">]</span> <span class="o">=</span> <span class="n">detuning</span><span class="o">.</span><span class="n">merge_first_order_crossterm</span><span class="p">()</span>
+            <span class="n">measured_detuning</span><span class="p">[</span><span class="n">scheme</span><span class="p">]</span> <span class="o">=</span> <span class="n">detuning_per_beam</span>
+        <span class="k">return</span> <span class="n">measured_detuning</span></div>
+</div>
+
+
+<div class="viewcode-block" id="XingSchemes">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.XingSchemes">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">XingSchemes</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Crossing schemes used in the measurements.&quot;&quot;&quot;</span>
+    <span class="n">flat</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;scheme&#39;</span><span class="p">:</span> <span class="s1">&#39;flat&#39;</span><span class="p">}</span>
+    <span class="n">full</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;scheme&#39;</span><span class="p">:</span> <span class="s1">&#39;flat&#39;</span><span class="p">,</span> <span class="s1">&#39;on_x1_v&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">160</span><span class="p">,</span> <span class="s1">&#39;on_x5_h&#39;</span><span class="p">:</span> <span class="mi">160</span><span class="p">}</span>
+    <span class="n">ip5p</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;scheme&#39;</span><span class="p">:</span> <span class="s1">&#39;flat&#39;</span><span class="p">,</span> <span class="s1">&#39;on_x5_h&#39;</span><span class="p">:</span> <span class="mi">160</span><span class="p">}</span>
+    <span class="n">ip5m</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;scheme&#39;</span><span class="p">:</span> <span class="s1">&#39;flat&#39;</span><span class="p">,</span> <span class="s1">&#39;on_x5_h&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">160</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="LHCSimParams">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.LHCSimParams">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LHCSimParams</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;LHC simulation parameters for 2022 MD6863.&quot;&quot;&quot;</span>
+    <span class="n">beams</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span>
+    <span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2022</span>
+    <span class="n">outputdir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;md6863&quot;</span><span class="p">)</span>
+    <span class="n">tune_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">62.28</span>  <span class="c1"># horizontal tune</span>
+    <span class="n">tune_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">60.31</span>  <span class="c1"># vertical tune</span></div>
+
+
+
+<span class="c1"># Get Detuning Data</span>
+<span class="c1"># -----------------</span>
+<span class="c1"># Note: The functions below often use the naming scheme as in the ``md6863_data``</span>
+<span class="c1">#       folder and are hence quite specific to this data set.</span>
+<div class="viewcode-block" id="MeasurementConfig">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.MeasurementConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MeasurementConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configuration for a measurement.</span>
+<span class="sd">    Used to quickly organize the data from the ``md6863_data`` folder into the</span>
+<span class="sd">    different &quot;schemes&quot; as defined in this file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">xing</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">kick_plane</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">b6corr</span><span class="p">:</span> <span class="nb">bool</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xing</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kick_plane</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b6corr</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="format_detuning_measurements">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.format_detuning_measurements">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_detuning_measurements</span><span class="p">(</span><span class="n">detuning</span><span class="p">:</span> <span class="n">MeasuredDetuning</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format the detuning data for printing.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        detuning (MeasuredDetuning): The detuning data per scheme and beam.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Loaded detuning data for MD6863 [10^-3 m^-1]:&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">scheme</span><span class="p">,</span> <span class="n">beams</span> <span class="ow">in</span> <span class="n">detuning</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">indent</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="mi">4</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">scheme</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">beam</span><span class="p">,</span> <span class="n">measured</span> <span class="ow">in</span> <span class="n">beams</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">indent</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="mi">8</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">Beam </span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">: &quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">measured</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">indent</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="mi">12</span>
+                <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="o">*</span><span class="mf">1e-3</span><span class="si">:</span><span class="s2"> 5.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_config_from_name">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.get_config_from_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_config_from_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MeasurementConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a MeasurementConfig from a measurement name, as used in the ``md6863_data`` folder.</span>
+<span class="sd">    The `MeasurementConfig` contains the beam number, the kick plane and the xing scheme as well as the b6 correction</span>
+<span class="sd">    and is only used to quickly organize the data into the different &quot;schemes&quot; as defined in this file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): The name of the measurement (i.e. the folder name).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        MeasurementConfig: The measurement configuration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^b(?P&lt;beam&gt;\d)_1_(?P&lt;ip1&gt;off|[+-]\d+)_5_(?P&lt;ip5&gt;off|[+-]\d+)_AmpDet_(?P&lt;plane&gt;[HV])_b6_(?P&lt;corr&gt;[^_]+)$&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">):</span>
+        <span class="n">xing_map</span> <span class="o">=</span> <span class="p">{(</span><span class="n">XingSchemes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;on_x1_v&quot;</span><span class="p">),</span> <span class="n">XingSchemes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;on_x5_h&quot;</span><span class="p">)):</span> <span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">XingSchemes</span><span class="p">}</span>
+        <span class="n">ip1</span><span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;ip1&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;off&quot;</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;ip1&quot;</span><span class="p">))</span>
+        <span class="n">ip5</span><span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;ip5&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;off&quot;</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;ip5&quot;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">MeasurementConfig</span><span class="p">(</span>
+            <span class="n">beam</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;beam&quot;</span><span class="p">)),</span>
+            <span class="n">kick_plane</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;h&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">}[</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;plane&quot;</span><span class="p">)],</span>
+            <span class="n">xing</span><span class="o">=</span><span class="n">xing_map</span><span class="p">[(</span><span class="n">ip1</span><span class="p">,</span> <span class="n">ip5</span><span class="p">)],</span>
+            <span class="n">b6corr</span><span class="o">=</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;corr&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;in&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not determine measurement configuration from </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="extract_data_for_both_planes_and_beams">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.extract_data_for_both_planes_and_beams">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_data_for_both_planes_and_beams</span><span class="p">(</span><span class="n">summary</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">xing</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">b6corr</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DetuningPerBeam</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract the data for both planes and beams from the summary DataFrame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        summary (pd.DataFrame): The summary DataFrame.</span>
+<span class="sd">        xing (str): The xing scheme.</span>
+<span class="sd">        b6corr (bool): Whether to apply the b6 correction.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        DetuningPerBeam: A dictionary of detuning data, merged for both planes, by beams as keys.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">beams</span> <span class="o">=</span> <span class="n">BeamDict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">rows_xy</span> <span class="o">=</span> <span class="p">[</span><span class="n">MeasurementConfig</span><span class="p">(</span><span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span> <span class="n">xing</span><span class="o">=</span><span class="n">xing</span><span class="p">,</span> <span class="n">kick_plane</span><span class="o">=</span><span class="n">plane</span><span class="p">,</span> <span class="n">b6corr</span><span class="o">=</span><span class="n">b6corr</span><span class="p">)</span> <span class="k">for</span> <span class="n">plane</span> <span class="ow">in</span> <span class="s2">&quot;xy&quot;</span><span class="p">]</span>
+        <span class="n">summary_xy</span> <span class="o">=</span> <span class="n">summary</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">rows_xy</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">merged</span> <span class="o">=</span> <span class="n">summary_xy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="n">merged_test</span> <span class="o">=</span> <span class="n">summary_xy</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">merged</span> <span class="o">!=</span> <span class="n">merged_test</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Detuning data is inconsistent. There are non-matching values in the same entry for both kick planes.&quot;</span>
+                <span class="s2">&quot; Expected are ``NaN`` values in at least one of the planes.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; Something is wrong with the data for </span><span class="si">{</span><span class="n">rows_xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="n">rows_xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="n">beams</span><span class="p">[</span><span class="n">beam</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_detuning_from_series</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span><span class="o">.</span><span class="n">apply_acdipole_correction</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">beams</span></div>
+
+
+
+<div class="viewcode-block" id="convert_summary_to_detuning">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.convert_summary_to_detuning">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_summary_to_detuning</span><span class="p">(</span><span class="n">summary</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MeasuredDetuning</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the summary DataFrame to a dictionary of detuning data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        summary (pd.DataFrame): The summary DataFrame.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        MeasuredDetuning: A dictionary of detuning data per scheme and beam.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">summary</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_config_from_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">summary</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="n">detuning</span> <span class="o">=</span> <span class="n">MeasuredDetuning</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">xing</span> <span class="ow">in</span> <span class="n">XingSchemes</span><span class="p">:</span>
+        <span class="n">detuning</span><span class="p">[</span><span class="n">xing</span><span class="p">]</span> <span class="o">=</span> <span class="n">extract_data_for_both_planes_and_beams</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">xing</span><span class="o">=</span><span class="n">xing</span><span class="p">,</span> <span class="n">b6corr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">detuning</span><span class="p">[</span><span class="s2">&quot;corrected&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">extract_data_for_both_planes_and_beams</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">xing</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="n">b6corr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">detuning</span></div>
+
+
+
+<div class="viewcode-block" id="get_detuning_data">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.get_detuning_data">[docs]</a>
+<span class="nd">@cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_detuning_data</span><span class="p">(</span><span class="n">redo_analysis</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MeasuredDetuning</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract the detuning measurement values from the analysed data in the `md6863_data` folder.</span>
+
+<span class="sd">    The values are automatically corrected for the influence of forced oscillations (see [DillyAmplitudeDetuning2023]_).</span>
+<span class="sd">    This data is presented in Table 7.2 of [DillyThesis2024]_ ; the values might be slightly</span>
+<span class="sd">    different due to different analysis settings, but should be within errorbar.</span>
+
+<span class="sd">    As the raw kick-data and BBQ data is also present in these folders,</span>
+<span class="sd">    you can choose to re-analyse the data for detuning values by setting ``redo_analysis`` to ``True``,</span>
+<span class="sd">    otherwise simply the already analysed ``kick_ampdet_xy.tfs`` files are loaded.</span>
+<span class="sd">    To change the analysis settings, you need to manually edit :func:`~ir_amplitude_detuning.utilities.measurement_analysis.do_detuning_analysis`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        redo_analysis (AnalysisOption, optional): Whether to re-analyse the data.</span>
+<span class="sd">            Defaults to &#39;never&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="n">create_summary</span><span class="p">(</span>
+        <span class="n">input_dirs</span><span class="o">=</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;md6863_data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;B*&quot;</span><span class="p">),</span>
+        <span class="n">do_analysis</span><span class="o">=</span><span class="n">AnalysisOption</span><span class="o">.</span><span class="n">always</span> <span class="k">if</span> <span class="n">redo_analysis</span> <span class="k">else</span> <span class="n">AnalysisOption</span><span class="o">.</span><span class="n">never</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">detuning_measurements</span> <span class="o">=</span> <span class="n">convert_summary_to_detuning</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+    <span class="n">detuning_measurements</span> <span class="o">=</span> <span class="n">detuning_measurements</span><span class="o">.</span><span class="n">merge_first_order_crossterms</span><span class="p">()</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">format_detuning_measurements</span><span class="p">(</span><span class="n">detuning_measurements</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">detuning_measurements</span></div>
+
+
+<span class="c1"># Steps of correction calculation ------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="get_targets">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.get_targets">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_targets</span><span class="p">(</span><span class="n">lhc_beams_per_setup</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Labels</span><span class="p">,</span> <span class="n">LHCBeams</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Target</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Define the targets to be used.</span>
+
+<span class="sd">    Here:</span>
+
+<span class="sd">        Calculate the values for the dodecapole correctors in the LHC to compensate</span>
+<span class="sd">        for the shift in measured detuning from the flat to the full crossing scheme</span>
+<span class="sd">        (i.e. crossing active in IP1 and IP5) and from flat to the IP5 crossing schemes.</span>
+
+<span class="sd">        The defined targets are as in Chapter 7.4.1 of [DillyThesis2024]_ ,</span>
+<span class="sd">        named there &quot;w/o IP5&quot; (here: &quot;global&quot;) and &quot;w/ IP5&quot; (here: &quot;local_and_global&quot;).</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The detuning target should be the opposite of the measured detuning,</span>
+<span class="sd">        such that the calculated correction compensates the measured detuning.</span>
+<span class="sd">        This is why here it is &quot;flat-xing&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">lhc_beams_per_setup</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lhc_beams_per_setup</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">Labels</span><span class="p">,</span> <span class="n">LHCSimParams</span><span class="o">.</span><span class="n">beams</span><span class="p">)</span>
+
+    <span class="n">meas2022</span> <span class="o">=</span> <span class="n">get_detuning_data</span><span class="p">()</span>
+
+    <span class="c1"># Compensate the global contribution</span>
+    <span class="n">target_global</span> <span class="o">=</span> <span class="n">TargetData</span><span class="p">(</span>
+        <span class="n">label</span><span class="o">=</span><span class="n">Labels</span><span class="o">.</span><span class="n">full</span><span class="p">,</span>
+        <span class="n">correctors</span><span class="o">=</span><span class="n">fill_corrector_masks</span><span class="p">([</span><span class="n">LHCCorrectors</span><span class="o">.</span><span class="n">b6</span><span class="p">],</span> <span class="n">ips</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span>
+        <span class="n">detuning</span><span class="o">=</span><span class="n">meas2022</span><span class="o">.</span><span class="n">flat</span> <span class="o">-</span> <span class="n">meas2022</span><span class="o">.</span><span class="n">full</span><span class="p">,</span>
+        <span class="n">optics</span><span class="o">=</span><span class="n">get_nominal_optics</span><span class="p">(</span>
+            <span class="n">lhc_beams_per_setup</span><span class="p">[</span><span class="n">Labels</span><span class="o">.</span><span class="n">full</span><span class="p">],</span>
+            <span class="n">outputdir</span><span class="o">=</span><span class="n">LHCSimParams</span><span class="o">.</span><span class="n">outputdir</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="n">Labels</span><span class="o">.</span><span class="n">full</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Compensate the IP5 contribution at positive crossing</span>
+    <span class="n">target_ip5p</span> <span class="o">=</span> <span class="n">TargetData</span><span class="p">(</span>
+        <span class="n">label</span><span class="o">=</span><span class="n">Labels</span><span class="o">.</span><span class="n">ip5p</span><span class="p">,</span>
+        <span class="n">correctors</span><span class="o">=</span><span class="n">fill_corrector_masks</span><span class="p">([</span><span class="n">LHCCorrectors</span><span class="o">.</span><span class="n">b6</span><span class="p">],</span> <span class="n">ips</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="p">)),</span>
+        <span class="n">detuning</span><span class="o">=</span><span class="n">meas2022</span><span class="o">.</span><span class="n">flat</span> <span class="o">-</span> <span class="n">meas2022</span><span class="o">.</span><span class="n">ip5p</span><span class="p">,</span>
+        <span class="n">optics</span><span class="o">=</span><span class="n">get_nominal_optics</span><span class="p">(</span>
+            <span class="n">lhc_beams_per_setup</span><span class="p">[</span><span class="n">Labels</span><span class="o">.</span><span class="n">ip5p</span><span class="p">],</span>
+            <span class="n">outputdir</span><span class="o">=</span><span class="n">LHCSimParams</span><span class="o">.</span><span class="n">outputdir</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="n">Labels</span><span class="o">.</span><span class="n">ip5p</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Compensate the IP5 contribution at negative crossing</span>
+    <span class="n">target_ip5m</span> <span class="o">=</span> <span class="n">TargetData</span><span class="p">(</span>
+        <span class="n">label</span><span class="o">=</span><span class="n">Labels</span><span class="o">.</span><span class="n">ip5m</span><span class="p">,</span>
+        <span class="n">correctors</span><span class="o">=</span><span class="n">fill_corrector_masks</span><span class="p">([</span><span class="n">LHCCorrectors</span><span class="o">.</span><span class="n">b6</span><span class="p">],</span> <span class="n">ips</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="p">)),</span>
+        <span class="n">detuning</span><span class="o">=</span><span class="n">meas2022</span><span class="o">.</span><span class="n">flat</span> <span class="o">-</span> <span class="n">meas2022</span><span class="o">.</span><span class="n">ip5m</span><span class="p">,</span>
+        <span class="n">optics</span><span class="o">=</span><span class="n">get_nominal_optics</span><span class="p">(</span>
+            <span class="n">lhc_beams_per_setup</span><span class="p">[</span><span class="n">Labels</span><span class="o">.</span><span class="n">ip5m</span><span class="p">],</span>
+            <span class="n">outputdir</span><span class="o">=</span><span class="n">LHCSimParams</span><span class="o">.</span><span class="n">outputdir</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="n">Labels</span><span class="o">.</span><span class="n">ip5m</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">Target</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;global&quot;</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">target_global</span><span class="p">]</span>
+        <span class="p">),</span>
+        <span class="n">Target</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;local_and_global&quot;</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">target_global</span><span class="p">,</span> <span class="n">target_ip5p</span><span class="p">,</span> <span class="n">target_ip5m</span><span class="p">]</span>
+        <span class="p">),</span>
+    <span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="simulation">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.simulation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">LHCBeams</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create LHC all optics with their respective crossing schemes.</span>
+
+<span class="sd">    Here:</span>
+
+<span class="sd">         - Flat orbit.</span>
+<span class="sd">         - IP1 and IP5 crossing active.</span>
+<span class="sd">         - IP5 positive crossing only (IP1 flat).</span>
+<span class="sd">         - IP5 negative crossing only (IP1 flat).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">optics</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">scheme</span> <span class="ow">in</span> <span class="n">XingSchemes</span><span class="p">:</span>
+        <span class="n">optics</span><span class="p">[</span><span class="n">scheme</span><span class="p">]</span>  <span class="o">=</span> <span class="n">create_optics</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">LHCSimParams</span><span class="p">,</span>
+            <span class="n">xing</span><span class="o">=</span><span class="n">XingSchemes</span><span class="p">[</span><span class="n">scheme</span><span class="p">],</span>
+            <span class="n">output_id</span><span class="o">=</span><span class="n">scheme</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">optics</span></div>
+
+
+
+<div class="viewcode-block" id="do_correction">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.do_correction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">do_correction</span><span class="p">(</span><span class="n">lhc_beams_per_setup</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Labels</span><span class="p">,</span> <span class="n">LHCBeams</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the dodecapole corrections for the LHC for the set targets.</span>
+
+<span class="sd">    Also calculates the individual contributions per corrector order and IP to</span>
+<span class="sd">    the individual detuning terms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">calculate_corrections</span><span class="p">(</span>
+        <span class="n">beams</span><span class="o">=</span><span class="n">LHCSimParams</span><span class="o">.</span><span class="n">beams</span><span class="p">,</span>
+        <span class="n">outputdir</span><span class="o">=</span><span class="n">LHCSimParams</span><span class="o">.</span><span class="n">outputdir</span><span class="p">,</span>
+        <span class="n">targets</span><span class="o">=</span><span class="n">get_targets</span><span class="p">(</span><span class="n">lhc_beams_per_setup</span><span class="p">),</span>  <span class="c1"># calculate corrections for these targets</span>
+        <span class="n">method</span><span class="o">=</span><span class="n">Method</span><span class="o">.</span><span class="n">numpy</span><span class="p">,</span>  <span class="c1"># No constraints, so calculate with errors</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Get full-crossing nominal optics for analytical checks</span>
+    <span class="n">lhc_beams_full_xing</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">lhc_beams_per_setup</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lhc_beams_full_xing</span> <span class="o">=</span> <span class="n">lhc_beams_per_setup</span><span class="p">[</span><span class="n">Labels</span><span class="o">.</span><span class="n">full</span><span class="p">]</span>
+
+    <span class="n">optics</span> <span class="o">=</span> <span class="n">get_nominal_optics</span><span class="p">(</span>
+        <span class="n">lhc_beams_full_xing</span> <span class="ow">or</span> <span class="n">LHCSimParams</span><span class="o">.</span><span class="n">beams</span><span class="p">,</span>
+        <span class="n">outputdir</span><span class="o">=</span><span class="n">LHCSimParams</span><span class="o">.</span><span class="n">outputdir</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="n">Labels</span><span class="o">.</span><span class="n">full</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>  <span class="c1"># per target</span>
+        <span class="n">check_corrections_analytically</span><span class="p">(</span>
+            <span class="n">outputdir</span><span class="o">=</span><span class="n">LHCSimParams</span><span class="o">.</span><span class="n">outputdir</span><span class="p">,</span>
+            <span class="n">optics</span><span class="o">=</span><span class="n">optics</span><span class="p">,</span>
+            <span class="n">results</span><span class="o">=</span><span class="n">values</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="check_correction">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.check_correction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_correction</span><span class="p">(</span><span class="n">lhc_beams_per_setup</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Labels</span><span class="p">,</span> <span class="n">LHCBeams</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check the corrections via PTC. (Not used for plotting here).&quot;&quot;&quot;</span>
+    <span class="n">check_corrections_ptc</span><span class="p">(</span>
+        <span class="n">lhc_beams</span><span class="o">=</span><span class="n">lhc_beams_per_setup</span><span class="p">[</span><span class="n">Labels</span><span class="o">.</span><span class="n">full</span><span class="p">]</span> <span class="k">if</span> <span class="n">lhc_beams_per_setup</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">LHCSimParams</span><span class="p">,</span>  <span class="c1"># apart form outputdir only used if lhc_beams is None</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># Plotting ---------------------------------------------------------------------</span>
+
+<span class="n">ID_MAP</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;global&quot;</span><span class="p">:</span> <span class="s2">&quot;Global&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;local_and_global&quot;</span><span class="p">:</span> <span class="s2">&quot;Local &amp; Global&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="plot_corrector_strengths">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.plot_corrector_strengths">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_corrector_strengths</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the corrector strengths for the different targets.</span>
+<span class="sd">    These are similar to the green and red values in Fig. 7.12 of [DillyThesis2024]_ .</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">outputdir</span> <span class="o">=</span> <span class="n">LHCSimParams</span><span class="o">.</span><span class="n">outputdir</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_correctors</span><span class="p">(</span>
+        <span class="n">outputdir</span><span class="p">,</span>
+        <span class="n">ids</span><span class="o">=</span><span class="n">ID_MAP</span><span class="p">,</span>
+        <span class="n">field</span><span class="o">=</span><span class="n">FieldComponent</span><span class="o">.</span><span class="n">b6</span><span class="p">,</span>
+        <span class="n">ncol</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">beam</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># does not matter as the same correctors are used for both beams</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="o">-</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">])</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outputdir</span> <span class="o">/</span> <span class="s2">&quot;plot.b6_correctors.ip15.pdf&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_measurement_comparison">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.plot_measurement_comparison">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_measurement_comparison</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the measured detuning values.&quot;&quot;&quot;</span>
+    <span class="n">style_adaptions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;figure.figsize&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">6.4</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span>
+        <span class="s2">&quot;legend.handletextpad&quot;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">meas2022</span> <span class="o">=</span> <span class="n">get_detuning_data</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">setup</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">PlotSetup</span><span class="p">(</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;flat orbit&quot;</span><span class="p">,</span>
+                <span class="n">measurement</span><span class="o">=</span><span class="n">meas2022</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="n">beam</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">OtherColors</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">PlotSetup</span><span class="p">(</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;full X-ing&quot;</span><span class="p">,</span>
+                <span class="n">measurement</span><span class="o">=</span><span class="n">meas2022</span><span class="o">.</span><span class="n">full</span><span class="p">[</span><span class="n">beam</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">get_color_for_ip</span><span class="p">(</span><span class="s1">&#39;15&#39;</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">PlotSetup</span><span class="p">(</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;IP5 +160μrad&quot;</span><span class="p">,</span>
+                <span class="n">measurement</span><span class="o">=</span><span class="n">meas2022</span><span class="o">.</span><span class="n">ip5p</span><span class="p">[</span><span class="n">beam</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">get_color_for_ip</span><span class="p">(</span><span class="s1">&#39;5&#39;</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">PlotSetup</span><span class="p">(</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;IP5 -160μrad&quot;</span><span class="p">,</span>
+                <span class="n">measurement</span><span class="o">=</span><span class="n">meas2022</span><span class="o">.</span><span class="n">ip5m</span><span class="p">[</span><span class="n">beam</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">get_color_for_field</span><span class="p">(</span><span class="n">FieldComponent</span><span class="o">.</span><span class="n">b6</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">PlotSetup</span><span class="p">(</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;corrected&quot;</span><span class="p">,</span>
+                <span class="n">measurement</span><span class="o">=</span><span class="n">meas2022</span><span class="o">.</span><span class="n">corrected</span><span class="p">[</span><span class="n">beam</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">get_color_for_ip</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_measurements</span><span class="p">(</span>
+            <span class="n">setup</span><span class="p">,</span>
+            <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">70</span><span class="p">,</span> <span class="mi">70</span><span class="p">],</span>
+            <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">transpose_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">manual_style</span><span class="o">=</span><span class="n">style_adaptions</span><span class="p">,</span>
+            <span class="n">terms</span><span class="o">=</span><span class="p">[</span><span class="n">FirstOrderTerm</span><span class="o">.</span><span class="n">X10</span><span class="p">,</span> <span class="n">FirstOrderTerm</span><span class="o">.</span><span class="n">X01</span><span class="p">,</span> <span class="n">FirstOrderTerm</span><span class="o">.</span><span class="n">Y01</span><span class="p">],</span>
+            <span class="n">average</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">LHCSimParams</span><span class="o">.</span><span class="n">outputdir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;plot.ampdet_measured.all.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">.pdf&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_target_comparison">
+<a class="viewcode-back" href="../../examples.html#examples.md6863.plot_target_comparison">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_target_comparison</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the detuning to be compensated (inverse of target) and</span>
+<span class="sd">    how close the different simulation results get.</span>
+
+<span class="sd">    As we have two targets here, multiple plots are created:</span>
+
+<span class="sd">     - Comparison with measured detuning values (Fig. 7.5 in [DillyThesis2024]_):</span>
+<span class="sd">       During MD only the &quot;global&quot; target correction could be applied,</span>
+<span class="sd">       as this correction was calculated while the IP5 measurements were still ongoing.</span>
+<span class="sd">       Therefore we can only compare the &quot;global&quot; target here to measurements after correction.</span>
+<span class="sd">     - Comparison of individual contributions from IP1 and IP5 (Fig. 7.10 in [DillyThesis2024]_):</span>
+<span class="sd">       Here we can compare the calculated contributions from both corrections (i.e. the two targets)</span>
+<span class="sd">       to the measured detuning differences from full crossing, the individual contributions from IP1 and IP5</span>
+<span class="sd">       and the contribution from IP5 dodecapoles only.</span>
+<span class="sd">       In Fig. 7.10 of [DillyThesis2024]_ only the result from the &quot;local_and_global&quot; target is shown,</span>
+<span class="sd">       as this is the more complete correction. This function however creates plots for both targets.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        We always show the detuning difference from flat to the respective crossing scheme,</span>
+<span class="sd">        i.e. the expected detuning coming from the crossing scheme change.</span>
+
+<span class="sd">        - AmpDet from IP5+ = Ampdet at IP5 positive crossing - AmpDet at flat</span>
+<span class="sd">        - AmpDet from Full = AmpDet at full crossing - AmpDet at flat = AmpDet from IP1 + AmpDet from IP5</span>
+<span class="sd">        - AmpDet from IP1 = AmpDet from Full - AmpDet from IP5</span>
+<span class="sd">        - AmpDet from IP5 dodecapoles =</span>
+
+<span class="sd">           | 0.5 * (AmpDet from IP5+ + AmpDet from IP5-) =</span>
+<span class="sd">           | - 0.5 * (AmpDet at IP5+ + AmpDet at IP5- - 2 * AmpDet at flat)</span>
+<span class="sd">           | (See Eqs. 7.6 - 7.8 in [DillyThesis2024]_)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">style_adaptions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;figure.figsize&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span>
+        <span class="s2">&quot;legend.handletextpad&quot;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">meas2022</span> <span class="o">=</span> <span class="n">get_detuning_data</span><span class="p">()</span>
+    <span class="n">targets</span> <span class="o">=</span> <span class="n">get_targets</span><span class="p">()</span>
+
+    <span class="c1"># Get detuning differences</span>
+    <span class="c1"># measured</span>
+    <span class="n">global_detuning</span> <span class="o">=</span> <span class="n">meas2022</span><span class="o">.</span><span class="n">full</span> <span class="o">-</span> <span class="n">meas2022</span><span class="o">.</span><span class="n">flat</span>
+    <span class="n">ip5p_detuning</span> <span class="o">=</span> <span class="n">meas2022</span><span class="o">.</span><span class="n">ip5p</span> <span class="o">-</span> <span class="n">meas2022</span><span class="o">.</span><span class="n">flat</span>
+    <span class="n">ip5m_detuning</span> <span class="o">=</span> <span class="n">meas2022</span><span class="o">.</span><span class="n">ip5m</span> <span class="o">-</span> <span class="n">meas2022</span><span class="o">.</span><span class="n">flat</span>
+    <span class="n">corrected_detuning</span> <span class="o">=</span> <span class="n">meas2022</span><span class="o">.</span><span class="n">corrected</span> <span class="o">-</span> <span class="n">meas2022</span><span class="o">.</span><span class="n">flat</span>
+
+    <span class="c1"># inferred</span>
+    <span class="n">ip1_detuning</span> <span class="o">=</span>  <span class="n">meas2022</span><span class="o">.</span><span class="n">full</span> <span class="o">-</span> <span class="n">meas2022</span><span class="o">.</span><span class="n">ip5p</span>
+    <span class="n">ip5b6_detuning</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">ip5p_detuning</span> <span class="o">+</span> <span class="n">ip5m_detuning</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+            <span class="n">simulation</span> <span class="o">=</span> <span class="n">get_calculated_detuning_for_field</span><span class="p">(</span>
+                <span class="n">folder</span><span class="o">=</span><span class="n">LHCSimParams</span><span class="o">.</span><span class="n">outputdir</span><span class="p">,</span>
+                <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span>
+                <span class="n">id_</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">field</span><span class="o">=</span><span class="n">FieldComponent</span><span class="o">.</span><span class="n">b6</span><span class="p">,</span>
+                <span class="n">errors</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># to add `Detuning` to `DetuningMeasurement` we need to convert the former</span>
+            <span class="n">compensation_global</span> <span class="o">=</span> <span class="n">DetuningMeasurement</span><span class="o">.</span><span class="n">from_detuning</span><span class="p">(</span><span class="n">simulation</span><span class="p">[</span><span class="s2">&quot;15&quot;</span><span class="p">])</span>
+
+            <span class="c1"># Plot comparison of all contributions (Fig. 7.10 in [DillyThesis2024]_) ---</span>
+            <span class="n">setup</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">PlotSetup</span><span class="p">(</span>
+                    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;full X-ing&quot;</span><span class="p">,</span>
+                    <span class="n">measurement</span><span class="o">=</span><span class="n">global_detuning</span><span class="p">[</span><span class="n">beam</span><span class="p">],</span>
+                    <span class="n">simulation</span><span class="o">=-</span><span class="n">simulation</span><span class="p">[</span><span class="s1">&#39;15&#39;</span><span class="p">],</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">get_color_for_ip</span><span class="p">(</span><span class="s1">&#39;15&#39;</span><span class="p">),</span>
+                <span class="p">),</span>
+                <span class="n">PlotSetup</span><span class="p">(</span>
+                    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;from IP5&quot;</span><span class="p">,</span>
+                    <span class="n">measurement</span><span class="o">=</span><span class="n">ip5p_detuning</span><span class="p">[</span><span class="n">beam</span><span class="p">],</span>
+                    <span class="n">simulation</span><span class="o">=-</span><span class="n">simulation</span><span class="p">[</span><span class="s1">&#39;5&#39;</span><span class="p">],</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">get_color_for_ip</span><span class="p">(</span><span class="s1">&#39;5&#39;</span><span class="p">),</span>
+                <span class="p">),</span>
+                <span class="n">PlotSetup</span><span class="p">(</span>
+                    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;from IP5 $b6$&quot;</span><span class="p">,</span>
+                    <span class="n">measurement</span><span class="o">=</span><span class="n">ip5b6_detuning</span><span class="p">[</span><span class="n">beam</span><span class="p">],</span>
+                    <span class="n">simulation</span><span class="o">=-</span><span class="n">simulation</span><span class="p">[</span><span class="s1">&#39;5&#39;</span><span class="p">],</span>  <span class="c1"># same as above</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">get_color_for_field</span><span class="p">(</span><span class="n">FieldComponent</span><span class="o">.</span><span class="n">b6</span><span class="p">),</span>
+                <span class="p">),</span>
+                <span class="n">PlotSetup</span><span class="p">(</span>
+                    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;from IP1&quot;</span><span class="p">,</span>
+                    <span class="n">measurement</span><span class="o">=</span><span class="n">ip1_detuning</span><span class="p">[</span><span class="n">beam</span><span class="p">],</span>
+                    <span class="n">simulation</span><span class="o">=-</span><span class="n">simulation</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">],</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">get_color_for_ip</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">),</span>
+                <span class="p">),</span>
+                <span class="n">PlotSetup</span><span class="p">(</span>
+                    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;estimated&quot;</span><span class="p">,</span>
+                    <span class="n">measurement</span><span class="o">=</span><span class="n">global_detuning</span><span class="p">[</span><span class="n">beam</span><span class="p">]</span> <span class="o">+</span> <span class="n">compensation_global</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">OtherColors</span><span class="o">.</span><span class="n">estimated</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_measurements</span><span class="p">(</span>
+                <span class="n">setup</span><span class="p">,</span>
+                <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">70</span><span class="p">,</span> <span class="mi">70</span><span class="p">],</span>
+                <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                <span class="n">manual_style</span><span class="o">=</span><span class="n">style_adaptions</span><span class="p">,</span>
+                <span class="n">terms</span><span class="o">=</span><span class="p">[</span><span class="n">FirstOrderTerm</span><span class="o">.</span><span class="n">X10</span><span class="p">,</span> <span class="n">FirstOrderTerm</span><span class="o">.</span><span class="n">X01</span><span class="p">,</span> <span class="n">FirstOrderTerm</span><span class="o">.</span><span class="n">Y01</span><span class="p">],</span>
+                <span class="n">is_shift</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">average</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">LHCSimParams</span><span class="o">.</span><span class="n">outputdir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;plot.ampdet_compensation.</span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">.pdf&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;global&quot;</span><span class="p">:</span>
+                <span class="c1"># for global target we have a measurement to compare to (Fig. 7.5 in [DillyThesis2024]_) ---</span>
+                <span class="n">setup</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">PlotSetup</span><span class="p">(</span>
+                        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;w/o $b_6$ corr.&quot;</span><span class="p">,</span>
+                        <span class="n">measurement</span><span class="o">=</span><span class="n">global_detuning</span><span class="p">[</span><span class="n">beam</span><span class="p">],</span>
+                        <span class="n">simulation</span><span class="o">=-</span><span class="n">simulation</span><span class="p">[</span><span class="s1">&#39;15&#39;</span><span class="p">],</span>
+                        <span class="n">color</span><span class="o">=</span><span class="n">get_color_for_ip</span><span class="p">(</span><span class="s1">&#39;15&#39;</span><span class="p">),</span>
+                    <span class="p">),</span>
+                    <span class="n">PlotSetup</span><span class="p">(</span>
+                        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;estimated&quot;</span><span class="p">,</span>
+                        <span class="n">measurement</span><span class="o">=</span><span class="n">global_detuning</span><span class="p">[</span><span class="n">beam</span><span class="p">]</span> <span class="o">+</span> <span class="n">compensation_global</span><span class="p">,</span>
+                        <span class="n">color</span><span class="o">=</span><span class="n">OtherColors</span><span class="o">.</span><span class="n">estimated</span><span class="p">,</span>
+                    <span class="p">),</span>
+                    <span class="n">PlotSetup</span><span class="p">(</span>
+                        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;w/ $b_6$ corr.&quot;</span><span class="p">,</span>
+                        <span class="n">measurement</span><span class="o">=</span><span class="n">corrected_detuning</span><span class="p">[</span><span class="n">beam</span><span class="p">],</span>
+                        <span class="n">color</span><span class="o">=</span><span class="n">get_color_for_ip</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">),</span>
+                    <span class="p">),</span>
+                <span class="p">]</span>
+                <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_measurements</span><span class="p">(</span>
+                    <span class="n">setup</span><span class="p">,</span>
+                    <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">70</span><span class="p">,</span> <span class="mi">70</span><span class="p">],</span>
+                    <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                    <span class="n">manual_style</span><span class="o">=</span><span class="n">style_adaptions</span><span class="p">,</span>
+                    <span class="n">terms</span><span class="o">=</span><span class="p">[</span><span class="n">FirstOrderTerm</span><span class="o">.</span><span class="n">X10</span><span class="p">,</span> <span class="n">FirstOrderTerm</span><span class="o">.</span><span class="n">X01</span><span class="p">,</span> <span class="n">FirstOrderTerm</span><span class="o">.</span><span class="n">Y01</span><span class="p">],</span>
+                    <span class="n">is_shift</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">average</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">LHCSimParams</span><span class="o">.</span><span class="n">outputdir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;plot.ampdet_compensation_and_measured_corrected.</span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">.pdf&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Run --------------------------------------------------------------------------</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="n">log_setup</span><span class="p">()</span>
+    <span class="n">lhc_beams</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># in case you want to skip the simulation</span>
+    <span class="n">lhc_beams</span> <span class="o">=</span> <span class="n">simulation</span><span class="p">()</span>
+    <span class="n">do_correction</span><span class="p">(</span><span class="n">lhc_beams_per_setup</span><span class="o">=</span><span class="n">lhc_beams</span><span class="p">)</span>
+    <span class="n">check_correction</span><span class="p">(</span><span class="n">lhc_beams_per_setup</span><span class="o">=</span><span class="n">lhc_beams</span><span class="p">)</span>
+    <span class="n">plot_corrector_strengths</span><span class="p">()</span>
+    <span class="n">plot_target_comparison</span><span class="p">()</span>
+    <span class="n">plot_measurement_comparison</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

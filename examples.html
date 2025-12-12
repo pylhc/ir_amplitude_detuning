@@ -1,0 +1,638 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examples &mdash; ir_amplitude_detuning 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/sphinx-codeautolink.css?v=b2176991" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=508b26b5" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Main Modules" href="modules/main.html" />
+    <link rel="prev" title="Welcome to ir_amplitude_detuning’ documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/omc_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setup-commissioning-2022">Setup Commissioning 2022</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setup-md3311-2018">Setup MD3311 (2018)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setup-for-md6863-2022">Setup for MD6863 (2022)</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/main.html">Main Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/main.html#lhc-detuning-corrections">LHC Detuning Corrections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/detuning.html">Detuning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/detuning.html#detuning-calculations">Detuning Calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/detuning.html#equation-system">Equation System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/detuning.html#classes-for-detuning">Classes for Detuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/detuning.html#correction-targets">Correction Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/detuning.html#detuning-terms">Detuning Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/simulation.html#lhc-simulation-class">LHC Simulation Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/simulation.html#simulation-results-loaders">Simulation Results Loaders</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/plotting.html">Plotting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/plotting.html#plot-corrector-strengths">Plot Corrector Strengths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/plotting.html#detuning-plots">Detuning Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/plotting.html#general-plotting-utilities">General Plotting Utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/utilities.html">Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/utilities.html#common-utilities">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/utilities.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/utilities.html#correctors">Correctors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/utilities.html#latex-utilities">Latex Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/utilities.html#logging">Logging</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Bibliography</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ir_amplitude_detuning</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Examples</li>
+      <li class="wy-breadcrumbs-aside">
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/pylhc/ir_amplitude_detuning" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+  <nav id="local-table-of-contents" role="navigation" aria-labelledby="local-table-of-contents-title">
+    <h4 id="local-table-of-contents-title">On This Page</h4>
+    <ul>
+<li><a class="reference internal" href="#">Examples</a><ul>
+<li><a class="reference internal" href="#setup-commissioning-2022">Setup Commissioning 2022</a></li>
+<li><a class="reference internal" href="#setup-md3311-2018">Setup MD3311 (2018)</a></li>
+<li><a class="reference internal" href="#setup-for-md6863-2022">Setup for MD6863 (2022)</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav>
+
+  
+           <div itemprop="articleBody">
+             
+  <section id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h1>
+<section id="setup-commissioning-2022">
+<h2>Setup Commissioning 2022<a class="headerlink" href="#setup-commissioning-2022" title="Link to this heading"></a></h2>
+<p><a class="reference external" href="https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/commissioning_2022.py">Source on github</a>.</p>
+<p>In this example, the dodecapole corrections are calculated based on
+the measurements performed during the commissioning in 2022.</p>
+<p>This data has been analyzed via the amplitude detuning analysis tool of omc3
+and the resulting detuning values have been entered manually below to be used here.</p>
+<p>You can find the data in <a class="reference external" href="https://gitlab.cern.ch/jdilly/lhc_amplitude_detuning_summary/">https://gitlab.cern.ch/jdilly/lhc_amplitude_detuning_summary/</a>
+and Table 7.2 of <a class="reference internal" href="bibliography.html#dillythesis2024" id="id1"><span>[DillyThesis2024]</span></a> .
+Some more information can be found in Chapter 7.4.1 of the same document.
+In particular, Table 7.3 contrains, in the “Commissioning 2022” rows,
+the results of the correction performed here.
+The values are slightly different, due to the use of the wrong tunes (.31, .32) in the simulation.
+As you can see from the plots, this does not change the trends:
+The resulting detuning values are depicted in Figure 7.4 (blue and orange values).</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">examples.commissioning_2022.</span></span><span class="sig-name descname"><span class="pre">LHCSimParams</span></span><a class="reference internal" href="_modules/examples/commissioning_2022.html#LHCSimParams"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>LHC simulation parameters for Commissioning in 2022.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">examples.commissioning_2022.</span></span><span class="sig-name descname"><span class="pre">MeasuredDetuning</span></span><a class="reference internal" href="_modules/examples/commissioning_2022.html#MeasuredDetuning"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Measured detuning values for different crossing schemes in 10^3 m^-1.
+Note: Keys are beam numbers, 2 and 4 can be used interchangeably (but consistently) here.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.commissioning_2022.</span></span><span class="sig-name descname"><span class="pre">check_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhc_beams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LHCBeam</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/commissioning_2022.html#check_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Check the corrections via PTC.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.commissioning_2022.</span></span><span class="sig-name descname"><span class="pre">do_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhc_beams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LHCBeam</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/commissioning_2022.html#do_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Calculate the dodecapole corrections for the LHC for the set targets.</p>
+<p>Also calculates the individual contributions per corrector order and IP to
+the individual detuning terms.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.commissioning_2022.</span></span><span class="sig-name descname"><span class="pre">get_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhc_beams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LHCBeams</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Target</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/examples/commissioning_2022.html#get_targets"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define the targets to be used.</p>
+<p>Here:</p>
+<blockquote>
+<div><p>Calculate the values for the dodecapole correctors in the LHC to compensate
+for the shift in measured detuning from the flat to the full crossing scheme
+(i.e. crossing active in IP1 and IP5).
+The optics used are only with crossing scheme in IP1 and IP5 active,
+assuming zero detuning at flat-orbit in the simulation.</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The detuning target should be the opposite of the measured detuning,
+such that the calculated correction compensates the measured detuning.
+This is why here it is “flat-full”.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.commissioning_2022.</span></span><span class="sig-name descname"><span class="pre">plot_corrector_strengths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/commissioning_2022.html#plot_corrector_strengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Plot the corrector strengths.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.commissioning_2022.</span></span><span class="sig-name descname"><span class="pre">plot_detuning_comparison</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/commissioning_2022.html#plot_detuning_comparison"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Plot the measured detuning values.
+As well as the target (i.e. the detuning that should be compensated) and
+the reached detuning values by the correction.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.commissioning_2022.</span></span><span class="sig-name descname"><span class="pre">plot_simulation_comparison</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/commissioning_2022.html#plot_simulation_comparison"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Plot the target detuning and how close the different simulation results are.</p>
+<p>Note, that we here show the actual target.
+In the other examples we usually plot the detuning change from flat to full crossing,
+i.e. the inverse of the target here.</p>
+<p>Shows:</p>
+<ul class="simple">
+<li><p>Target vs. PTC</p></li>
+<li><p>Target vs. calculated contributions from IP1 &amp; IP5</p></li>
+<li><p>PTC vs. calculated contributions from IP1 &amp; IP5</p></li>
+<li><p>Calculated contributions from IP1 &amp; IP5 vs. IP1</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.commissioning_2022.</span></span><span class="sig-name descname"><span class="pre">simulation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/commissioning_2022.html#simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Create LHC optics with the set crossing scheme.</p>
+<dl class="simple">
+<dt>Here:</dt><dd><p>IP1 and IP5 crossing active.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="setup-md3311-2018">
+<h2>Setup MD3311 (2018)<a class="headerlink" href="#setup-md3311-2018" title="Link to this heading"></a></h2>
+<p><a class="reference external" href="https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/md3311.py">Source on github</a>.</p>
+<p>Example for a filled template based on the 2018 measurements from commissioning
+and MD3311.</p>
+<p>You can find the data in <a class="reference external" href="https://gitlab.cern.ch/jdilly/lhc_amplitude_detuning_summary/">https://gitlab.cern.ch/jdilly/lhc_amplitude_detuning_summary/</a>
+and Table 7.2 of <a class="reference internal" href="bibliography.html#dillythesis2024" id="id3"><span>[DillyThesis2024]</span></a> .
+The extensive simulations studies are discussed in Chapter 7.3 of the same document
+and partially recreated here.</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">examples.md3311.</span></span><span class="sig-name descname"><span class="pre">CorrectionConstraints</span></span><a class="reference internal" href="_modules/examples/md3311.html#CorrectionConstraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Constraints to be used in the calculations.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">examples.md3311.</span></span><span class="sig-name descname"><span class="pre">LHCSimParams</span></span><a class="reference internal" href="_modules/examples/md3311.html#LHCSimParams"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>LHC simulation parameters for 2018 MD3311.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">examples.md3311.</span></span><span class="sig-name descname"><span class="pre">MeasuredDetuning</span></span><a class="reference internal" href="_modules/examples/md3311.html#MeasuredDetuning"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Measured detuning values for different crossing schemes in 10^3 m^-1.
+Note: Keys are beam numbers, 2 and 4 can be used interchangeably (but consistently) here.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md3311.</span></span><span class="sig-name descname"><span class="pre">check_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhc_beams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LHCBeam</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/md3311.html#check_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Check the corrections via PTC. (Not used for plotting here).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md3311.</span></span><span class="sig-name descname"><span class="pre">do_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhc_beams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LHCBeam</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/md3311.html#do_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Calculate the dodecapole corrections for the LHC for the set targets.</p>
+<p>Also calculates the individual contributions per corrector order and IP to
+the individual detuning terms.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md3311.</span></span><span class="sig-name descname"><span class="pre">get_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhc_beams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LHCBeams</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Target</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/examples/md3311.html#get_targets"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define the targets to be used.</p>
+<p>Here:</p>
+<blockquote>
+<div><p>Calculate the values for the dodecapole correctors in the LHC to compensate
+for the shift in measured detuning from the flat to the full crossing scheme
+(i.e. crossing active in IP1 and IP5) and from flat to the IP5 crossing scheme.</p>
+<p>The defined targets are as in Scenarios D, G and approximately I
+in Figure 7.1 of <a class="reference internal" href="bibliography.html#dillythesis2024" id="id4"><span>[DillyThesis2024]</span></a> .</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The detuning target should be the opposite of the measured detuning,
+such that the calculated correction compensates the measured detuning.
+This is why here it is “flat-full”.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md3311.</span></span><span class="sig-name descname"><span class="pre">plot_corrector_strengths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/md3311.html#plot_corrector_strengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Plot the corrector strengths for the different targets.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md3311.</span></span><span class="sig-name descname"><span class="pre">plot_detunig_compensation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/md3311.html#plot_detunig_compensation"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Plot the detuning to be compensated (inverse of target) and
+how close the different simulation results get.</p>
+<p>This plot shows how well the expected detuning from the corrector powering will
+match global detuning as well as the individual contributions from the IPs,
+for each target individually.</p>
+<p>You can see from the plots, that for the first target the global contribution
+is well matched, yet the individual IPs overshoot (but conpensate each other).</p>
+<p>When trying to match the IPs we loose some global accuracy and get also a
+small amount of positive crossterm.</p>
+<p>Constraining the crossterm to be negative, does not seem to be possible
+and hence the correction tries to keep it at zero, by compensating
+the contributions from IP1 and IP5 exactly.
+This comes at the cost of even worse accuracy for the other terms,
+globally and per IP.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md3311.</span></span><span class="sig-name descname"><span class="pre">simulation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/md3311.html#simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Create LHC optics with the set crossing scheme.</p>
+<dl class="simple">
+<dt>Here:</dt><dd><p>IP1 and IP5 crossing active.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="setup-for-md6863-2022">
+<h2>Setup for MD6863 (2022)<a class="headerlink" href="#setup-for-md6863-2022" title="Link to this heading"></a></h2>
+<p><a class="reference external" href="https://github.com/pylhc/ir_amplitude_detuning/blob/master/examples/md6863.py">Source on github</a>.</p>
+<p>In this example, the dodecapole corrections are calculated based on
+the measurements performed during MD6863 in 2022.</p>
+<p>This setup is the most complicated one of the examples given in this package,
+as we are not only calculating the correction, but also extract the data directly
+from the omc3 output directories.
+In fact, you can modify this example easily below, to even run the detuning
+analysis in omc3 first.</p>
+<p>To achieve this automation, a naming scheme for the output-directories is assumed (see <code class="xref py py-func docutils literal notranslate"><span class="pre">get_config_from_name()</span></code>),
+that allows this script to sort the measurements into the different machine settings used,
+these are:</p>
+<ul class="simple">
+<li><p>With full crossing scheme in IP1 and IP5</p></li>
+<li><p>With flat crossing scheme in IP1 and IP5</p></li>
+<li><p>With positive crossing scheme in IP5</p></li>
+<li><p>With negative crossing scheme in IP5</p></li>
+</ul>
+<p>The naming scheme is as follows:</p>
+<p><code class="docutils literal notranslate"><span class="pre">b$BEAM_1_$XING1_5_$XING5_ampdet_$PLANE_b6_$CORR</span></code></p>
+<p>Where:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">$BEAM</span></code> is the beam number</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">$XING1</span></code> and <code class="docutils literal notranslate"><span class="pre">$XING5</span></code> are the IP1 and IP5 crossing schemes, respectively, in signed-integer murad or ‘off’ for flat</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">$PLANE</span></code> is the plane of the kick, either ‘H’ or ‘V’ or ‘X’ or ‘Y’</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">$CORR</span></code> is the whether there is b6 correction, either ‘in’ or ‘out’</p></li>
+</ul>
+<p>The resulting data is then used to calculate the correction.</p>
+<p>You can find the detunig as well in <a class="reference external" href="https://gitlab.cern.ch/jdilly/lhc_amplitude_detuning_summary/">https://gitlab.cern.ch/jdilly/lhc_amplitude_detuning_summary/</a>
+and Table 7.2 of <a class="reference internal" href="bibliography.html#dillythesis2024" id="id6"><span>[DillyThesis2024]</span></a> ; there are minor differences due to different analysis settings.</p>
+<p>Some more information can be found in Chapter 7.4.1 of <a class="reference internal" href="bibliography.html#dillythesis2024" id="id7"><span>[DillyThesis2024]</span></a> .
+In particular, Table 7.3 contains, in the “MD6863” rows,
+the results of the corrections performed here.</p>
+<p>The resulting detuning values are depicted in Figures 7.5, 7.7 and 7.10.</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">LHCSimParams</span></span><a class="reference internal" href="_modules/examples/md6863.html#LHCSimParams"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>LHC simulation parameters for 2022 MD6863.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">Labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/md6863.html#Labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Labels for the different measurement configurations (as enum to avoid typos).</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">MeasuredDetuning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BeamDict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Detuning</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DetuningMeasurement</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BeamDict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Detuning</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DetuningMeasurement</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip5p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BeamDict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Detuning</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DetuningMeasurement</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip5m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BeamDict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Detuning</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DetuningMeasurement</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrected</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BeamDict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Detuning</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DetuningMeasurement</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/md6863.html#MeasuredDetuning"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Dataclass to hold the detuning data per scheme/configuration.</p>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">merge_first_order_crossterms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MeasuredDetuning</span></span></span><a class="reference internal" href="_modules/examples/md6863.html#MeasuredDetuning.merge_first_order_crossterms"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Create average of the first order crossterm on all measurements.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">MeasurementConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">xing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">kick_plane</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b6corr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/md6863.html#MeasurementConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Configuration for a measurement.
+Used to quickly organize the data from the <code class="docutils literal notranslate"><span class="pre">md6863_data</span></code> folder into the
+different “schemes” as defined in this file.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">XingSchemes</span></span><a class="reference internal" href="_modules/examples/md6863.html#XingSchemes"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Crossing schemes used in the measurements.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">check_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhc_beams_per_setup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Labels</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LHCBeam</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/md6863.html#check_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Check the corrections via PTC. (Not used for plotting here).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">convert_summary_to_detuning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pd.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MeasuredDetuning</span></span></span><a class="reference internal" href="_modules/examples/md6863.html#convert_summary_to_detuning"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Convert the summary DataFrame to a dictionary of detuning data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>summary</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) -- The summary DataFrame.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary of detuning data per scheme and beam.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>MeasuredDetuning</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">do_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhc_beams_per_setup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Labels</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LHCBeam</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/md6863.html#do_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Calculate the dodecapole corrections for the LHC for the set targets.</p>
+<p>Also calculates the individual contributions per corrector order and IP to
+the individual detuning terms.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">extract_data_for_both_planes_and_beams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pd.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b6corr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DetuningPerBeam</span></span></span><a class="reference internal" href="_modules/examples/md6863.html#extract_data_for_both_planes_and_beams"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Extract the data for both planes and beams from the summary DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>summary</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) -- The summary DataFrame.</p></li>
+<li><p><strong>xing</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- The xing scheme.</p></li>
+<li><p><strong>b6corr</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) -- Whether to apply the b6 correction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary of detuning data, merged for both planes, by beams as keys.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DetuningPerBeam</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">format_detuning_measurements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detuning</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MeasuredDetuning</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/examples/md6863.html#format_detuning_measurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Format the detuning data for printing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>detuning</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">MeasuredDetuning</span></code>) -- The detuning data per scheme and beam.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">get_config_from_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MeasurementConfig</span></span></span><a class="reference internal" href="_modules/examples/md6863.html#get_config_from_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Create a MeasurementConfig from a measurement name, as used in the <code class="docutils literal notranslate"><span class="pre">md6863_data</span></code> folder.
+The <code class="xref py py-obj docutils literal notranslate"><span class="pre">MeasurementConfig</span></code> contains the beam number, the kick plane and the xing scheme as well as the b6 correction
+and is only used to quickly organize the data into the different “schemes” as defined in this file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- The name of the measurement (i.e. the folder name).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The measurement configuration.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>MeasurementConfig</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">get_detuning_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">redo_analysis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MeasuredDetuning</span></span></span><a class="reference internal" href="_modules/examples/md6863.html#get_detuning_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Extract the detuning measurement values from the analysed data in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">md6863_data</span></code> folder.</p>
+<p>The values are automatically corrected for the influence of forced oscillations (see <a class="reference internal" href="bibliography.html#dillyamplitudedetuning2023" id="id8"><span>[DillyAmplitudeDetuning2023]</span></a>).
+This data is presented in Table 7.2 of <a class="reference internal" href="bibliography.html#dillythesis2024" id="id9"><span>[DillyThesis2024]</span></a> ; the values might be slightly
+different due to different analysis settings, but should be within errorbar.</p>
+<p>As the raw kick-data and BBQ data is also present in these folders,
+you can choose to re-analyse the data for detuning values by setting <code class="docutils literal notranslate"><span class="pre">redo_analysis</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code>,
+otherwise simply the already analysed <code class="docutils literal notranslate"><span class="pre">kick_ampdet_xy.tfs</span></code> files are loaded.
+To change the analysis settings, you need to manually edit <code class="xref py py-func docutils literal notranslate"><span class="pre">do_detuning_analysis()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>redo_analysis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisOption</span></code>, <em>optional</em>) -- Whether to re-analyse the data.
+Defaults to ‘never’.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">get_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhc_beams_per_setup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Labels</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LHCBeams</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Target</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/examples/md6863.html#get_targets"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define the targets to be used.</p>
+<p>Here:</p>
+<blockquote>
+<div><p>Calculate the values for the dodecapole correctors in the LHC to compensate
+for the shift in measured detuning from the flat to the full crossing scheme
+(i.e. crossing active in IP1 and IP5) and from flat to the IP5 crossing schemes.</p>
+<p>The defined targets are as in Chapter 7.4.1 of <a class="reference internal" href="bibliography.html#dillythesis2024" id="id10"><span>[DillyThesis2024]</span></a> ,
+named there “w/o IP5” (here: “global”) and “w/ IP5” (here: “local_and_global”).</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The detuning target should be the opposite of the measured detuning,
+such that the calculated correction compensates the measured detuning.
+This is why here it is “flat-xing”.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">plot_corrector_strengths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/md6863.html#plot_corrector_strengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Plot the corrector strengths for the different targets.
+These are similar to the green and red values in Fig. 7.12 of <a class="reference internal" href="bibliography.html#dillythesis2024" id="id11"><span>[DillyThesis2024]</span></a> .</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">plot_measurement_comparison</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/md6863.html#plot_measurement_comparison"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Plot the measured detuning values.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">plot_target_comparison</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/md6863.html#plot_target_comparison"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Plot the detuning to be compensated (inverse of target) and
+how close the different simulation results get.</p>
+<p>As we have two targets here, multiple plots are created:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Comparison with measured detuning values (Fig. 7.5 in <a class="reference internal" href="bibliography.html#dillythesis2024" id="id12"><span>[DillyThesis2024]</span></a>):
+During MD only the “global” target correction could be applied,
+as this correction was calculated while the IP5 measurements were still ongoing.
+Therefore we can only compare the “global” target here to measurements after correction.</p></li>
+<li><p>Comparison of individual contributions from IP1 and IP5 (Fig. 7.10 in <a class="reference internal" href="bibliography.html#dillythesis2024" id="id13"><span>[DillyThesis2024]</span></a>):
+Here we can compare the calculated contributions from both corrections (i.e. the two targets)
+to the measured detuning differences from full crossing, the individual contributions from IP1 and IP5
+and the contribution from IP5 dodecapoles only.
+In Fig. 7.10 of <a class="reference internal" href="bibliography.html#dillythesis2024" id="id14"><span>[DillyThesis2024]</span></a> only the result from the “local_and_global” target is shown,
+as this is the more complete correction. This function however creates plots for both targets.</p></li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We always show the detuning difference from flat to the respective crossing scheme,
+i.e. the expected detuning coming from the crossing scheme change.</p>
+<ul>
+<li><p>AmpDet from IP5+ = Ampdet at IP5 positive crossing - AmpDet at flat</p></li>
+<li><p>AmpDet from Full = AmpDet at full crossing - AmpDet at flat = AmpDet from IP1 + AmpDet from IP5</p></li>
+<li><p>AmpDet from IP1 = AmpDet from Full - AmpDet from IP5</p></li>
+<li><p>AmpDet from IP5 dodecapoles =</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">0.5 * (AmpDet from IP5+ + AmpDet from IP5-) =</div>
+<div class="line">- 0.5 * (AmpDet at IP5+ + AmpDet at IP5- - 2 * AmpDet at flat)</div>
+<div class="line">(See Eqs. 7.6 - 7.8 in <a class="reference internal" href="bibliography.html#dillythesis2024" id="id15"><span>[DillyThesis2024]</span></a>)</div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">examples.md6863.</span></span><span class="sig-name descname"><span class="pre">simulation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LHCBeam</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/examples/md6863.html#simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Create LHC all optics with their respective crossing schemes.</p>
+<p>Here:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Flat orbit.</p></li>
+<li><p>IP1 and IP5 crossing active.</p></li>
+<li><p>IP5 positive crossing only (IP1 flat).</p></li>
+<li><p>IP5 negative crossing only (IP1 flat).</p></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to ir_amplitude_detuning’ documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules/main.html" class="btn btn-neutral float-right" title="Main Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

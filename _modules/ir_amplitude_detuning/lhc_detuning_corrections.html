@@ -1,0 +1,615 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ir_amplitude_detuning.lhc_detuning_corrections &mdash; ir_amplitude_detuning 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-codeautolink.css?v=b2176991" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=508b26b5" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#setup-commissioning-2022">Setup Commissioning 2022</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#setup-md3311-2018">Setup MD3311 (2018)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#setup-for-md6863-2022">Setup for MD6863 (2022)</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/main.html">Main Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/main.html#lhc-detuning-corrections">LHC Detuning Corrections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/detuning.html">Detuning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/detuning.html#detuning-calculations">Detuning Calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/detuning.html#equation-system">Equation System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/detuning.html#classes-for-detuning">Classes for Detuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/detuning.html#correction-targets">Correction Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/detuning.html#detuning-terms">Detuning Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/simulation.html#lhc-simulation-class">LHC Simulation Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/simulation.html#simulation-results-loaders">Simulation Results Loaders</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/plotting.html">Plotting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/plotting.html#plot-corrector-strengths">Plot Corrector Strengths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/plotting.html#detuning-plots">Detuning Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/plotting.html#general-plotting-utilities">General Plotting Utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/utilities.html">Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utilities.html#common-utilities">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utilities.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utilities.html#correctors">Correctors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utilities.html#latex-utilities">Latex Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utilities.html#logging">Logging</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Bibliography</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ir_amplitude_detuning</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ir_amplitude_detuning.lhc_detuning_corrections</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ir_amplitude_detuning.lhc_detuning_corrections</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">LHC Detuning Corrections</span>
+<span class="sd">------------------------</span>
+
+<span class="sd">.. caution:: THIS FILE CANNOT BE RUN AS A SCRIPT !!!</span>
+
+<span class="sd">    It does contain the main simulation functions for the LHC scenarios,</span>
+<span class="sd">    but to set the parameters needed (e.g. the measurement),</span>
+<span class="sd">    see the examples.</span>
+
+<span class="sd">This module contains the main function to run an LHC simulation with</span>
+<span class="sd">the given parameters via MAD-X and calculate the corrections based on</span>
+<span class="sd">the provided targets.</span>
+
+<span class="sd">This module is similar to the main function to run and calculate the correction,</span>
+<span class="sd">but also allows to use different crossing-schemes.</span>
+<span class="sd">That is, you can specify a crossing scheme per measurement and the</span>
+<span class="sd">feed-down is calculated based on that scheme.</span>
+<span class="sd">As the simulation takes a while and multiple measurements might rely on the same</span>
+<span class="sd">crossing scheme, the optics are calculated and saved first.</span>
+<span class="sd">They can be then either read or passed to the correction function.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">TypeAlias</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cpymad</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tfs</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.detuning.calculations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Method</span><span class="p">,</span>
+    <span class="n">calc_effective_detuning</span><span class="p">,</span>
+    <span class="n">calculate_correction</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.detuning.measurements</span><span class="w"> </span><span class="kn">import</span> <span class="n">MeasureValue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.detuning.targets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Target</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.simulation.lhc_simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FakeLHCBeam</span><span class="p">,</span>
+    <span class="n">LHCBeam</span><span class="p">,</span>
+    <span class="n">LHCCorrectors</span><span class="p">,</span>
+    <span class="n">pathstr</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.utilities.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AMPDET_CALC_ERR_ID</span><span class="p">,</span>
+    <span class="n">AMPDET_CALC_ID</span><span class="p">,</span>
+    <span class="n">CIRCUIT</span><span class="p">,</span>
+    <span class="n">ERR</span><span class="p">,</span>
+    <span class="n">KN</span><span class="p">,</span>
+    <span class="n">KNL</span><span class="p">,</span>
+    <span class="n">LENGTH</span><span class="p">,</span>
+    <span class="n">NAME</span><span class="p">,</span>
+    <span class="n">NOMINAL_ID</span><span class="p">,</span>
+    <span class="n">SETTINGS_ID</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.utilities.correctors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Corrector</span><span class="p">,</span>
+    <span class="n">Correctors</span><span class="p">,</span>
+    <span class="n">get_fields</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.detuning.equation_system</span><span class="w"> </span><span class="kn">import</span> <span class="n">TwissPerBeam</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ir_amplitude_detuning.detuning.targets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Target</span>
+
+
+<span class="n">LHCBeams</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">LHCBeam</span><span class="p">]</span>
+<span class="n">LHCBeamsPerXing</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">LHCBeams</span><span class="p">]</span>
+
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_optics">
+<a class="viewcode-back" href="../../modules/main.html#ir_amplitude_detuning.lhc_detuning_corrections.get_optics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_optics</span><span class="p">(</span><span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the path to the 30cm (round) optics file for the given year.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="mi">2018</span><span class="p">:</span> <span class="n">pathstr</span><span class="p">(</span><span class="s2">&quot;PROTON&quot;</span><span class="p">,</span> <span class="s2">&quot;opticsfile.22_ctpps2&quot;</span><span class="p">),</span>
+        <span class="mi">2022</span><span class="p">:</span> <span class="n">pathstr</span><span class="p">(</span><span class="s2">&quot;strengths&quot;</span><span class="p">,</span> <span class="s2">&quot;ATS_Nominal&quot;</span><span class="p">,</span> <span class="s2">&quot;2022&quot;</span><span class="p">,</span> <span class="s2">&quot;squeeze&quot;</span><span class="p">,</span> <span class="s2">&quot;ats_30cm.madx&quot;</span><span class="p">)</span>
+    <span class="p">}[</span><span class="n">year</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="CorrectionResults">
+<a class="viewcode-back" href="../../modules/main.html#ir_amplitude_detuning.lhc_detuning_corrections.CorrectionResults">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CorrectionResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to store the results of a correction calculation.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        name (str): The name of the correction target.</span>
+<span class="sd">        series (pd.Series): Series of the correction KNL values for each corrector.</span>
+<span class="sd">        dataframe (tfs.TfsDataFrame): Same information as the Series, but in a DataFrame format,</span>
+<span class="sd">                                      with the corrector-magnet names as index and the other data</span>
+<span class="sd">                                      split into columns. See :func:`~ir_amplitude_detuning.lhc_detuning_corrections.generate_knl_tfs`.</span>
+<span class="sd">        madx (str): The MAD-X code to apply the correction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span>
+    <span class="n">dataframe</span><span class="p">:</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span>
+    <span class="n">madx</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+
+<div class="viewcode-block" id="create_optics">
+<a class="viewcode-back" href="../../modules/main.html#ir_amplitude_detuning.lhc_detuning_corrections.create_optics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_optics</span><span class="p">(</span>
+    <span class="n">beams</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">outputdir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">xing</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># default set below</span>
+    <span class="n">optics</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># defaults to 30cm round optics</span>
+    <span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2018</span><span class="p">,</span>  <span class="c1"># lhc year</span>
+    <span class="n">tune_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">62.28</span><span class="p">,</span>  <span class="c1"># horizontal tune</span>
+    <span class="n">tune_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">60.31</span><span class="p">,</span>  <span class="c1"># vertical tune</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LHCBeams</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run MAD-X to create optics for all crossing-schemes.</span>
+
+<span class="sd">    The optics are saved in subfolders of the output directory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        beams (Sequence[int]): The beam numbers.</span>
+<span class="sd">        outputdir (Path): The output directory.</span>
+<span class="sd">        output_id (str, optional): The output id. Defaults to &#39;&#39;.</span>
+<span class="sd">        xing (dict[str, dict], optional): The crossing scheme. Defaults to `None`,</span>
+<span class="sd">                                          which is set to the top-energy collision scheme below.</span>
+<span class="sd">        optics (str, optional): The optics. Defaults to &quot;round3030&quot;.</span>
+<span class="sd">        year (int, optional): The year. Defaults to 2018.</span>
+<span class="sd">        tune_x (float, optional): The horizontal tune. Defaults to 62.31.</span>
+<span class="sd">        tune_y (float, optional): The vertical tune. Defaults to 60.32.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        LHCBeams: The LHC beams, i.e. a dictionary of LHCBeam objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Setup LHC for both beams -------------------------------------------------</span>
+    <span class="n">lhc_beams</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="n">beams</span><span class="p">:</span>
+        <span class="n">output_subdir</span> <span class="o">=</span> <span class="n">get_label_outputdir</span><span class="p">(</span><span class="n">outputdir</span><span class="p">,</span> <span class="n">output_id</span><span class="p">,</span> <span class="n">beam</span><span class="p">)</span>
+        <span class="n">lhc_beam</span> <span class="o">=</span> <span class="n">LHCBeam</span><span class="p">(</span>
+            <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span>
+            <span class="n">outputdir</span><span class="o">=</span><span class="n">output_subdir</span><span class="p">,</span>
+            <span class="n">xing</span><span class="o">=</span><span class="n">xing</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;scheme&#39;</span><span class="p">:</span> <span class="s1">&#39;top&#39;</span><span class="p">},</span>  <span class="c1"># use top-energy crossing scheme</span>
+            <span class="n">optics</span><span class="o">=</span><span class="n">optics</span> <span class="ow">or</span> <span class="n">get_optics</span><span class="p">(</span><span class="n">year</span><span class="p">),</span>
+            <span class="n">year</span><span class="o">=</span><span class="n">year</span><span class="p">,</span>
+            <span class="n">tune_x</span><span class="o">=</span><span class="n">tune_x</span><span class="p">,</span>
+            <span class="n">tune_y</span><span class="o">=</span><span class="n">tune_y</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">lhc_beam</span><span class="o">.</span><span class="n">setup_machine</span><span class="p">()</span>
+        <span class="n">lhc_beam</span><span class="o">.</span><span class="n">save_nominal</span><span class="p">()</span>
+        <span class="n">lhc_beams</span><span class="p">[</span><span class="n">beam</span><span class="p">]</span> <span class="o">=</span> <span class="n">lhc_beam</span>
+    <span class="k">return</span> <span class="n">lhc_beams</span></div>
+
+
+
+<div class="viewcode-block" id="calculate_corrections">
+<a class="viewcode-back" href="../../modules/main.html#ir_amplitude_detuning.lhc_detuning_corrections.calculate_corrections">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_corrections</span><span class="p">(</span>
+    <span class="n">beams</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">outputdir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">targets</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Target</span><span class="p">],</span>
+    <span class="n">method</span><span class="p">:</span> <span class="n">Method</span> <span class="o">=</span> <span class="n">Method</span><span class="o">.</span><span class="n">auto</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">CorrectionResults</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate corrections based on targets and given correctors.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        beams (Sequence[int]): The beam numbers to calculate corrections for.</span>
+<span class="sd">        outputdir (Path): The output directory.</span>
+<span class="sd">        targets (Sequence[Target]): The targets to calculate corrections for.</span>
+<span class="sd">        method (Method): The method to use for calculating the corrections (see :func:`ir_amplitude_detuning.detuning.calculations`).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict[str, CorrectionResults]: The results for each target.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculating detuning for </span><span class="se">\n</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Calculate correction ---</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">calculate_correction</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimization failed for </span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">  (fields: </span><span class="si">{</span><span class="n">get_fields</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">correctors</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Save results ---</span>
+        <span class="n">madx_command</span> <span class="o">=</span> <span class="n">generate_madx_command</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">knl_tfs</span> <span class="o">=</span> <span class="n">generate_knl_tfs</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+
+        <span class="n">results</span><span class="p">[</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">CorrectionResults</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">series</span><span class="o">=</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">dataframe</span><span class="o">=</span><span class="n">knl_tfs</span><span class="p">,</span>
+            <span class="n">madx</span><span class="o">=</span><span class="n">madx_command</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">lhc_beams_out</span> <span class="o">=</span> <span class="p">{</span><span class="n">b</span><span class="p">:</span> <span class="n">FakeLHCBeam</span><span class="p">(</span><span class="n">beam</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">outputdir</span><span class="o">=</span><span class="n">outputdir</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">beams</span><span class="p">}</span>  <span class="c1"># to get the file output paths</span>
+        <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="n">beams</span><span class="p">:</span>
+            <span class="n">lhc_out</span> <span class="o">=</span> <span class="n">lhc_beams_out</span><span class="p">[</span><span class="n">beam</span><span class="p">]</span>
+            <span class="n">lhc_out</span><span class="o">.</span><span class="n">output_path</span><span class="p">(</span><span class="n">SETTINGS_ID</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.madx&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">madx_command</span><span class="p">)</span>
+            <span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">lhc_out</span><span class="o">.</span><span class="n">output_path</span><span class="p">(</span><span class="n">SETTINGS_ID</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">knl_tfs</span><span class="p">,</span> <span class="n">save_index</span><span class="o">=</span><span class="n">NAME</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="get_nominal_optics">
+<a class="viewcode-back" href="../../modules/main.html#ir_amplitude_detuning.lhc_detuning_corrections.get_nominal_optics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_nominal_optics</span><span class="p">(</span><span class="n">beams</span><span class="p">:</span> <span class="n">LHCBeams</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">outputdir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TwissPerBeam</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return previously generated nominal machine optics as a dictionary of TfsDataFrames per Beam, either directly from the</span>
+<span class="sd">    LHCBeams objects (if given) or reading from the labeled sub-folder in the output-path.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        beams (LHCBeams | Sequence[int]): The LHCBeams objects or a sequence of beam numbers.</span>
+<span class="sd">        outputdir (Path): The output directory.</span>
+<span class="sd">        label (str): The label for the sub-dir (e.g. a name for the optics)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">optics</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="n">beams</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">beams</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">optics</span><span class="p">[</span><span class="n">beam</span><span class="p">]</span> <span class="o">=</span> <span class="n">beams</span><span class="p">[</span><span class="n">beam</span><span class="p">]</span><span class="o">.</span><span class="n">df_twiss_nominal</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">outputdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;outputdir must be provided if beams are not given as LHCBeams.&quot;</span><span class="p">)</span>
+
+            <span class="n">lhc_beam</span> <span class="o">=</span> <span class="n">FakeLHCBeam</span><span class="p">(</span><span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span> <span class="n">outputdir</span><span class="o">=</span><span class="n">get_label_outputdir</span><span class="p">(</span><span class="n">outputdir</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">beam</span><span class="p">))</span>
+            <span class="n">optics</span><span class="p">[</span><span class="n">beam</span><span class="p">]</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">lhc_beam</span><span class="o">.</span><span class="n">output_path</span><span class="p">(</span><span class="s1">&#39;twiss&#39;</span><span class="p">,</span> <span class="n">NOMINAL_ID</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">NAME</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">optics</span></div>
+
+
+
+<div class="viewcode-block" id="get_label_outputdir">
+<a class="viewcode-back" href="../../modules/main.html#ir_amplitude_detuning.lhc_detuning_corrections.get_label_outputdir">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_label_outputdir</span><span class="p">(</span><span class="n">outputdir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the outputdir sub-dir for a given label and beam.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        outputdir (Path): The output directory.</span>
+<span class="sd">        label (str): The label for the sub-dir (e.g. a name for the optics)</span>
+<span class="sd">        beam (int): The beam number.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">outputdir</span>  <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">outputdir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">_b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<span class="c1"># Correction Output Functions --------------------------------------------------</span>
+
+<div class="viewcode-block" id="generate_madx_command">
+<a class="viewcode-back" href="../../modules/main.html#ir_amplitude_detuning.lhc_detuning_corrections.generate_madx_command">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_madx_command</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a MAD-X command to set the corrector values.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        values (pd.Series): The correction values. Assumes the index are the Corrector objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">correctors</span><span class="p">:</span> <span class="n">Correctors</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">length_map</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;l.</span><span class="si">{</span><span class="n">corrector</span><span class="o">.</span><span class="n">madx_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">corrector</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">corrector</span> <span class="ow">in</span> <span class="n">correctors</span> <span class="k">if</span> <span class="n">corrector</span><span class="o">.</span><span class="n">madx_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+
+    <span class="n">madx_command</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;! Amplitude detuning powering:&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;! reminder: </span><span class="si">{</span><span class="n">l</span><span class="si">}</span><span class="s1"> = </span><span class="si">{</span><span class="n">length_map</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">length_map</span><span class="p">]</span>  <span class="c1"># noqa: E741</span>
+    <span class="k">for</span> <span class="n">corrector</span><span class="p">,</span> <span class="n">knl</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">corrector</span><span class="p">:</span> <span class="n">Corrector</span>
+        <span class="n">length_str</span> <span class="o">=</span> <span class="n">corrector</span><span class="o">.</span><span class="n">length</span> <span class="k">if</span> <span class="n">corrector</span><span class="o">.</span><span class="n">madx_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;l.</span><span class="si">{</span><span class="n">corrector</span><span class="o">.</span><span class="n">madx_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">knl_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">knl</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">knl</span><span class="p">)</span>
+        <span class="n">madx_command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">corrector</span><span class="o">.</span><span class="n">circuit</span><span class="si">}</span><span class="s2"> := </span><span class="si">{</span><span class="n">knl_value</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="n">length_str</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
+        <span class="n">madx_command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;! </span><span class="si">{</span><span class="n">corrector</span><span class="o">.</span><span class="n">circuit</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">knl_value</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">corrector</span><span class="o">.</span><span class="n">length</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">madx_command</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="generate_knl_tfs">
+<a class="viewcode-back" href="../../modules/main.html#ir_amplitude_detuning.lhc_detuning_corrections.generate_knl_tfs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_knl_tfs</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a TFS dataframe with the corrector values.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        values (pd.Series): The correction values. Assumes the index are</span>
+<span class="sd">                            :class:`~ir_amplitude_detuning.utilities.classes_accelerator.Corrector` objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">correctors</span><span class="p">:</span> <span class="n">Correctors</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">magnet</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">correctors</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">corrector</span><span class="p">,</span> <span class="n">knl</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">corrector</span><span class="p">:</span> <span class="n">Corrector</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">corrector</span><span class="o">.</span><span class="n">length</span>
+        <span class="n">magnet</span> <span class="o">=</span> <span class="n">corrector</span><span class="o">.</span><span class="n">magnet</span>
+
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">magnet</span><span class="p">,</span> <span class="n">CIRCUIT</span><span class="p">]</span> <span class="o">=</span> <span class="n">corrector</span><span class="o">.</span><span class="n">circuit</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">magnet</span><span class="p">,</span> <span class="n">LENGTH</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">magnet</span><span class="p">,</span> <span class="n">KNL</span><span class="p">]</span> <span class="o">=</span> <span class="n">knl</span><span class="o">.</span><span class="n">value</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">magnet</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ERR</span><span class="si">}{</span><span class="n">KNL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">knl</span><span class="o">.</span><span class="n">error</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">magnet</span><span class="p">,</span> <span class="n">KN</span><span class="p">]</span> <span class="o">=</span> <span class="n">knl</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="n">length</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">magnet</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ERR</span><span class="si">}{</span><span class="n">KN</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">knl</span><span class="o">.</span><span class="n">error</span> <span class="o">/</span> <span class="n">length</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">magnet</span><span class="p">,</span> <span class="n">KNL</span><span class="p">]</span> <span class="o">=</span> <span class="n">knl</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">magnet</span><span class="p">,</span> <span class="n">KN</span><span class="p">]</span> <span class="o">=</span> <span class="n">knl</span> <span class="o">/</span> <span class="n">length</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<span class="c1"># Detuning Check Functions -----------------------------------------------------</span>
+
+
+<span class="c1"># Analytical Check ---</span>
+
+<div class="viewcode-block" id="check_corrections_analytically">
+<a class="viewcode-back" href="../../modules/main.html#ir_amplitude_detuning.lhc_detuning_corrections.check_corrections_analytically">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_corrections_analytically</span><span class="p">(</span><span class="n">outputdir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">optics</span><span class="p">:</span> <span class="n">TwissPerBeam</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">CorrectionResults</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the :func:`effective detuning &lt;ir_amplitude_detuning.detuning.calculations.calc_effective_detuning&gt;` for each beam and</span>
+<span class="sd">    write the results into a `tfs` file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        outputdir (Path): The output directory.</span>
+<span class="sd">        optics (TwissPerBeam): The machine optics.</span>
+<span class="sd">        results (CorrectionResults): The calculated correction results.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">effective_detuning</span> <span class="o">=</span> <span class="n">calc_effective_detuning</span><span class="p">(</span><span class="n">optics</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">series</span><span class="p">)</span>
+
+    <span class="n">lhc_beams_out</span> <span class="o">=</span> <span class="p">{</span><span class="n">b</span><span class="p">:</span> <span class="n">FakeLHCBeam</span><span class="p">(</span><span class="n">beam</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">outputdir</span><span class="o">=</span><span class="n">outputdir</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">optics</span><span class="p">}</span>  <span class="c1"># to get the file output paths</span>
+    <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="n">optics</span><span class="p">:</span>
+        <span class="n">df_detuning</span> <span class="o">=</span> <span class="n">effective_detuning</span><span class="p">[</span><span class="n">beam</span><span class="p">]</span>
+        <span class="n">detuning_tfs_out_with_and_without_errors</span><span class="p">(</span><span class="n">lhc_beams_out</span><span class="p">[</span><span class="n">beam</span><span class="p">],</span> <span class="n">results</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">df_detuning</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detuning check for beam </span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="n">df_detuning</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="detuning_tfs_out_with_and_without_errors">
+<a class="viewcode-back" href="../../modules/main.html#ir_amplitude_detuning.lhc_detuning_corrections.detuning_tfs_out_with_and_without_errors">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">detuning_tfs_out_with_and_without_errors</span><span class="p">(</span><span class="n">lhc_out</span><span class="p">:</span> <span class="n">LHCBeam</span> <span class="o">|</span> <span class="n">FakeLHCBeam</span><span class="p">,</span> <span class="n">id_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Write out the detuning results, given as :class:`DataFrame` into a</span>
+<span class="sd">    `tfs` file.</span>
+<span class="sd">    If the input `DataFrame` contains :class:`~ir_amplitude_detuning.detuning.MeasureValue` objects,</span>
+<span class="sd">    the values and errors are extracted and two files are written:</span>
+<span class="sd">    One with only the values and one with the values and errors.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        lhc_out (LHCBeam | FakeLHCBeam): LHCBeam object to find the correct output path.</span>
+<span class="sd">        id_ (str): The identifier (e.g. target name) of the calculation.</span>
+<span class="sd">        df (pd.DataFrame): The calculated detuning terms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">has_errors</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">df_values</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df_errors</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">MeasureValue</span><span class="o">.</span><span class="n">from_value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># string column</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df_values</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">df_errors</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_values</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
+            <span class="n">df_errors</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ERR</span><span class="si">}{</span><span class="n">column</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">error</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">has_errors</span> <span class="o">=</span> <span class="n">has_errors</span> <span class="ow">or</span> <span class="n">df_errors</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ERR</span><span class="si">}{</span><span class="n">column</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+
+    <span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">lhc_out</span><span class="o">.</span><span class="n">output_path</span><span class="p">(</span><span class="n">AMPDET_CALC_ID</span><span class="p">,</span> <span class="n">id_</span><span class="p">),</span> <span class="n">df_values</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">has_errors</span><span class="p">:</span>
+        <span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">lhc_out</span><span class="o">.</span><span class="n">output_path</span><span class="p">(</span><span class="n">AMPDET_CALC_ERR_ID</span><span class="p">,</span> <span class="n">id_</span><span class="p">),</span> <span class="n">df_errors</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># PTC Check ---</span>
+
+<div class="viewcode-block" id="check_corrections_ptc">
+<a class="viewcode-back" href="../../modules/main.html#ir_amplitude_detuning.lhc_detuning_corrections.check_corrections_ptc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_corrections_ptc</span><span class="p">(</span>
+    <span class="n">outputdir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">lhc_beams</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">LHCBeam</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="c1"># Below only needed if lhc_beams is None ---</span>
+    <span class="n">beams</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">xing</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">optics</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># defaults to 30cm round optics</span>
+    <span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2018</span><span class="p">,</span>  <span class="c1"># lhc year</span>
+    <span class="n">tune_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">62.28</span><span class="p">,</span>  <span class="c1"># horizontal tune</span>
+    <span class="n">tune_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">60.31</span><span class="p">,</span>  <span class="c1"># vertical tune</span>
+    <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check the corrections via PTC.</span>
+
+<span class="sd">    This installs decapole corrector magnets and reads the corrections</span>
+<span class="sd">    from the settings file.</span>
+<span class="sd">    If ``lhc_beams`` are given, the output paths will be adapted and these used,</span>
+<span class="sd">    otherwise new :class:`~ir_amplitude_detuning.lhc_detuning_corrections.LHCBeam` s</span>
+<span class="sd">    will be set up.</span>
+
+<span class="sd">    PTC is run for the ``nominal`` machine as well as all ``settings.*`` files</span>
+<span class="sd">    found in the output directory.</span>
+<span class="sd">    The PTC output ids are parsed from the settings file names.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        outputdir (Path): Output directory.</span>
+<span class="sd">        lhc_beams (dict[int, LHCBeam]): Pre-run LHC beams.</span>
+<span class="sd">        beams (Sequence[int]): Beams (if ``lhc_beams`` is None).</span>
+<span class="sd">        xing (dict[str, dict]): Crossing scheme (if ``lhc_beams`` is `None`).</span>
+<span class="sd">        optics (Path): Path to the optics file (if ``lhc_beams`` is `None`).</span>
+<span class="sd">        year (int): Year (if ``lhc_beams`` is `None`).</span>
+<span class="sd">        tune_x (float): Horizontal tune (if ``lhc_beams`` is `None`).</span>
+<span class="sd">        tune_y (float): Vertical tune (if ``lhc_beams`` is `None`).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">lhc_beams</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Setup LHC for both beams ---</span>
+        <span class="n">lhc_beams</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">beams</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either lhc_beams or beams must be given.&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="n">beams</span><span class="p">:</span>
+            <span class="n">lhc_beam</span> <span class="o">=</span> <span class="n">LHCBeam</span><span class="p">(</span>
+                <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span>
+                <span class="n">outputdir</span><span class="o">=</span><span class="n">get_label_outputdir</span><span class="p">(</span><span class="n">outputdir</span><span class="p">,</span> <span class="s1">&#39;tmp_ptc&#39;</span><span class="p">,</span> <span class="n">beam</span><span class="p">),</span>
+                <span class="n">xing</span><span class="o">=</span><span class="n">xing</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;scheme&#39;</span><span class="p">:</span> <span class="s1">&#39;top&#39;</span><span class="p">},</span>
+                <span class="n">optics</span><span class="o">=</span><span class="n">optics</span> <span class="ow">or</span> <span class="n">get_optics</span><span class="p">(</span><span class="n">year</span><span class="p">),</span>
+                <span class="n">year</span><span class="o">=</span><span class="n">year</span><span class="p">,</span>
+                <span class="n">tune_x</span><span class="o">=</span><span class="n">tune_x</span><span class="p">,</span>
+                <span class="n">tune_y</span><span class="o">=</span><span class="n">tune_y</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">lhc_beam</span><span class="o">.</span><span class="n">setup_machine</span><span class="p">()</span>
+            <span class="n">lhc_beams</span><span class="p">[</span><span class="n">beam</span><span class="p">]</span> <span class="o">=</span> <span class="n">lhc_beam</span>
+
+    <span class="c1"># Check Corrections ---</span>
+    <span class="k">for</span> <span class="n">lhc_beam</span> <span class="ow">in</span> <span class="n">lhc_beams</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">lhc_beam</span><span class="o">.</span><span class="n">outputdir</span> <span class="o">=</span> <span class="n">outputdir</span>  <span class="c1"># override old outputdir</span>
+
+        <span class="n">lhc_beam</span><span class="o">.</span><span class="n">install_circuits_into_mctx</span><span class="p">()</span>
+        <span class="n">settings_glob</span> <span class="o">=</span> <span class="n">lhc_beam</span><span class="o">.</span><span class="n">output_path</span><span class="p">(</span><span class="n">SETTINGS_ID</span><span class="p">,</span> <span class="n">output_id</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.madx&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="n">loaded_settings</span> <span class="o">=</span> <span class="p">{</span><span class="n">NOMINAL_ID</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>  <span class="c1"># get nominal to establish a baseline</span>
+        <span class="k">for</span> <span class="n">settings_file</span> <span class="ow">in</span> <span class="n">lhc_beam</span><span class="o">.</span><span class="n">outputdir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">settings_glob</span><span class="p">):</span> <span class="c1"># loop over targets</span>
+            <span class="n">target_id</span> <span class="o">=</span> <span class="n">settings_file</span><span class="o">.</span><span class="n">suffixes</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+            <span class="n">loaded_settings</span><span class="p">[</span><span class="n">target_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">settings_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loaded_settings</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No settings files found matching &#39;</span><span class="si">{</span><span class="n">settings_glob</span><span class="si">}</span><span class="s2">&#39; in &#39;</span><span class="si">{</span><span class="n">lhc_beam</span><span class="o">.</span><span class="n">outputdir</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">target_id</span><span class="p">,</span> <span class="n">settings</span> <span class="ow">in</span> <span class="n">loaded_settings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">settings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">lhc_beam</span><span class="o">.</span><span class="n">madx</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">lhc_beam</span><span class="o">.</span><span class="n">match_tune</span><span class="p">()</span>
+                <span class="n">lhc_beam</span><span class="o">.</span><span class="n">get_twiss</span><span class="p">(</span><span class="n">target_id</span><span class="p">,</span> <span class="n">index_regex</span><span class="o">=</span><span class="n">LHCCorrectors</span><span class="o">.</span><span class="n">pattern</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">cpymad</span><span class="o">.</span><span class="n">madx</span><span class="o">.</span><span class="n">TwissFailed</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Matching/Twiss failed for target </span><span class="si">{</span><span class="n">target_id</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lhc_beam</span><span class="o">.</span><span class="n">get_ampdet</span><span class="p">(</span><span class="n">target_id</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">settings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">lhc_beam</span><span class="o">.</span><span class="n">check_kctx_limits</span><span class="p">()</span>
+                <span class="n">lhc_beam</span><span class="o">.</span><span class="n">reset_detuning_circuits</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
