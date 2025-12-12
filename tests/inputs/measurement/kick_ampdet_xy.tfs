@@ -1,0 +1,29 @@
+@ Measure_optics:version    %s                   "0.4.0"
+@ Command                   %s "python make_analysis"
+@ CWD                       %s "my_cwd"
+@ Date                      %s "12. July 2022, 16:04:36"
+@ Model_directory           %s "b1_30cm"
+@ Compensation              %s                "by model"
+@ Q1                        %le       0.27998842435500393
+@ Q2                        %le        0.3099860733499966
+@ RescalingFactorX          %le         1.000606165206714
+@ RescalingFactorY          %le        1.0067746669006474
+@ ODR_dQXd2JX_COEFF0        %le       0.28016503286702676
+@ ODR_dQXd2JX_ERRCOEFF0     %le     1.155263876804028e-05
+@ ODR_dQXd2JX_COEFF1        %le        -32209.77442163995
+@ ODR_dQXd2JX_ERRCOEFF1     %le          3384.46122805569
+@ ODR_dQYd2JX_COEFF0        %le       0.30983684442567894
+@ ODR_dQYd2JX_ERRCOEFF0     %le      9.16011158268422e-06
+@ ODR_dQYd2JX_COEFF1        %le         55112.82068518765
+@ ODR_dQYd2JX_ERRCOEFF1     %le        2075.2520018162136
+@ ODR_dQXd2JX_CORRCOEFF0    %le     2.443949536369067e-05
+@ ODR_dQXd2JX_ERRCORRCOEFF0 %le     7.421759440893851e-06
+@ ODR_dQXd2JX_CORRCOEFF1    %le       -25059.924191527414
+@ ODR_dQXd2JX_ERRCORRCOEFF1 %le         1873.560446932308
+@ ODR_dQYd2JX_CORRCOEFF0    %le     4.927028596965795e-05
+@ ODR_dQYd2JX_ERRCORRCOEFF0 %le     9.066255056779466e-06
+@ ODR_dQYd2JX_CORRCOEFF1    %le        34493.584047847944
+@ ODR_dQYd2JX_ERRCORRCOEFF1 %le         1931.467372460784
+* TIME                                 DPPX              DPPAMPX                   QX                ERRQX                NATQX             ERRNATQX              sqrt2JX           ERRsqrt2JX                  2JX               ERR2JX           sqrt2JXRES        ERRsqrt2JXRES               2JXRES            ERR2JXRES                 DPPY              DPPAMPY                   QY                ERRQY                NATQY             ERRNATQY              sqrt2JY           ERRsqrt2JY                  2JY               ERR2JY           sqrt2JYRES        ERRsqrt2JYRES               2JYRES            ERR2JYRES              BBQXMAV           ERRBBQXMAV              BBQYMAV           ERRBBQYMAV            NATQXCORR         ERRNATQXCORR            NATQYCORR         ERRNATQYCORR
+$ %s                                    %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le
+  "2022_06_25@03_37_46_464453"                    0                    0       0.270988387385    2.66571562631e-07       0.280141454982    3.93830101129e-06    1.68439511206e-05    6.41659859539e-07    2.83336967667e-10    2.15656382837e-11    1.68541613377e-05     6.4204881142e-07    2.83508716679e-10    2.15787106232e-11                    0                    0       0.316986082014     4.3304013192e-08       0.309869261813    1.72718088373e-05    3.20969724259e-05    7.77166572281e-07    1.02928627069e-09    4.98528853655e-11    3.23144187226e-05    7.82431616935e-07    1.03625934232e-09    5.01906220579e-11       0.280143370853    2.01341151135e-06       0.309810264934    4.28046095265e-06   -1.91587113502e-06     4.4231256787e-06    5.89968792359e-05    1.77943172524e-05
